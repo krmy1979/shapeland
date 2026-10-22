@@ -12,7 +12,7 @@ function renderQuestChip(){const q=P.quest;const el=$('#questChip');let h='';
 let friendsSig='';
 function renderFriends(){const el=$('#friends');let h='';
   if(NET.state==='on'){const others=NET.peers.filter(p=>!p.sameTab);
-    h+=`<span class="net">${others.length?`${others.length+1} מחוברים · ${en(P.code)}`:`רק את/ה כאן · ${en(P.code)}`}</span>`;
+    const gl=window.CLOUD&&CLOUD.gname?esc(CLOUD.gname):en(P.code);h+=`<span class="net">${others.length?`${others.length+1} מחוברים · ${gl}`:`רק את/ה כאן · ${gl}`}</span>`;
     h+=others.slice(0,6).map(p=>{const pr=p.presence||{};const where=pr.zone==='city'?'באשקלון':pr.zone==='town'?'בעיירה':pr.zone==='house'?(pr.host===P.key?'אצלך בבית':'בבית'):pr.zone==='work'?'בסדנה':'באי';
       return`<button class="fr" data-a="friend" data-p="${esc(p.peer)}"><span class="dot"></span>${charSVG(sanitizeCh(pr.ch))}<span>${esc(nameOf(p))} <span class="where">${where}</span></span></button>`}).join('')}
   else if(NET.state==='connecting')h=`<span class="net">מתחבר לחבורה…</span>`;

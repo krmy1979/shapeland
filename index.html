@@ -38,11 +38,32 @@
     <div class="logo" aria-label="Shapeland" id="logo"></div>
     <div class="sig"><small>a world by</small>Shirel Yitzhak</div>
     <div class="preview" id="titleAv"></div>
-    <div class="tform">
+    <div class="tform" id="cloudBox" hidden>
+      <div id="kidLoginForm" style="display:flex;flex-direction:column;gap:10px">
+        <label for="kCode">קוד שחקן (מקבלים מההורים)</label>
+        <input class="txt en" id="kCode" dir="ltr" maxlength="12" placeholder="abc123" autocapitalize="none" autocomplete="username" spellcheck="false">
+        <label for="kPin">PIN (6 ספרות)</label>
+        <input class="txt en" id="kPin" dir="ltr" type="password" inputmode="numeric" maxlength="6" autocomplete="current-password">
+        <button class="btn" data-c="kidlogin" style="font-size:22px">כניסה לעולם ✨</button>
+        <p class="sub" id="kidMsg" aria-live="polite"></p>
+        <p class="sub" id="parentNote" hidden>הדפדפן הזה מחובר כהורה. ילדים נכנסים כאן עם קוד שחקן.</p>
+      </div>
+      <div id="kidWelcome" hidden style="display:flex;flex-direction:column;gap:10px;text-align:center">
+        <h2>שלום <span id="kidHello" dir="auto"></span>! 👋</h2>
+        <p class="sub" id="kidGroup"></p>
+        <button class="btn" data-c="kidgo" id="kidGo" style="font-size:22px">יאללה, לשחק! ✨</button>
+        <button class="btn ghost mini" data-a="avatar">🎨 לעצב את הדמות</button>
+      </div>
+      <button class="btn ghost mini" data-c="solo">לשחק לבד, בלי חברים</button>
+      <a class="sub" href="parent.html" style="text-align:center">🔒 אזור הורים</a>
+    </div>
+    <div class="tform" id="localBox">
       <label for="tName">איך קוראים לדמות שלך?</label>
       <input class="txt" id="tName" dir="auto" maxlength="14" placeholder="שם במשחק">
+      <div class="codewrap" style="display:flex;flex-direction:column;gap:10px">
       <label for="tCode">קוד החבורה (כל מי שמשתמש באותו קוד משחק ביחד)</label>
       <input class="txt en" id="tCode" dir="ltr" maxlength="24" placeholder="shirel-friends" autocapitalize="none" autocomplete="off" spellcheck="false">
+      </div>
       <button class="btn" data-a="play" style="font-size:22px">יאללה, לשחק! ✨</button>
       <button class="btn ghost mini" data-a="avatar">🎨 לעצב את הדמות</button>
     </div>
@@ -76,5 +97,10 @@
 <script src="js/18-events.js"></script>
 <script src="js/19-loop.js"></script>
 <script src="js/20-boot.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/21-cloud.js"></script>
 </body>
 </html>

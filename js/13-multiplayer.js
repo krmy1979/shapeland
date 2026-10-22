@@ -11,9 +11,11 @@ const peerByKey=k=>NET.peers.find(p=>!p.sameTab&&(p.presence||{}).k===k);
 async function connect(){
   NET.state='connecting';renderFriends();
   try{
-    if(!window.claude||!window.claude.use){NET.state='solo';renderFriends();return}
-    const ns=await window.claude.use('room');if(!ns){NET.state='solo';renderFriends();return}
-    const r=await ns.join('sl-'+P.code);NET.room=r;NET.state='on';
+    let r;
+    if(window.CLOUD&&window.CLOUD.on){if(!CLOUD.user||!CLOUD.gid){NET.state='solo';renderFriends();if(CLOUD.user&&!CLOUD.gid)toast('עוד לא אושרת לחבורה. ההורים מבקשים את זה באזור ההורים');return}r=cloudRoom(CLOUD.gid)}
+    else{if(!window.claude||!window.claude.use){NET.state='solo';renderFriends();return}
+      const ns=await window.claude.use('room');if(!ns){NET.state='solo';renderFriends();return}r=await ns.join('sl-'+P.code)}
+    NET.room=r;NET.state='on';
     r.onPeers(ch=>{NET.peers=ch.peers.filter(p=>p.kind==='viewer');const me=ch.peers.find(p=>p.sameTab);if(me)NET.myPeer=me.peer;
       NET.peers.forEach(p=>{if(p.presence&&typeof p.presence.k==='string')NET.names.set(p.presence.k,nameOf(p))});
       if(ch.joined.some(p=>!p.sameTab))sendAllPieces();

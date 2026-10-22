@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Shapeland · אזור הורים</title>
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Varela+Round&family=Dancing+Script:wght@700&display=swap">
+<link rel="stylesheet" href="css/parent.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand"><img src="icon.svg" alt="" width="40" height="40"><div><b class="en">Shapeland</b><small>אזור הורים · <span class="sig">Shirel Yitzhak</span></small></div></div>
+  <div id="who"></div>
+</header>
+<main id="app">
+  <section class="card" id="loginCard" hidden>
+    <h1>אזור הורים</h1>
+    <p class="sub">כאן פותחים חשבון לילד, רואים את ההתקדמות שלו, קובעים זמן משחק יומי ומבקשים להצטרף לחבורה של הכיתה. ילדים לא נכנסים לכאן.</p>
+    <button class="btn" id="gLogin">כניסה עם Google</button>
+    <p class="sub" id="loginMsg"></p>
+  </section>
+  <div id="dash" hidden>
+    <section class="card">
+      <div class="row"><h2 class="grow">הילדים שלי</h2></div>
+      <div id="kids"></div>
+      <form id="addKid" class="row" autocomplete="off">
+        <label for="kidNick" class="sub">כינוי לילד במשחק (לא שם מלא)</label>
+        <input id="kidNick" class="txt" maxlength="14" placeholder="למשל: Shirel" dir="auto" required>
+        <button class="btn" type="submit">+ פתיחת חשבון שחקן</button>
+      </form>
+      <p class="sub" id="addMsg" aria-live="polite"></p>
+    </section>
+    <section class="card">
+      <h2>חבורות</h2>
+      <p class="sub">חבורה היא קבוצה סגורה של ילדים שמשחקים יחד. מנהל החבורה מאשר כל ילד בנפרד, ורק ילדים מאושרים רואים אחד את השני.</p>
+      <div id="groups"></div>
+      <div class="two">
+        <form id="joinGroup" class="box">
+          <h3>להצטרף לחבורה קיימת</h3>
+          <label for="joinKid" class="sub">איזה ילד</label><select id="joinKid" class="txt"></select>
+          <label for="joinCode" class="sub">קוד החבורה (מקבלים ממנהל החבורה)</label><input id="joinCode" class="txt en" dir="ltr" maxlength="10" placeholder="SL-XXXX" required>
+          <button class="btn ghost" type="submit">שליחת בקשה</button>
+          <p class="sub" id="joinMsg" aria-live="polite"></p>
+        </form>
+        <form id="newGroup" class="box">
+          <h3>לפתוח חבורה חדשה</h3>
+          <label for="groupName" class="sub">שם החבורה</label><input id="groupName" class="txt" maxlength="30" placeholder="למשל: החברות של שיראל" dir="auto" required>
+          <button class="btn ghost" type="submit">פתיחת חבורה</button>
+          <p class="sub" id="groupMsg" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+    <p class="sub center"><a href="index.html">← חזרה למשחק</a> · <button class="link" id="logout">יציאה</button></p>
+  </div>
+  <p class="sub center" id="noCloud" hidden>המערכת עוד לא מחוברת לשרת.</p>
+</main>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/parent.js"></script>
+</body>
+</html>

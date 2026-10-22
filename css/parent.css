@@ -1,0 +1,57 @@
+/* Shapeland parents' area — same toy palette as the game, calmer layout */
+:root{
+  --sky:#E6F2FF; --ink:#1D2A48; --muted:#56668A; --card:#FFFFFF; --line:#C9DCF3; --soft:#EEF5FF;
+  --berry:#EE4F7C; --berry-dk:#C23560; --gem:#19B8C9; --leaf:#1F9E60; --leaf-soft:#DAF5E6; --sun:#FFB41F; --sun-soft:#FFF3D6; --bad:#D9443F;
+  --f-display:"Fredoka","Varela Round",Arial,sans-serif; --f-body:"Varela Round","Fredoka",Arial,sans-serif; --f-sign:"Dancing Script",cursive;
+  color-scheme:light;
+}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--sky);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top{max-width:860px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:16px}
+.brand{display:flex;gap:10px;align-items:center}
+.brand b{font-family:var(--f-display);font-size:22px;display:block;line-height:1}
+.brand small{color:var(--muted)}
+.sig{font-family:var(--f-sign);font-size:17px;direction:ltr;unicode-bidi:isolate}
+.en{direction:ltr;unicode-bidi:isolate}
+#who{font-size:14px;color:var(--muted);text-align:end}
+main{max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:16px;padding-bottom:40px}
+.card{background:var(--card);border-radius:22px;padding:18px;box-shadow:0 4px 0 var(--line);display:flex;flex-direction:column;gap:12px}
+h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance}
+h1{font-size:28px} h2{font-size:21px} h3{font-size:17px}
+.sub{color:var(--muted);font-size:14px;margin:0}
+.center{text-align:center}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.grow{flex:1;min-width:0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:640px){.two{grid-template-columns:1fr}}
+.box{background:var(--soft);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.txt{font:inherit;border:2px solid var(--line);border-radius:12px;padding:9px 12px;background:#fff;color:var(--ink);min-width:0;width:100%}
+.row .txt{flex:1;min-width:160px;width:auto}
+.btn{border:0;border-radius:14px;padding:10px 16px;font-family:var(--f-display);font-weight:600;font-size:16px;background:var(--berry);color:#fff;box-shadow:0 3px 0 var(--berry-dk);cursor:pointer}
+.btn.ghost{background:#fff;color:var(--ink);border:2px solid var(--line);box-shadow:0 3px 0 var(--line)}
+.btn.ok{background:var(--leaf);box-shadow:0 3px 0 #15703F}
+.btn.mini{padding:6px 11px;font-size:14px}
+.btn:disabled{opacity:.5;cursor:default}
+.link{border:0;background:none;color:var(--berry);font:inherit;cursor:pointer;text-decoration:underline}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--berry);outline-offset:2px}
+.kid{border:2px solid var(--line);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.kid h3{font-size:20px}
+.cred{background:var(--sun-soft);border-radius:12px;padding:10px 12px;display:flex;gap:16px;flex-wrap:wrap;font-size:15px}
+.cred b{font-family:var(--f-display);font-size:18px;letter-spacing:1px;direction:ltr;unicode-bidi:isolate}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+@media (max-width:640px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{background:var(--soft);border-radius:12px;padding:8px 10px}
+.stat small{color:var(--muted);font-size:12px;display:block}
+.stat b{font-family:var(--f-display);font-size:20px;font-variant-numeric:tabular-nums}
+.skills{display:grid;grid-template-columns:repeat(3,1fr);gap:6px 14px}
+@media (max-width:640px){.skills{grid-template-columns:repeat(2,1fr)}}
+.sk{font-size:13px;color:var(--muted)}
+.bar{height:8px;background:var(--soft);border-radius:9px;overflow:hidden;margin-top:3px}
+.bar i{display:block;height:100%;background:var(--leaf)}
+.pill{display:inline-block;border-radius:999px;padding:2px 10px;font-size:13px;font-weight:700}
+.pill.ok{background:var(--leaf-soft);color:var(--leaf)} .pill.wait{background:var(--sun-soft);color:#8A5A00}
+.list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.list li{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--soft);border-radius:12px;padding:8px 12px;flex-wrap:wrap}
+.code{font-family:var(--f-display);font-size:22px;letter-spacing:2px;direction:ltr;unicode-bidi:isolate;background:var(--sun-soft);border-radius:10px;padding:2px 10px}
