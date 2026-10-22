@@ -213,3 +213,11 @@ details.more summary{cursor:pointer;color:var(--berry);font-weight:700;margin-bo
 .box.grp.on{outline:3px solid var(--berry)}
 .mchip{display:inline-flex;align-items:center;gap:4px;background:#fff;border:2px solid var(--line);border-radius:999px;padding:3px 10px;font-size:14px}
 .mchip .x{border:0;background:var(--soft);border-radius:50%;width:22px;height:22px;font-size:11px;cursor:pointer}
+
+/* --- detective, girls vs boys --- */
+.clues{display:flex;flex-direction:column;gap:8px}
+.clue{display:flex;align-items:center;gap:10px;border:2px solid var(--line);background:#fff;border-radius:16px;padding:6px 10px;text-align:start;cursor:pointer;font-size:15px}
+.clue svg{width:56px;height:auto;flex:none}.clue.no{border-color:var(--bad,#D9443F);background:#FEE2E2}
+.vs{background:var(--soft);border-radius:16px;padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+.vsbar{display:flex;height:16px;border-radius:9px;overflow:hidden;background:#E5E7EB}.vsbar .g{background:#EC4899}.vsbar .b{background:#3B82F6}
+.vs ol{margin:0;padding-inline-start:20px}

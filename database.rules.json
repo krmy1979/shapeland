@@ -123,6 +123,13 @@
             }
           }
         },
+        "teams": {
+          ".read": "auth != null && (root.child('groups/' + $g + '/members/' + auth.uid).exists() || root.child('groups/' + $g + '/meta/op').val() === auth.uid || root.child('groups/' + $g + '/pw/' + auth.uid).exists())",
+          "$k": {
+            ".write": "auth != null && auth.uid === $k && root.child('groups/' + $g + '/members/' + auth.uid).exists()",
+            ".validate": "newData.hasChildren(['g', 'n', 'p', 'w']) && newData.child('p').isNumber() && newData.child('n').isString() && newData.child('n').val().length <= 14"
+          }
+        },
         "presence": {
           ".read": "auth != null && (root.child('groups/' + $g + '/members/' + auth.uid).exists() || root.child('groups/' + $g + '/meta/op').val() === auth.uid || root.child('groups/' + $g + '/pw/' + auth.uid).exists())",
           "$pid": {

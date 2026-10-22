@@ -9,8 +9,9 @@ function loop(){const dt=Math.min(clock.getDelta(),.05),t=clock.elapsedTime;
       else{moving=true;const st=Math.min(dist,4.6*dt);ME.pos.x+=dx/dist*st;ME.pos.z+=dz/dist*st;ME.obj.rotation.y=Math.atan2(dx,dz);pushPresence();
         const z=zoneAt(ME.pos.x,ME.pos.z);if(OUTZ.includes(z)&&z!==ME.zone){ME.zone=z;renderLoc();renderBar();renderTray()}if(!ME.path.length||dist<.3)checkDoors()}
       controls.target.lerp(tmpV.set(ME.pos.x,0,ME.pos.z),.05)}
-    const human=!!ME.obj.userData.limbs;ME.obj.position.y=ME.y+(moving&&ME.y<.01&&!mv.roll?Math.abs(Math.sin(t*(mv.run?15:11)))*(human?.05:.12):0);
-    if(!mv.roll)animLimbs(ME.obj,t,moving&&ME.y<.01&&!P.riding,mv.run?15:10);if(ME.y>.01&&human){const L=ME.obj.userData.limbs;L.arms[0].rotation.x=L.arms[1].rotation.x=-2.6;L.legs[0].rotation.x=.5;L.legs[1].rotation.x=-.3}
+    const human=!!ME.obj.userData.limbs;ME.obj.position.y=ME.y+(moving&&!ME.air&&!ME.swim&&!mv.roll?Math.abs(Math.sin(t*(mv.run?15:11)))*(human?.05:.12):0);
+    if(!mv.roll)animLimbs(ME.obj,t,moving&&!ME.air&&!P.riding&&!ME.swim,mv.run?15:10);if(ME.swim&&human){const L=ME.obj.userData.limbs;L.arms[0].rotation.x=t*6;L.arms[1].rotation.x=t*6+Math.PI;L.legs[0].rotation.x=Math.sin(t*12)*.3;L.legs[1].rotation.x=-Math.sin(t*12)*.3}
+    else if(ME.air&&human){const L=ME.obj.userData.limbs;L.arms[0].rotation.x=L.arms[1].rotation.x=-2.6;L.legs[0].rotation.x=.5;L.legs[1].rotation.x=-.3}
     ME.obj.position.x=ME.pos.x;ME.obj.position.z=ME.pos.z;
     if(ME.pet){const bx=ME.pos.x-Math.sin(ME.obj.rotation.y)*.9+Math.cos(ME.obj.rotation.y)*.6,bz=ME.pos.z-Math.cos(ME.obj.rotation.y)*.9-Math.sin(ME.obj.rotation.y)*.6;
       const dx=bx-ME.pet.position.x,dz=bz-ME.pet.position.z;const dd=Math.hypot(dx,dz);if(dd>12){ME.pet.position.set(bx,0,bz)}else if(dd>.05){ME.pet.position.x+=dx*.08;ME.pet.position.z+=dz*.08;ME.pet.rotation.y=Math.atan2(dx,dz);ME.pet.position.y=Math.abs(Math.sin(t*14))*.08}else ME.pet.position.y=0}}
@@ -27,6 +28,6 @@ function loop(){const dt=Math.min(clock.getDelta(),.05),t=clock.elapsedTime;
   BOATS.forEach((b,i)=>{b.position.y=Math.sin(t*1.5+i)*.06;b.rotation.z=Math.sin(t*1.2+i)*.05});
   if(P.tour&&ME.zone==='city'&&ME.obj){const tm=NPCOBJ.tom,ry=ME.obj.rotation.y;const bx=ME.pos.x-Math.sin(ry)*1.5,bz=ME.pos.z-Math.cos(ry)*1.5;const dx=bx-tm.position.x,dz=bz-tm.position.z,dd=Math.hypot(dx,dz);
     if(dd>.15){tm.position.x+=dx*.06;tm.position.z+=dz*.06;tm.rotation.y=Math.atan2(dx,dz)}const a=ANCHORS[P.tour.dest];if(a&&Math.hypot(ME.pos.x-CX-a[0],ME.pos.z-CZ-a[1])<5.5)tourDone()}
-  stepZones(dt,t);
+  stepZones(dt,t);stepAdventure(dt,t);
   water.position.y=-1.6+Math.sin(t*.8)*.05;
   controls.update();renderer.render(scene,camera);requestAnimationFrame(loop)}

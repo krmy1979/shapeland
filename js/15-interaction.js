@@ -23,7 +23,7 @@ function tap(e){const rc=renderer.domElement.getBoundingClientRect();ndc.set(((e
   if(zone&&walkable(h.point,zone))walkTo(h.point)}
 function surfaceNormal(h){return h.face?h.face.normal.clone().transformDirection(h.object.matrixWorld):new THREE.Vector3(0,1,0)}
 function place(h,root,zone){
-  if(['town','bridge','road','girls','boys','inside'].includes(zone)){toast('כאן לא בונים, רק מבקרים ומשחקים 🙂');return}if(!zone)return;
+  if(['town','bridge','road','girls','boys','adv','inside'].includes(zone)){toast('כאן לא בונים, רק מבקרים ומשחקים 🙂');return}if(!zone)return;
   let cplot=null;if(zone==='city'){cplot=plotAt(h.point.x-CX,h.point.z-CZ);if(!cplot||!P.plots.includes(cplot.id)){toast('באשקלון בונים רק על מגרש שקנית. Dana מוכרת מגרשים 🏡');if(cplot)openPlot(cplot.id);return}}
   if(!P.owned.includes(SEL.s)){openShop(SEL.s);return}
   const store=zone==='island'?P.pieces:zone==='home'?P.house.pieces:zone==='work'?P.ws:zone==='city'?P.cpieces:null;
