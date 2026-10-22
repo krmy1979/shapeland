@@ -28,6 +28,6 @@ function loop(){const dt=Math.min(clock.getDelta(),.05),t=clock.elapsedTime;
   BOATS.forEach((b,i)=>{b.position.y=Math.sin(t*1.5+i)*.06;b.rotation.z=Math.sin(t*1.2+i)*.05});
   if(P.tour&&ME.zone==='city'&&ME.obj){const tm=NPCOBJ.tom,ry=ME.obj.rotation.y;const bx=ME.pos.x-Math.sin(ry)*1.5,bz=ME.pos.z-Math.cos(ry)*1.5;const dx=bx-tm.position.x,dz=bz-tm.position.z,dd=Math.hypot(dx,dz);
     if(dd>.15){tm.position.x+=dx*.06;tm.position.z+=dz*.06;tm.rotation.y=Math.atan2(dx,dz)}const a=ANCHORS[P.tour.dest];if(a&&Math.hypot(ME.pos.x-CX-a[0],ME.pos.z-CZ-a[1])<5.5)tourDone()}
-  stepZones(dt,t);stepAdventure(dt,t);
+  stepZones(dt,t);stepAdventure(dt,t);stepExplorer(dt,t);
   water.position.y=-1.6+Math.sin(t*.8)*.05;
   controls.update();renderer.render(scene,camera);requestAnimationFrame(loop)}

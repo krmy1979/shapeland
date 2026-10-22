@@ -34,7 +34,7 @@ function renderKids(){const kids=PDATA.kids||{};const box=$('#kids');
     $('#lim-'+k).onchange=e=>{db.ref('kids/'+k+'/limit').set(+e.target.value).then(()=>{$('#limMsg-'+k).textContent='נשמר ✓'}).catch(err=>{$('#limMsg-'+k).textContent='לא נשמר: '+err.code})}})}
 function fillKid(k){const v=typeof KIDV[k]==='object'?KIDV[k]:{};const p=v.progress||{};const el=$('#stats-'+k);if(!el)return;
   const minToday=p.day===today()?(p.min||0):0;
-  el.innerHTML=[['רמה',p.lv||1],['דקות היום',minToday+(v.limit?' / '+v.limit:'')],['מילים שנלמדו',p.words||0],['הרפתקאות',p.adv||0],['יהלומים ביד',p.gems??'–'],['חיסכון בבנק',p.sav??'–'],['כוכבי בטיחות',(p.badges&&p.badges.safe)||0],['משמרות עבודה',p.shifts||0]]
+  el.innerHTML=[['רמה',p.lv||1],['דקות היום',minToday+(v.limit?' / '+v.limit:'')],['מילים שנלמדו',p.words||0],['הרפתקאות',p.adv||0],['יהלומים ביד',p.gems??'–'],['חיסכון בבנק',p.sav??'–'],['דרגת חוקר',p.rank||'Rookie'],['מפתחות זהב 🗝️',p.keys||0],['מקומות סודיים',(p.gates||0)+' / 3'],['תעלומות שנפתרו',(p.badges&&p.badges.det)||0]]
     .map(([a,b])=>`<div class="stat"><small>${a}</small><b>${esc(b)}</b></div>`).join('');
   const sk=p.sk||{};$('#sk-'+k).innerHTML=Object.entries(SKILLS).map(([s,t])=>{const val=+sk[s]||3;return`<div class="sk">${t} · ${val.toFixed(1)}<div class="bar"><i style="width:${val*10}%"></i></div></div>`}).join('');
   $('#last-'+k).textContent=ago(p.last);const fcEl=$('#fc-'+k);if(fcEl)fcEl.textContent=v.fc||'…';if(v.parent===ME.uid&&!v.fc)backfill(k,v);const sel=$('#lim-'+k);if(sel&&document.activeElement!==sel)sel.value=String(v.limit||0);

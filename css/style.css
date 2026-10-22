@@ -221,3 +221,8 @@ details.more summary{cursor:pointer;color:var(--berry);font-weight:700;margin-bo
 .vs{background:var(--soft);border-radius:16px;padding:10px 12px;display:flex;flex-direction:column;gap:6px}
 .vsbar{display:flex;height:16px;border-radius:9px;overflow:hidden;background:#E5E7EB}.vsbar .g{background:#EC4899}.vsbar .b{background:#3B82F6}
 .vs ol{margin:0;padding-inline-start:20px}
+
+/* --- explorer --- */
+.parch{background:linear-gradient(#FEF3C7,#FDE68A);border:2px solid #E5C27A;border-radius:14px;padding:14px;font-family:var(--f-display);font-size:20px;line-height:1.35;color:#5E3B00;text-align:left}
+.bar.big{height:14px;border-radius:9px;background:#E5E7EB;overflow:hidden}.bar.big i{display:block;height:100%;background:linear-gradient(90deg,#A78BFA,#EC4899)}
+.quest.jr{background:#EDE9FE;box-shadow:0 3px 0 #C4B5FD;color:var(--ink)}

@@ -103,8 +103,8 @@ function buildRoom(id){if(INROOM){scene.remove(INROOM);INROOM=null}INPICK=[];con
   const back=mesh(new THREE.BoxGeometry(W,4,.3),mat(shade(R0.wall,-.1)));back.position.set(0,2,-D/2);g.add(back);
   [-1,1].forEach(s=>{const w=mesh(new THREE.BoxGeometry(.3,4,D),mat(shade(R0.wall,-.15)));w.position.set(s*W/2,2,0);g.add(w)});
   const tl=label(R0.en,'#FFFFFF','#1D2A48',.6);tl.position.set(0,4.5,-D/2);g.add(tl);
-  R0.props.forEach(([k,x,z,r,c])=>{const p=roomProp(k,c);p.position.set(x,0,z);p.rotation.y=r||0;const nm=PNAME[k]||k;const lb=label(nm,'#FFFFFF','#1D2A48',.32);
-    const bb=new THREE.Box3().setFromObject(p);lb.position.y=Math.max(1.2,bb.max.y+.35);p.add(lb);rootify(p);p.userData.zact=()=>sayWord(nm,HE[k]||'');g.add(p);INPICK.push(p)});
+  R0.props.forEach(pr=>{const[k,x,z,r,c]=pr;const p=roomProp(k,c);p.position.set(x,0,z);p.rotation.y=r||0;const nm=pr.word||PNAME[k]||k;const lb=label(nm,'#FFFFFF','#1D2A48',.32);
+    const bb=new THREE.Box3().setFromObject(p);lb.position.y=Math.max(1.2,bb.max.y+.35);p.add(lb);rootify(p);p.userData.zact=()=>sayWord(nm,(typeof CAVE_HE!=='undefined'&&CAVE_HE[nm])||HE[k]||'');g.add(p);INPICK.push(p)});
   const hz=R0.host;let hostObj;if(hz.bear){hostObj=NPCOBJ.bear.clone();hostObj.position.set(0,0,0);hostObj.rotation.set(0,0,0)}else hostObj=human3D(Object.assign({kind:'human',eyes:'big'},hz.ch));
   if(!hz.bear){const hl=label(hz.name,'#EE4F7C','#FFFFFF',.42);hl.position.y=2.4;hostObj.add(hl);const mk=marker('!','#EE4F7C');mk.position.y=3;hostObj.add(mk)}hostObj.position.set(3.5,0,-1);hostObj.lookAt(3.5,0,4);
   pb(g,2.4,1,.7,'#FFFFFF',3.5,.5,.2);rootify(hostObj);hostObj.userData.zact=()=>{say(hz.line);hz.act()};g.add(hostObj);INPICK.push(hostObj);
@@ -116,4 +116,4 @@ function enterBuilding(id){if(!SHOPS_IN[id]){openBuilding(id);return}const d=DOO
 function leaveBuilding(){if(!INSIDE)return;const o=INSIDE;INSIDE=null;const[cx,cz]=ZC[o.zone];teleport(o.zone,[o.ox-cx,o.oz-cz]);sfx.door();if(INROOM){scene.remove(INROOM);INROOM=null;INPICK=[]}}
 function insideWalkable(pt){if(!INROOM)return false;const[cx,cz]=ZC.inside;const W=INROOM.userData.W,D=INROOM.userData.D;return Math.abs(pt.x-cx)<W/2-.6&&pt.z-cz>-D/2+.6&&pt.z-cz<D/2-.3}
 function checkDoors(){if(ME.zone==='inside'){if(INROOM&&ME.pos.z-ZC.inside[1]>INROOM.userData.D/2-.5)leaveBuilding();return}
-  for(const d of DOORS){if(d.zone!==ME.zone)continue;if(Math.hypot(ME.pos.x-d.x,ME.pos.z-d.z)<.8){enterBuilding(d.id);return}}}
+  for(const d of DOORS){if(d.zone!==ME.zone)continue;if(Math.hypot(ME.pos.x-d.x,ME.pos.z-d.z)<.8){if(d.lock&&d.lock()){if(!d.warned||performance.now()-d.warned>4000){d.warned=performance.now();toast('🔒 הדלת נעולה. 🦉 הינשוף החכם יודע איך לפתוח');say('The door is locked.')}return}enterBuilding(d.id);return}}}
