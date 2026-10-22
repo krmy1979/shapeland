@@ -1,0 +1,29 @@
+/* Shapeland · a world by Shirel Yitzhak */
+/* ===================== LOOP ===================== */
+function resize(){const w=stage.clientWidth,h=stage.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
+window.addEventListener('resize',resize);resize();
+const clock=new THREE.Clock();const tmpV=new THREE.Vector3();
+function loop(){const dt=Math.min(clock.getDelta(),.05),t=clock.elapsedTime;
+  if(ME.obj){const tgt=ME.path[0];if(tgt){const dx=tgt.x-ME.pos.x,dz=tgt.z-ME.pos.z,dist=Math.hypot(dx,dz);
+      if(dist<.08){ME.path.shift();const z=zoneAt(ME.pos.x,ME.pos.z);if(z&&z!=='bridge'&&z!==ME.zone&&(z==='island'||z==='town')){ME.zone=z;renderLoc();renderBar();renderTray()}}
+      else{const st=Math.min(dist,4.6*dt);ME.pos.x+=dx/dist*st;ME.pos.z+=dz/dist*st;ME.obj.rotation.y=Math.atan2(dx,dz);ME.obj.position.y=Math.abs(Math.sin(t*12))*.12;pushPresence();
+        const z=zoneAt(ME.pos.x,ME.pos.z);if((z==='island'||z==='town')&&z!==ME.zone){ME.zone=z;renderLoc();renderBar();renderTray()}}
+      controls.target.lerp(tmpV.set(ME.pos.x,0,ME.pos.z),.05)}else ME.obj.position.y=0;
+    ME.obj.position.x=ME.pos.x;ME.obj.position.z=ME.pos.z;
+    if(ME.pet){const bx=ME.pos.x-Math.sin(ME.obj.rotation.y)*.9+Math.cos(ME.obj.rotation.y)*.6,bz=ME.pos.z-Math.cos(ME.obj.rotation.y)*.9-Math.sin(ME.obj.rotation.y)*.6;
+      const dx=bx-ME.pet.position.x,dz=bz-ME.pet.position.z;const dd=Math.hypot(dx,dz);if(dd>12){ME.pet.position.set(bx,0,bz)}else if(dd>.05){ME.pet.position.x+=dx*.08;ME.pet.position.z+=dz*.08;ME.pet.rotation.y=Math.atan2(dx,dz);ME.pet.position.y=Math.abs(Math.sin(t*14))*.08}else ME.pet.position.y=0}}
+  sun.position.set(controls.target.x+12,24,controls.target.z+10);sun.target.position.copy(controls.target);
+  NET.avatars.forEach(a=>{if(a.tx==null||!a.obj.visible)return;const o=a.obj,dx=a.tx-o.position.x,dz=a.tz-o.position.z,dd=Math.hypot(dx,dz);if(dd>.03){o.position.x+=dx*.15;o.position.z+=dz*.15;o.rotation.y=Math.atan2(dx,dz);o.position.y=Math.abs(Math.sin(t*12))*.1}else o.position.y=0});
+  OBJ.forEach(m=>{const g=m.userData.grow;if(g){const s=m.scale.x+(g-m.scale.x)*.25;m.scale.setScalar(s);if(Math.abs(g-s)<.01){m.scale.setScalar(g);m.userData.grow=0}}});
+  Object.values(NPCOBJ).forEach((g,i)=>{g.userData.mk.position.y=3.35+Math.sin(t*3+i)*.12;g.children[0].scale.y=1.2+Math.sin(t*2+i)*.025});
+  CHESTS.forEach((c,i)=>{c.userData.mk.position.y=1.4+Math.sin(t*3+i*2)*.1});
+  SIGN.userData.spin.rotation.y=t*1.5;const fp=FLAG.userData.flag.geometry.attributes.position;for(let i=0;i<fp.count;i++){const x=fp.getX(i);fp.setZ(i,Math.sin(x*4+t*5)*.08*(x+.7))}fp.needsUpdate=true;
+  const pgr=(t%12)>7.5;if(pgr!==PEDGREEN)setLights(pgr);
+  CARS.forEach(c=>{let z=c.g.position.z-CZ;const stop=PEDGREEN&&((c.dir>0&&z>c.cw-3.4&&z<c.cw-1.6)||(c.dir<0&&z<c.cw+3.4&&z>c.cw+1.6));if(!stop){z+=c.dir*c.speed*dt;if(z>24.5)z=-24.5;if(z<-24.5)z=24.5}c.g.position.z=CZ+z});
+  WALKERS.forEach(w=>{if(w.pause>0){w.pause-=dt;w.g.position.y=0;return}const tg=w.path[w.i];const dx=CX+tg[0]-w.g.position.x,dz=CZ+tg[1]-w.g.position.z,dd=Math.hypot(dx,dz);
+    if(dd<.1)w.i=(w.i+1)%w.path.length;else{const st=Math.min(dd,1.3*dt);w.g.position.x+=dx/dd*st;w.g.position.z+=dz/dd*st;w.g.rotation.y=Math.atan2(dx,dz);w.g.position.y=Math.abs(Math.sin(t*9+w.i))*.08}});
+  BOATS.forEach((b,i)=>{b.position.y=Math.sin(t*1.5+i)*.06;b.rotation.z=Math.sin(t*1.2+i)*.05});
+  if(P.tour&&ME.zone==='city'&&ME.obj){const tm=NPCOBJ.tom,ry=ME.obj.rotation.y;const bx=ME.pos.x-Math.sin(ry)*1.5,bz=ME.pos.z-Math.cos(ry)*1.5;const dx=bx-tm.position.x,dz=bz-tm.position.z,dd=Math.hypot(dx,dz);
+    if(dd>.15){tm.position.x+=dx*.06;tm.position.z+=dz*.06;tm.rotation.y=Math.atan2(dx,dz)}const a=ANCHORS[P.tour.dest];if(a&&Math.hypot(ME.pos.x-CX-a[0],ME.pos.z-CZ-a[1])<5.5)tourDone()}
+  water.position.y=-1.6+Math.sin(t*.8)*.05;
+  controls.update();renderer.render(scene,camera);requestAnimationFrame(loop)}

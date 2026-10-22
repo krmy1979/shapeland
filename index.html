@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="he">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Shapeland</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Varela+Round&family=Dancing+Script:wght@700&display=swap">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<meta name="theme-color" content="#9FD6FF">
+<meta name="description" content="Shapeland · a world by Shirel Yitzhak">
+<link rel="stylesheet" href="css/style.css">
+<style>[hidden]{display:none!important}</style>
+</head>
+<body>
+<div id="stage"></div>
+
+<div id="hudTop" class="hud" dir="rtl" hidden>
+  <div class="topcol">
+    <div class="row" style="gap:8px">
+      <button class="chip" data-a="avatar" id="meChip" aria-label="הדמות שלי"></button>
+      <button class="gems" data-a="bank" id="gemPill" aria-label="יהלומים"></button>
+    </div>
+    <button class="loc" data-a="map" id="locChip"></button>
+    <div id="questChip"></div>
+  </div>
+  <div class="friends" id="friends"></div>
+</div>
+
+<div id="hudBot" class="hud" dir="rtl" hidden>
+  <div class="tray" id="tray" hidden></div>
+  <div class="bar" role="toolbar" aria-label="כלים" id="bar"></div>
+</div>
+
+<div id="title" dir="rtl">
+  <div class="tcard">
+    <div class="logo" aria-label="Shapeland" id="logo"></div>
+    <div class="sig"><small>a world by</small>Shirel Yitzhak</div>
+    <div class="preview" id="titleAv"></div>
+    <div class="tform">
+      <label for="tName">איך קוראים לדמות שלך?</label>
+      <input class="txt" id="tName" dir="auto" maxlength="14" placeholder="שם במשחק">
+      <label for="tCode">קוד החבורה (כל מי שמשתמש באותו קוד משחק ביחד)</label>
+      <input class="txt en" id="tCode" dir="ltr" maxlength="24" placeholder="shirel-friends" autocapitalize="none" autocomplete="off" spellcheck="false">
+      <button class="btn" data-a="play" style="font-size:22px">יאללה, לשחק! ✨</button>
+      <button class="btn ghost mini" data-a="avatar">🎨 לעצב את הדמות</button>
+    </div>
+  </div>
+</div>
+
+<div id="sheet" class="sheet" dir="rtl" hidden></div>
+<div id="toast" class="toast" dir="rtl" hidden></div>
+<div id="burst" class="burst" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="js/00-words-data.js"></script>
+<script src="js/01-game-data.js"></script>
+<script src="js/02-profile.js"></script>
+<script src="js/03-utils.js"></script>
+<script src="js/04-avatar-drawing.js"></script>
+<script src="js/05-questions.js"></script>
+<script src="js/06-economy.js"></script>
+<script src="js/07-world-3d.js"></script>
+<script src="js/08-shapes-models.js"></script>
+<script src="js/09-houses.js"></script>
+<script src="js/10-pieces.js"></script>
+<script src="js/11-avatars-pets.js"></script>
+<script src="js/12-city-ashkelon.js"></script>
+<script src="js/13-multiplayer.js"></script>
+<script src="js/14-movement.js"></script>
+<script src="js/15-interaction.js"></script>
+<script src="js/16-hud.js"></script>
+<script src="js/17-panels.js"></script>
+<script src="js/18-events.js"></script>
+<script src="js/19-loop.js"></script>
+<script src="js/20-boot.js"></script>
+</body>
+</html>
