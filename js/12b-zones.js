@@ -39,8 +39,8 @@ DOORS.push({id:'mall',zone:'city',x:CX+17.8,z:CZ-14,ox:CX+16.5,oz:CZ-14});
 
 /* ---- Girls' Garden (pink) ---- */
 const GX0=-24,GX1=4,SZ0=-201.5,SZ1=-155.5;
-(()=>{const gr=wbox(GX1-GX0,.5,SZ1-SZ0,'#F7BFDB',(GX0+GX1)/2,-.25,(SZ0+SZ1)/2,false);EXTRA_PICK.push(gr);wbox(GX1-GX0,4,SZ1-SZ0,'#E9A8C6',(GX0+GX1)/2,-2.6,(SZ0+SZ1)/2,false);
-  EXTRA_PICK.push(wbox(4,.05,40,'#FDE4F0',-10,.03,-178,false));EXTRA_PICK.push(wbox(22,.05,4,'#FDE4F0',-10,.03,-180,false));
+(()=>{const gr=wbox(GX1-GX0,.5,SZ1-SZ0,'#EE92C2',(GX0+GX1)/2,-.25,(SZ0+SZ1)/2,false);EXTRA_PICK.push(gr);wbox(GX1-GX0,4,SZ1-SZ0,'#E9A8C6',(GX0+GX1)/2,-2.6,(SZ0+SZ1)/2,false);
+  EXTRA_PICK.push(wbox(4,.05,40,'#FAD1E6',-10,.03,-178,false));EXTRA_PICK.push(wbox(22,.05,4,'#FAD1E6',-10,.03,-180,false));
   const cx=-10,cz=-180;const f=new THREE.Group();const basin=mesh(new THREE.CylinderGeometry(2,2.2,.6,32),mat('#F9A8D4'));basin.position.y=.3;f.add(basin);
   const w=mesh(new THREE.CylinderGeometry(1.8,1.8,.1,32),mat('#7DD3FC',{roughness:.1}));w.position.y=.58;f.add(w);
   const heart=new THREE.ExtrudeGeometry(shape2D('heart'),{depth:.3,bevelEnabled:true,bevelThickness:.06,bevelSize:.05,bevelSegments:2});heart.center();const hm=mesh(heart,mat('#EC4899'));hm.scale.setScalar(1.1);hm.position.y=1.9;hm.rotation.z=Math.PI;f.add(hm);ZFX.fount.push(hm);
@@ -66,8 +66,8 @@ const GX0=-24,GX1=4,SZ0=-201.5,SZ1=-155.5;
 
 /* ---- Sports Park (blue) ---- */
 const BX0=4,BX1=32;
-(()=>{const gr=wbox(BX1-BX0,.5,SZ1-SZ0,'#A7CBF5',(BX0+BX1)/2,-.25,(SZ0+SZ1)/2,false);EXTRA_PICK.push(gr);wbox(BX1-BX0,4,SZ1-SZ0,'#93C5FD',(BX0+BX1)/2,-2.6,(SZ0+SZ1)/2,false);
-  EXTRA_PICK.push(wbox(4,.05,40,'#E0EDFF',18,.03,-178,false));
+(()=>{const gr=wbox(BX1-BX0,.5,SZ1-SZ0,'#76A9EC',(BX0+BX1)/2,-.25,(SZ0+SZ1)/2,false);EXTRA_PICK.push(gr);wbox(BX1-BX0,4,SZ1-SZ0,'#93C5FD',(BX0+BX1)/2,-2.6,(SZ0+SZ1)/2,false);
+  EXTRA_PICK.push(wbox(4,.05,40,'#C9DEFB',18,.03,-178,false));
   // soccer field
   const fx=24,fz=-168;EXTRA_PICK.push(wbox(13,.06,8.5,'#22A35A',fx,.04,fz,false));
   [[0,0,13,.08],[0,0,.08,8.5]].forEach(([x,z,w,d])=>wbox(w,.07,d,'#FFFFFF',fx+x,.05,fz+z,false));
