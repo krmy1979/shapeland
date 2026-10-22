@@ -3,7 +3,7 @@
 function renderHud(){const L=level(),a=lvlXp(L),b=lvlXp(L+1);
   $('#meChip').innerHTML=`${charSVG(P.ch)}<div><b>${esc(P.name||'שחקן/ית')}</b><small>Level ${L}</small><div class="lvbar"><i style="width:${Math.round((P.xp-a)/(b-a)*100)}%"></i></div></div>`;
   $('#gemPill').textContent='💎 '+fmt(P.gems);renderQuestChip();if(['build','item'].includes(MODE))renderTray()}
-function renderLoc(){$('#locChip').innerHTML=`📍 ${ME.zone==='visit'&&VISIT?'בבית של '+esc(VISIT.name||'חבר/ה'):esc(ZNAME[ME.zone]||'')} · 🗺️`}
+function renderLoc(){$('#locChip').innerHTML=`📍 ${ME.zone==='visit'&&VISIT?'בבית של '+esc(VISIT.name||'חבר/ה'):esc(ME.zone==='inside'&&INSIDE&&SHOPS_IN[INSIDE.id]?SHOPS_IN[INSIDE.id].en:(ZNAME[ME.zone]||''))} · 🗺️`}
 function renderQuestChip(){const q=P.quest;const el=$('#questChip');let h='';
   if(q){const[d,n]=questProgress(q);h+=`<button class="quest" data-a="questinfo"><span>🎯</span><span class="en">${esc(q.short)}</span><b>${d}/${n}</b></button>`}
   if(P.tour)h+=`<button class="quest" data-a="tourinfo" style="margin-top:6px;background:#FDE68A"><span>🧳</span><span class="en">Take Tom to the ${esc(P.tour.dest)}</span></button>`;

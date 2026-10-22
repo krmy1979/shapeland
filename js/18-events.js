@@ -4,7 +4,7 @@ document.addEventListener('click',e=>{const sh=$('#sheet');if(e.target===sh&&!(P
   const b=e.target.closest('[data-a]');if(!b||b.disabled)return;const a=b.dataset.a,d=b.dataset;
   KEEP=['mq','busans','cplus','cminus','tile','untile','clearb','addcart','rmcart','opt','check','serve','said','coans','pay','dep','wd','goal','sound'].includes(a);
   try{act(a,d)}finally{KEEP=false}});
-function act(a,d){
+function act(a,d){if(ACTX[a]){ACTX[a](d);return}
   switch(a){
    case'play':{const nm=$('#tName').value.trim().slice(0,14);const code=($('#tCode').value.trim()||'shirel-friends').toLowerCase().replace(/\s+/g,'-');
      if(!CODE_RE.test(code)){toast('קוד החבורה באנגלית או מספרים בלבד, למשל shirel-friends');break}P.name=nm||P.name||'Player';P.code=code;save();

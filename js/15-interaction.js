@@ -6,12 +6,12 @@ renderer.domElement.addEventListener('pointerdown',e=>{down={x:e.clientX,y:e.cli
 renderer.domElement.addEventListener('pointerup',e=>{if(!down)return;const d=Math.hypot(e.clientX-down.x,e.clientY-down.y),dt=performance.now()-down.t;down=null;if(d<9&&dt<450)tap(e)});
 function pickTargets(){const t=[ground,townGround,plaza,bridge,LOTS.home,LOTS.visit,LOTS.work,SIGN,FLAG,...Object.values(NPCOBJ),...BLDG,...CHESTS.filter(c=>c.visible),...[...EXT.values()].map(e=>e.g),...OBJ.values()];
   if(HOUSEG.home)t.push(HOUSEG.home);if(HOUSEG.visit)t.push(HOUSEG.visit);
-  t.push(...CITYPICK,TOWER,MALL,SCHOOL,...Object.values(BUSSTOPS),...Object.values(PLOTOBJ).map(p=>p.g),...WALKERS.map(w=>w.g));return t}
+  t.push(...EXTRA_PICK,...INPICK,...CITYPICK,TOWER,MALL,SCHOOL,...Object.values(BUSSTOPS),...Object.values(PLOTOBJ).map(p=>p.g),...WALKERS.map(w=>w.g));return t}
 function tap(e){const rc=renderer.domElement.getBoundingClientRect();ndc.set(((e.clientX-rc.left)/rc.width)*2-1,-((e.clientY-rc.top)/rc.height)*2+1);ray.setFromCamera(ndc,camera);
   const hits=ray.intersectObjects(pickTargets(),true).filter(h=>h.object.type!=='Sprite'||h.object.userData.root);if(!hits.length)return;const h=hits[0];const obj=h.object,root=obj.userData.root||obj;const u=root.userData||{};
-  if(u.npc){talkTo(u.npc);return}if(u.chest){openChest(root);return}if(u.sign){openTeam();return}if(u.race){openArena();return}if(u.bld){openBuilding(u.bld);return}
+  if(typeof u.zact==='function'){u.zact(root,h);return}if(u.npc){talkTo(u.npc);return}if(u.chest){openChest(root);return}if(u.sign){openTeam();return}if(u.race){openArena();return}if(u.bld){enterBuilding(u.bld);return}
   if(u.house){houseDoor(u.house);return}
-  if(u.escape){openEscape();return}if(u.mall){openMall();return}if(u.school){openSam();return}if(u.bus){openBus(u.bus);return}if(u.walker!==undefined){talkWalker(u.walker);return}
+  if(u.escape){openEscape();return}if(u.mall){enterBuilding('mall');return}if(u.school){openSam();return}if(u.bus){openBus(u.bus);return}if(u.walker!==undefined){talkWalker(u.walker);return}
   if(u.plot&&(obj.type==='Sprite'||(MODE!=='walk'&&!(P.plots.includes(u.plot)&&['build','erase'].includes(MODE))))){openPlot(u.plot);return}
   if(obj.userData.cross!==undefined&&MODE==='walk'){crossTap(obj.userData.cross,h.point);return}
   const zone=zoneAt(h.point.x,h.point.z);
@@ -23,7 +23,7 @@ function tap(e){const rc=renderer.domElement.getBoundingClientRect();ndc.set(((e
   if(zone&&walkable(h.point,zone))walkTo(h.point)}
 function surfaceNormal(h){return h.face?h.face.normal.clone().transformDirection(h.object.matrixWorld):new THREE.Vector3(0,1,0)}
 function place(h,root,zone){
-  if(zone==='town'||zone==='bridge'){toast('בעיירה לא בונים, רק מבקרים 🙂');return}if(!zone)return;
+  if(['town','bridge','road','girls','boys','inside'].includes(zone)){toast('כאן לא בונים, רק מבקרים ומשחקים 🙂');return}if(!zone)return;
   let cplot=null;if(zone==='city'){cplot=plotAt(h.point.x-CX,h.point.z-CZ);if(!cplot||!P.plots.includes(cplot.id)){toast('באשקלון בונים רק על מגרש שקנית. Dana מוכרת מגרשים 🏡');if(cplot)openPlot(cplot.id);return}}
   if(!P.owned.includes(SEL.s)){openShop(SEL.s);return}
   const store=zone==='island'?P.pieces:zone==='home'?P.house.pieces:zone==='work'?P.ws:zone==='city'?P.cpieces:null;

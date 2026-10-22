@@ -12,6 +12,8 @@ const HAIRS={
   spiky:['קוצים','spiky','boy',12],messy:['פרוע','messy','boy',12],afro:['אפרו','afro','boy',15],mohawk:['מוהוק','mohawk','boy',20]};
 const BOTTOMS={pants:['מכנסיים','pants'],shorts:['מכנסיים קצרים','shorts'],skirt:['חצאית','skirt'],dress:['שמלה','dress']};
 const HEYES={big:['עיניים גדולות','big eyes'],happy:['שמחות','happy eyes'],dots:['קטנות','small eyes'],wink:['קריצה','wink']};
+const OUTFITS={hoodie:['קפוצ׳ון','hoodie',20,'🧥'],jacket:['ג׳קט ג׳ינס','denim jacket',25,'🧥'],suit:['חליפה ועניבה','suit and tie',35,'🤵'],party:['שמלת ערב נוצצת','party dress',30,'👗'],jersey:['חולצת כדורגל','soccer jersey',20,'⚽']};
+const LIPS=[['#FF5C9A','pink',8],['#E11D48','red',8],['#FF7F50','coral',8],['#A855F7','purple',10]];
 const hairPrice=id=>(HAIRS[id]||[])[3]||0;const hcPrice=hex=>(HAIRC.find(x=>x[0]===hex)||[])[3]||0;
 const salonOwned=k=>!k||(P.salon||[]).includes(k);
 function humanCh(g,old){const girl=g!=='boy';return{kind:'human',g:girl?'girl':'boy',skin:'#F6CBA5',hair:girl?'long':'short',hc:girl?'#4A2E1F':'#1F1B1A',
@@ -19,7 +21,8 @@ function humanCh(g,old){const girl=g!=='boy';return{kind:'human',g:girl?'girl':'
 function sanitizeHuman(c){const d=humanCh(c.g);const hex=v=>typeof v==='string'&&/^#[0-9A-Fa-f]{6}$/.test(v);
   return{kind:'human',g:c.g==='boy'?'boy':'girl',skin:SKINS.some(x=>x[0]===c.skin)?c.skin:d.skin,hair:HAIRS[c.hair]?c.hair:d.hair,hc:HAIRC.some(x=>x[0]===c.hc)?c.hc:d.hc,
     top:hex(c.top)?c.top:d.top,bot:BOTTOMS[c.bot]?c.bot:d.bot,bc:hex(c.bc)?c.bc:d.bc,eyes:HEYES[c.eyes]?c.eyes:'big',
-    hat:['none','crown','cap','flower','bow'].includes(c.hat)?c.hat:'none',back:['none','wings'].includes(c.back)?c.back:'none'}}
+    hat:['none','crown','cap','flower','bow','helmet'].includes(c.hat)?c.hat:'none',back:['none','wings'].includes(c.back)?c.back:'none',
+    lip:LIPS.some(x=>x[0]===c.lip)?c.lip:'none',lash:c.lash?1:0,glit:c.glit?1:0,outfit:OUTFITS[c.outfit]?c.outfit:'none'}}
 
 /* ---------- 3D ---------- */
 function ell(r,sx,sy,sz,m,x,y,z){const o=mesh(new THREE.SphereGeometry(r,16,12),m);o.scale.set(sx,sy,sz);o.position.set(x,y,z);return o}
@@ -54,10 +57,16 @@ function human3D(ch){ch=sanitizeHuman(ch);const g=new THREE.Group();const rig=ne
     const up=mesh(new THREE.CylinderGeometry(.1,.09,.3,12),ch.bot==='skirt'||ch.bot==='dress'?S:BC);up.position.y=-.15;L.add(up);
     const lo=mesh(new THREE.CylinderGeometry(.087,.08,.28,12),covered?BC:S);lo.position.y=-.43;L.add(lo);
     const sh=ell(.1,1,.6,1.5,mat('#FFFFFF'),0,-.57,.05);L.add(sh);const so=ell(.1,1.02,.2,1.52,mat('#1D2A48'),0,-.61,.05);L.add(so);B.add(L);legs.push(L)});
-  if(ch.bot==='pants'||ch.bot==='shorts'){const hp=mesh(new THREE.CylinderGeometry(.235,.23,.16,18),BC);hp.position.y=.64;B.add(hp)}
+  if(ch.outfit==='party'){const gw=mesh(new THREE.LatheGeometry([[0,.12],[.5,.12],[.44,.3],[.3,.6],[.22,.72],[0,.74]].map(p=>new THREE.Vector2(p[0],p[1])),26),mat(ch.top,{metalness:.35,roughness:.3}));B.add(gw)}
+  else if(ch.bot==='pants'||ch.bot==='shorts'){const hp=mesh(new THREE.CylinderGeometry(.235,.23,.16,18),BC);hp.position.y=.64;B.add(hp)}
   else{const sk=mesh(new THREE.LatheGeometry([[0,.4],[.37,.4],[.33,.5],[.25,.68],[0,.72]].map(p=>new THREE.Vector2(p[0],p[1])),22),ch.bot==='dress'?T:BC);B.add(sk)}
   const torso=mesh(new THREE.LatheGeometry([[0,.6],[.225,.6],[.24,.7],girl?[.205,.84]:[.225,.84],[.25,.97],[.2,1.06],[.08,1.1],[0,1.1]].map(p=>new THREE.Vector2(p[0],p[1])),22),T);B.add(torso);
   const nk=mesh(new THREE.CylinderGeometry(.07,.08,.12,10),S);nk.position.y=1.12;B.add(nk);
+  if(ch.outfit==='hoodie'){B.add(ell(.2,1.35,.75,1,T,0,1.12,-.19));B.add(ell(.14,1.3,.6,.3,mat(shade(ch.top,-.15)),0,.78,.22));[-1,1].forEach(s=>B.add(ell(.012,1,8,1,mat('#FFFFFF'),s*.05,.98,.25)))}
+  if(ch.outfit==='jacket'||ch.outfit==='suit'){const J=mat(ch.outfit==='suit'?'#1F2937':'#4F7CC2');[-1,1].forEach(s=>{const pnl=mesh(new THREE.BoxGeometry(.17,.46,.04),J);pnl.position.set(s*.15,.84,.235);pnl.rotation.y=s*.25;B.add(pnl)});
+    [-1,1].forEach(s=>B.add(ell(.1,1,1.2,1.05,J,s*.29,.93,0)));
+    if(ch.outfit==='suit'){const tie=mesh(new THREE.BoxGeometry(.07,.32,.02),mat('#DC2626'));tie.position.set(0,.88,.255);B.add(tie);B.add(ell(.05,1,.7,.5,mat('#DC2626'),0,1.04,.24))}}
+  if(ch.outfit==='jersey'){const band=mesh(new THREE.CylinderGeometry(.252,.25,.09,22),mat('#FFFFFF'));band.position.y=.93;B.add(band)}
   [-1,1].forEach(s=>{const A=new THREE.Group();A.position.set(s*.29,1.01,0);A.rotation.z=s*.1;
     A.add(ell(.09,1,1.45,1,T,0,-.09,0));const fa=mesh(new THREE.CylinderGeometry(.068,.062,.26,10),S);fa.position.y=-.3;A.add(fa);A.add(ell(.075,1,1.1,1,S,0,-.46,0));B.add(A);arms.push(A)});
   const head=new THREE.Group();head.position.y=1.43;B.add(head);head.add(mesh(new THREE.SphereGeometry(.34,28,20),S));
@@ -70,11 +79,14 @@ function human3D(ch){ch=sanitizeHuman(ch);const g=new THREE.Group();const rig=ne
     const br=ell(.05,1.3,.3,.4,H,x,.1,.315);br.rotation.z=-s*.12;head.add(br);
     const bl=ell(.05,1.3,.75,.25,mat('#FF9EB5',{transparent:true,opacity:.55}),s*.2,-.09,.27);bl.rotation.y=s*.6;head.add(bl)});
   head.add(ell(.026,1,1,1,mat(shade(ch.skin,-.12)),0,-.06,.338));
-  const mo=mesh(new THREE.TorusGeometry(.055,.013,6,12,Math.PI),mat('#B2304E'));mo.rotation.z=Math.PI;mo.position.set(0,-.12,.31);head.add(mo);
+  if(ch.lash)[-1,1].forEach(s=>{for(let k=-1;k<=1;k++){const l=mesh(new THREE.ConeGeometry(.008,.05,4),ink);l.position.set(s*.12+k*.03,.055,.305);l.rotation.z=-k*.4;head.add(l)}});
+  if(ch.glit)[-1,1].forEach(s=>[[0,0],[.04,.04],[-.03,.05]].forEach(([a,b])=>head.add(ell(.012,1,1,.4,mat('#FDE047',{emissive:'#FDE047',emissiveIntensity:.6}),s*(.2+a),-.07+b,.285))));
+  const mo=mesh(new THREE.TorusGeometry(.055,ch.lip!=='none'?.02:.013,6,12,Math.PI),mat(ch.lip!=='none'?ch.lip:'#B2304E'));mo.rotation.z=Math.PI;mo.position.set(0,-.12,.31);head.add(mo);
   hair3D(ch.hair,H,head);
   const T0=.37,Y=mat('#FFD54A');
   if(ch.hat==='crown'){const c=mesh(new THREE.CylinderGeometry(.19,.16,.15,6,1,true),mat('#FFC531',{metalness:.5,roughness:.3,side:THREE.DoubleSide}));c.position.y=T0+.04;head.add(c)}
   if(ch.hat==='cap'){const c=mesh(new THREE.SphereGeometry(.37,18,8,0,Math.PI*2,0,Math.PI/2),mat('#EE4F7C'));c.position.y=.02;head.add(c);const b=ell(.2,1,.12,1.1,mat('#C23560'),0,.06,.36);head.add(b)}
+  if(ch.hat==='helmet'){const hm=mesh(new THREE.SphereGeometry(.4,18,10,0,Math.PI*2,0,Math.PI/2),mat('#EF4444'));hm.position.y=.04;head.add(hm);head.add(ell(.06,3,.4,1,mat('#FFFFFF'),0,.36,.05))}
   if(ch.hat==='flower'){const fx=.22,fy=.24,fz=.17;head.add(ell(.05,1,1,1,Y,fx,fy,fz));for(let i=0;i<5;i++){const a=i*Math.PI*2/5;head.add(ell(.045,1,1,.6,mat('#FFFFFF'),fx+Math.cos(a)*.07,fy+Math.sin(a)*.07,fz+.01))}}
   if(ch.hat==='bow')[-1,1].forEach(s=>{const b=mesh(new THREE.ConeGeometry(.07,.15,8),mat('#EE4F7C'));b.rotation.z=s*Math.PI/2;b.position.set(.16+s*.07,.3,.06);head.add(b)});
   if(ch.back==='wings')[-1,1].forEach(s=>{const w=ell(.24,1.2,.6,.2,mat('#FFFFFF',{transparent:true,opacity:.9}),s*.25,.98,-.24);w.rotation.z=s*.5;B.add(w)});
@@ -110,15 +122,23 @@ function humanSVG(c){c=sanitizeHuman(c);const id='hc'+(++uid),H=c.hc,S=c.skin,dk
   const legs=[-1,1].map(s=>`<rect x="${100+s*14-9}" y="184" width="18" height="${pants?40:40}" rx="8" fill="${pants?c.bc:S}"/>${c.bot==='shorts'?`<rect x="${100+s*14-10}" y="182" width="20" height="18" rx="6" fill="${c.bc}"/>`:''}<ellipse cx="${100+s*15}" cy="226" rx="15" ry="8" fill="#FFFFFF" stroke="#1D2A48" stroke-width="3"/>`).join('');
   const body=`<path d="M70 140 Q70 130 84 128 L116 128 Q130 130 130 140 L${girl?127:131} 192 L${girl?73:69} 192Z" fill="${c.top}"/>`+(skirt?`<path d="M72 176 L128 176 L142 206 Q100 214 58 206Z" fill="${dress?c.top:c.bc}"/>`:pants||c.bot==='shorts'?`<rect x="70" y="178" width="60" height="16" rx="6" fill="${c.bc}"/>`:'');
   const arms=[-1,1].map(s=>`<rect x="${100+s*36-9}" y="134" width="18" height="52" rx="9" fill="${S}" transform="rotate(${s*-8} ${100+s*36} 134)"/><rect x="${100+s*36-10}" y="132" width="20" height="24" rx="9" fill="${c.top}" transform="rotate(${s*-8} ${100+s*36} 134)"/>`).join('');
+  const lashes=c.lash?[-1,1].map(s=>{const x=100+s*18;return`<path d="M${x-9} 76 l-3 -5 M${x} 74 l0 -6 M${x+9} 76 l3 -5" stroke="#2A1B14" stroke-width="2.5" stroke-linecap="round"/>`}).join(''):'';
+  const glit=c.glit?[[66,96],[72,104],[62,104],[134,96],[128,104],[138,104]].map(([x,y])=>`<path d="M${x} ${y-4}l1.2 2.8 2.8 1.2-2.8 1.2-1.2 2.8-1.2-2.8-2.8-1.2 2.8-1.2z" fill="#FDE047"/>`).join(''):'';
   const eye=(x,s)=>c.eyes==='happy'||(c.eyes==='wink'&&s>0)?`<path d="M${x-8} 86 Q${x} 76 ${x+8} 86" stroke="#2A1B14" stroke-width="4" fill="none" stroke-linecap="round"/>`
     :c.eyes==='dots'?`<circle cx="${x}" cy="84" r="5" fill="#2A1B14"/>`:`<ellipse cx="${x}" cy="84" rx="8" ry="10" fill="#3B2416"/><circle cx="${x+3}" cy="80" r="3" fill="#FFFFFF"/>`;
   const face=`${eye(82,-1)}${eye(118,1)}<path d="M74 70 Q82 66 90 70" stroke="${H}" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M110 70 Q118 66 126 70" stroke="${H}" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-    <ellipse cx="70" cy="100" rx="8" ry="5" fill="#FF9EB5" opacity=".55"/><ellipse cx="130" cy="100" rx="8" ry="5" fill="#FF9EB5" opacity=".55"/><path d="M90 104 Q100 114 110 104" stroke="#B2304E" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+    <ellipse cx="70" cy="100" rx="8" ry="5" fill="#FF9EB5" opacity=".55"/><ellipse cx="130" cy="100" rx="8" ry="5" fill="#FF9EB5" opacity=".55"/><path d="M90 104 Q100 114 110 104" stroke="${c.lip!=='none'?c.lip:'#B2304E'}" stroke-width="${c.lip!=='none'?6:4}" fill="none" stroke-linecap="round"/>${lashes}${glit}`;
   let hat='';const t=hy-50;
   if(c.hat==='crown')hat=`<path d="M76 ${t+8} L76 ${t-18} L88 ${t-6} L100 ${t-22} L112 ${t-6} L124 ${t-18} L124 ${t+8}Z" fill="#FFC531" stroke="#E0A800" stroke-width="2"/>`;
   if(c.hat==='cap')hat=`<path d="M48 ${t+30} Q50 ${t-6} 100 ${t-6} Q150 ${t-6} 152 ${t+30}Z" fill="#EE4F7C"/><path d="M100 ${t+28} L170 ${t+30} Q170 ${t+38} 100 ${t+36}Z" fill="#C23560"/>`;
+  if(c.hat==='helmet')hat=`<path d="M46 ${t+34} Q46 ${t-10} 100 ${t-10} Q154 ${t-10} 154 ${t+34}Z" fill="#EF4444"/><rect x="92" y="${t-8}" width="16" height="30" rx="6" fill="#FFFFFF" opacity=".8"/>`;
   if(c.hat==='flower')hat=[0,72,144,216,288].map(a=>`<circle cx="${(136+11*Math.cos(a*Math.PI/180)).toFixed(1)}" cy="${(t+16+11*Math.sin(a*Math.PI/180)).toFixed(1)}" r="8" fill="#FFFFFF" stroke="#FFC2D3" stroke-width="2"/>`).join('')+`<circle cx="136" cy="${t+16}" r="7" fill="#FFC531"/>`;
   if(c.hat==='bow')hat=`<g fill="#EE4F7C"><polygon points="128,${t+14} 108,${t+2} 108,${t+26}"/><polygon points="128,${t+14} 148,${t+2} 148,${t+26}"/></g><circle cx="128" cy="${t+14}" r="6" fill="#C23560"/>`;
+  let outfit='';const of=c.outfit;
+  if(of==='party')outfit=`<path d="M74 170 L126 170 L150 214 Q100 224 50 214Z" fill="${c.top}" stroke="#FFFFFF" stroke-width="2" stroke-dasharray="2 6"/>`;
+  if(of==='hoodie')outfit=`<path d="M78 134 Q100 120 122 134 L118 140 Q100 130 82 140Z" fill="${shade(c.top,-.15)}"/><rect x="84" y="160" width="32" height="16" rx="6" fill="${shade(c.top,-.15)}"/>`;
+  if(of==='jacket'||of==='suit'){const J=of==='suit'?'#1F2937':'#4F7CC2';outfit=`<path d="M70 140 Q70 130 84 128 L96 128 L92 190 L70 192Z" fill="${J}"/><path d="M130 140 Q130 130 116 128 L104 128 L108 190 L130 192Z" fill="${J}"/>`+(of==='suit'?`<path d="M96 130 L104 130 L102 136 L106 168 L100 176 L94 168 L98 136Z" fill="#DC2626"/>`:'')}
+  if(of==='jersey')outfit=`<rect x="71" y="150" width="58" height="9" fill="#FFFFFF"/><text x="100" y="182" font-size="18" font-weight="700" text-anchor="middle" fill="#FFFFFF" font-family="Arial">10</text>`;
   const wings=c.back==='wings'?`<g fill="#FFFFFF" stroke="#E3E9F7" stroke-width="3"><ellipse cx="54" cy="150" rx="30" ry="17" transform="rotate(-28 54 150)"/><ellipse cx="146" cy="150" rx="30" ry="17" transform="rotate(28 146 150)"/></g>`:'';
-  return`<svg viewBox="0 -14 200 248" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="הדמות">${wings}<g fill="${H}">${backH}</g>${legs}${arms}${body}<rect x="91" y="118" width="18" height="16" rx="6" fill="${dk}"/>
+  return`<svg viewBox="0 -14 200 248" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="הדמות">${wings}<g fill="${H}">${backH}</g>${legs}${arms}${body}${outfit}<rect x="91" y="118" width="18" height="16" rx="6" fill="${dk}"/>
     <circle cx="48" cy="${hy+4}" r="8" fill="${S}"/><circle cx="152" cy="${hy+4}" r="8" fill="${S}"/><circle cx="${hx}" cy="${hy}" r="50" fill="${S}"/>${frontH}${extra}${face}${hat}</svg>`}

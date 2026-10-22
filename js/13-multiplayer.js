@@ -59,7 +59,7 @@ async function connect(){
 let lastPres=0;
 function localPos(){const[cx,cz]=ZC[ME.zone]||[0,0];return[+(ME.pos.x-cx).toFixed(2),+(ME.pos.z-cz).toFixed(2)]}
 function pushPresence(force){if(!NET.room)return;const t=performance.now();if(!force&&t-lastPres<120)return;lastPres=t;const[x,z]=localPos();
-  const zone=ME.zone==='home'?'house':ME.zone==='visit'?'house':ME.zone,host=ME.zone==='home'?P.key:ME.zone==='visit'&&VISIT?VISIT.host:null;
+  const zone=ME.zone==='home'?'house':ME.zone==='visit'?'house':ME.zone,host=ME.zone==='home'?P.key:ME.zone==='visit'&&VISIT?VISIT.host:ME.zone==='inside'&&INSIDE?INSIDE.id:null;
   NET.room.presence({n:P.name||'שחקן/ית',k:P.key,lv:level(),pc:P.pieces.length+P.cpieces.length,ch:P.ch,hc:P.house.color,pet:P.pet,pl:P.plots,zone,host,x,z}).catch(()=>{})}
 function emit(topic,data){if(NET.room&&NET.room.connected())NET.room.emit(topic,data).catch(()=>{})}
 let sendQ=Promise.resolve();
@@ -86,6 +86,7 @@ function syncAvatars(){NET.peers.forEach(p=>{if(p.sameTab)return;const pr=p.pres
   let a=NET.avatars.get(p.peer);if(!a||a.sig!==sig){if(a)scene.remove(a.obj);const o=avatar3D(ch);const lb=label(nameOf(p)+(p.isMe?' (גם את/ה)':''),'#1D2A48','#FFFFFF');lb.position.y=o.userData.h+.35;o.add(lb);
     if(pet){const pm=partsModel(PETS[pet].parts);pm.position.set(-.9,0,-.3);o.add(pm)}scene.add(o);a={obj:o,sig};NET.avatars.set(p.peer,a);a.first=true}
   let center=null;const z=pr.zone;
-  if(z==='island'||z==='town'||z==='bridge'||z==='city')center=ZC[z==='bridge'?'island':z];
+  if(['island','town','bridge','city','road','girls','boys'].includes(z))center=ZC[z==='bridge'?'island':z];
+  else if(z==='inside'){if(INSIDE&&pr.host===INSIDE.id)center=ZC.inside}
   else if(z==='house'){if(pr.host===P.key)center=ZC.home;else if(VISIT&&pr.host===VISIT.host)center=ZC.visit}
   a.obj.visible=!!center;if(center){a.tx=center[0]+clamp(+pr.x||0,-40,40);a.tz=center[1]+clamp(+pr.z||0,-40,40);if(a.first||a.lastCenter!==center){a.obj.position.set(a.tx,0,a.tz);a.first=false;a.lastCenter=center}}})}

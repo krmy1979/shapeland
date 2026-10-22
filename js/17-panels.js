@@ -259,9 +259,9 @@ function salonBuy(b,k,v){const pr=k==='hair'?hairPrice(v):hcPrice(v);const key=k
 /* --- map --- */
 function openMap(){PANEL='map';sheet(`<h2>לאן הולכים? 🗺️</h2><div class="mapgrid">
   <button data-a="goto" data-v="island" style="background:#DCFCE7"><span class="ic">🏝️</span>${en("Shirel's Island")}</button><button data-a="goto" data-v="town" style="background:#DBEAFE"><span class="ic">🏙️</span>${en('Town')}</button>
-  <button data-a="goto" data-v="home" style="background:#FEF3C7"><span class="ic">🏠</span>${en('My House')}</button><button data-a="goto" data-v="work" style="background:#FCE7F3"><span class="ic">🛠️</span>${en('Workshop')}</button><button data-a="goto" data-v="city" style="background:#CFFAFE"><span class="ic">🌊</span>${en('Ashkelon')}</button>
+  <button data-a="goto" data-v="home" style="background:#FEF3C7"><span class="ic">🏠</span>${en('My House')}</button><button data-a="goto" data-v="work" style="background:#FCE7F3"><span class="ic">🛠️</span>${en('Workshop')}</button><button data-a="goto" data-v="city" style="background:#CFFAFE"><span class="ic">🌊</span>${en('Ashkelon')}</button><button data-a="goto" data-v="girls" style="background:#FCE7F3"><span class="ic">🌸</span>${en("Girls' Garden")}</button><button data-a="goto" data-v="boys" style="background:#DBEAFE"><span class="ic">⚽</span>${en('Sports Park')}</button>
   ${VISIT&&VISIT.house?`<button data-a="goto" data-v="visit" style="background:#EDE9FE"><span class="ic">🔑</span>${en('Visit '+(VISIT.name||'friend'))}</button>`:''}</div>
-  <p class="sub">מהאי לעיירה הולכים על הגשר 🌉, ומהעיירה לאשקלון נוסעים באוטובוס 🚌</p><button class="btn ghost" data-a="close">סגירה</button>`)}
+  <p class="sub">הכל מחובר ואפשר ללכת ברגל: מהאי לעיירה על הגשר 🌉, מהעיירה לאשקלון בשדרות בן גוריון 🌴, ומאשקלון דרומה לגן הבנות ולפארק הספורט, שמחוברים בשער החברים 🌈. אפשר גם לנסוע באוטובוס 🚌</p><button class="btn ghost" data-a="close">סגירה</button>`)}
 
 /* --- workshop save --- */
 function openSaveFurn(){if(!P.ws.length){toast('קודם בונים רהיט מצורות על השולחן של הסדנה');return}PANEL='savefurn';PANEL_DATA={word:null};
