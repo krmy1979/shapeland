@@ -12,7 +12,7 @@ async function connect(){
   NET.state='connecting';renderFriends();
   try{
     let r;
-    if(window.CLOUD&&window.CLOUD.on){if(!CLOUD.user||!CLOUD.gid){NET.state='solo';renderFriends();if(CLOUD.user&&!CLOUD.gid)toast('עוד לא אושרת לחבורה. ההורים מבקשים את זה באזור ההורים');return}r=cloudRoom(CLOUD.gid)}
+    if(window.CLOUD&&window.CLOUD.on){if(!CLOUD.user||!CLOUD.gid){NET.state='solo';renderFriends();if(CLOUD.user&&!CLOUD.gid)toast('עוד אין קבוצה. בכפתור 👫 פותחים קבוצה ומזמינים חברים');return}r=cloudRoom(CLOUD.gid)}
     else{if(!window.claude||!window.claude.use){NET.state='solo';renderFriends();return}
       const ns=await window.claude.use('room');if(!ns){NET.state='solo';renderFriends();return}r=await ns.join('sl-'+P.code)}
     NET.room=r;NET.state='on';

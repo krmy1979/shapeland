@@ -273,7 +273,7 @@ function doSaveFurn(){const w=PANEL_DATA.word;if(!w)return;const id='cf_'+uid6()
 /* --- settings --- */
 function openSettings(){PANEL='settings';const L=Object.keys(P.learned);
   sheet(`<h2>הגדרות</h2><div class="row"><button class="btn ghost mini" data-a="sound">${P.sound?'🔊 צלילים פועלים':'🔇 צלילים כבויים'}</button>${window.CLOUD&&CLOUD.user?'<button class="btn ghost mini" data-c="logout">יציאה מהחשבון</button>':'<button class="btn ghost mini" data-a="tocode">להחליף קוד חבורה</button>'}<button class="btn ghost mini" data-a="avatar">🎨 עיצוב דמות</button></div>
-    ${window.CLOUD&&CLOUD.on?`<p class="sub">${CLOUD.gid?'החבורה: '+esc(CLOUD.gname||''):'משחק לבד'} · רק ילדים שאושרו על ידי מנהל החבורה רואים אחד את השני.</p>`:`<p class="sub">קוד החבורה: ${en(P.code)}. רק מי שמקליד בדיוק את אותו קוד נכנס לאותו עולם.</p>`}
+    ${window.CLOUD&&CLOUD.on?`<p class="sub">${CLOUD.gid?'הקבוצה: '+esc(CLOUD.gname||''):'משחק לבד'} · נכנסים לקבוצה רק בהזמנה, וההורים רואים מי בקבוצה. <button class="link" data-a="friends">👫 החברים שלי</button></p>`:`<p class="sub">קוד החבורה: ${en(P.code)}. רק מי שמקליד בדיוק את אותו קוד נכנס לאותו עולם.</p>`}
     <details><summary style="font-family:var(--f-display);font-size:17px;cursor:pointer">🔒 פינת הורים</summary>
       <div style="display:flex;flex-direction:column;gap:10px;margin-top:10px"><p class="sub">מה תורגל בלי להרגיש: הרמות עולות לבד לפי התשובות (1–10), בלי קשר לגיל.</p>
       <ul class="list">${Object.entries({vocab:'אוצר מילים',listen:'הבנת הנשמע',spell:'איות',sentence:'בניית משפטים',talk:'שיחה',math:'חשבון וכסף'}).map(([k,v])=>`<li><span>${v}</span><b>${P.sk[k].toFixed(1)} / 10</b></li>`).join('')}

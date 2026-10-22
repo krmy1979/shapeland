@@ -20,6 +20,23 @@
           ".write": "auth != null && newData.parent().child('parent').val() === auth.uid && (!data.parent().child('parent').exists() || data.parent().child('parent').val() === auth.uid)",
           ".validate": "newData.isString() && newData.val().length <= 12"
         },
+        "pname": {
+          ".write": "auth != null && newData.parent().child('parent').val() === auth.uid",
+          ".validate": "newData.isString() && newData.val().length <= 20"
+        },
+        "fc": {
+          ".write": "auth != null && newData.parent().child('parent').val() === auth.uid && !data.exists()",
+          ".validate": "newData.isString() && newData.val().matches(/^F-[A-Z0-9]{5}$/)"
+        },
+        "created": {
+          ".write": "auth != null && newData.parent().child('parent').val() === auth.uid && !data.exists()"
+        },
+        "block": {
+          "$o": {
+            ".write": "auth != null && root.child('kids/' + $k + '/parent').val() === auth.uid",
+            ".validate": "!newData.exists() || newData.val() === true"
+          }
+        },
         "limit": {
           ".write": "auth != null && data.parent().child('parent').val() === auth.uid",
           ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 600"
@@ -27,51 +44,89 @@
         "progress": {
           ".write": "auth != null && auth.uid === $k"
         },
+        "active": {
+          ".write": "auth != null && auth.uid === $k",
+          ".validate": "!newData.exists() || (newData.isString() && newData.val().length < 40)"
+        },
         "save": {
           ".write": "auth != null && auth.uid === $k",
           ".validate": "newData.isString() && newData.val().length < 400000"
         }
       }
     },
+    "pub": {
+      "$k": {
+        ".read": "auth != null",
+        ".write": "auth != null && (root.child('kids/' + $k + '/parent').val() === auth.uid || newData.parent().parent().child('kids/' + $k + '/parent').val() === auth.uid)",
+        ".validate": "!newData.exists() || (newData.child('nick').isString() && newData.child('nick').val().length <= 14)"
+      }
+    },
+    "fcodes": {
+      "$c": {
+        ".read": "auth != null",
+        ".write": "auth != null && !data.exists() && (root.child('kids/' + newData.val() + '/parent').val() === auth.uid || newData.parent().parent().child('kids/' + newData.val() + '/parent').val() === auth.uid)",
+        ".validate": "newData.isString() && $c.matches(/^F-[A-Z0-9]{5}$/)"
+      }
+    },
     "kidGroups": {
       "$k": {
         ".read": "auth != null && (auth.uid === $k || auth.uid === root.child('kids/' + $k + '/parent').val())",
         "$g": {
-          ".write": "auth != null && root.child('groups/' + $g + '/meta/owner').val() === auth.uid"
+          ".write": "auth != null && ((auth.uid === $k && (!newData.exists() || newData.parent().parent().parent().child('groups/' + $g + '/members/' + $k).exists())) || (!newData.exists() && (auth.uid === root.child('kids/' + $k + '/parent').val() || auth.uid === root.child('groups/' + $g + '/meta/owner').val() || auth.uid === root.child('groups/' + $g + '/meta/op').val())))"
         }
       }
     },
-    "joinCodes": {
-      "$c": {
-        ".read": "auth != null",
-        ".write": "auth != null && !data.exists() && newData.parent().parent().child('groups/' + newData.val() + '/meta/owner').val() === auth.uid"
+    "kidInvites": {
+      "$k": {
+        ".read": "auth != null && (auth.uid === $k || auth.uid === root.child('kids/' + $k + '/parent').val())",
+        "$g": {
+          ".write": "auth != null && ((newData.exists() && root.child('groups/' + $g + '/meta/owner').val() === auth.uid && !root.child('kids/' + $k + '/block/' + auth.uid).exists()) || (!newData.exists() && (auth.uid === $k || auth.uid === root.child('kids/' + $k + '/parent').val() || auth.uid === root.child('groups/' + $g + '/meta/owner').val())))",
+          ".validate": "!newData.exists() || (newData.child('gname').isString() && newData.child('from').isString())"
+        }
       }
     },
     "groups": {
       "$g": {
         "meta": {
           ".read": "auth != null",
-          ".write": "auth != null && ((!data.exists() && newData.child('owner').val() === auth.uid) || data.child('owner').val() === auth.uid)"
-        },
-        "requests": {
-          ".read": "auth != null && root.child('groups/' + $g + '/meta/owner').val() === auth.uid",
-          "$k": {
-            ".read": "auth != null && data.child('parent').val() === auth.uid",
-            ".write": "auth != null && (root.child('kids/' + $k + '/parent').val() === auth.uid || root.child('groups/' + $g + '/meta/owner').val() === auth.uid)",
-            ".validate": "!newData.exists() || (newData.child('parent').val() === root.child('kids/' + $k + '/parent').val() && newData.child('nick').isString())"
-          }
+          ".write": "auth != null && ((!data.exists() && newData.child('owner').val() === auth.uid && newData.child('op').val() === root.child('kids/' + auth.uid + '/parent').val()) || (data.exists() && data.child('owner').val() === auth.uid && newData.exists() && newData.child('owner').val() === auth.uid && newData.child('op').val() === data.child('op').val()))",
+          ".validate": "newData.child('name').isString() && newData.child('name').val().length > 0 && newData.child('name').val().length <= 30"
         },
         "members": {
-          ".read": "auth != null && (root.child('groups/' + $g + '/meta/owner').val() === auth.uid || data.child(auth.uid).exists())",
-          ".write": "auth != null && root.child('groups/' + $g + '/meta/owner').val() === auth.uid",
+          ".read": "auth != null && (data.child(auth.uid).exists() || root.child('groups/' + $g + '/meta/op').val() === auth.uid || root.child('groups/' + $g + '/pw/' + auth.uid).exists() || root.child('groups/' + $g + '/meta/owner').val() === auth.uid)",
           "$k": {
-            ".read": "auth != null && data.child('parent').val() === auth.uid"
+            ".write": "auth != null && ((!data.exists() && newData.exists() && auth.uid === $k && (newData.parent().parent().child('meta/owner').val() === auth.uid || root.child('groups/' + $g + '/invites/' + $k).exists())) || (!newData.exists() && (auth.uid === $k || auth.uid === root.child('kids/' + $k + '/parent').val() || auth.uid === root.child('groups/' + $g + '/meta/owner').val() || auth.uid === root.child('groups/' + $g + '/meta/op').val())))",
+            ".validate": "!newData.exists() || (newData.child('nick').val() === root.child('kids/' + $k + '/nick').val() && newData.child('parent').val() === root.child('kids/' + $k + '/parent').val())"
+          }
+        },
+        "invites": {
+          ".read": "auth != null && (root.child('groups/' + $g + '/members/' + auth.uid).exists() || root.child('groups/' + $g + '/meta/op').val() === auth.uid || root.child('groups/' + $g + '/pw/' + auth.uid).exists())",
+          "$k": {
+            ".write": "auth != null && ((newData.exists() && root.child('groups/' + $g + '/meta/owner').val() === auth.uid && root.child('kids/' + $k + '/parent').exists() && !root.child('groups/' + $g + '/members/' + $k).exists() && !root.child('kids/' + $k + '/block/' + auth.uid).exists()) || (!newData.exists() && (auth.uid === $k || auth.uid === root.child('kids/' + $k + '/parent').val() || auth.uid === root.child('groups/' + $g + '/meta/owner').val() || auth.uid === root.child('groups/' + $g + '/meta/op').val())))",
+            ".validate": "!newData.exists() || newData.child('nick').isString()"
+          }
+        },
+        "pw": {
+          ".read": "auth != null && (root.child('groups/' + $g + '/meta/op').val() === auth.uid || data.child(auth.uid).exists())",
+          "$p": {
+            "$k": {
+              ".write": "auth != null && ((auth.uid === $k && $p === root.child('kids/' + $k + '/parent').val() && (!newData.exists() || newData.parent().parent().parent().child('members/' + $k).exists())) || (!newData.exists() && (auth.uid === $p || auth.uid === root.child('groups/' + $g + '/meta/owner').val() || auth.uid === root.child('groups/' + $g + '/meta/op').val())))"
+            }
+          }
+        },
+        "reports": {
+          ".read": "auth != null && (root.child('groups/' + $g + '/meta/op').val() === auth.uid || root.child('groups/' + $g + '/pw/' + auth.uid).exists())",
+          "$k": {
+            "$p": {
+              ".write": "auth != null && auth.uid === $p && root.child('groups/' + $g + '/pw/' + auth.uid).exists()",
+              ".validate": "!newData.exists() || newData.isNumber()"
+            }
           }
         },
         "presence": {
-          ".read": "auth != null && (root.child('groups/' + $g + '/members/' + auth.uid).exists() || root.child('groups/' + $g + '/meta/owner').val() === auth.uid)",
+          ".read": "auth != null && (root.child('groups/' + $g + '/members/' + auth.uid).exists() || root.child('groups/' + $g + '/meta/op').val() === auth.uid || root.child('groups/' + $g + '/pw/' + auth.uid).exists())",
           "$pid": {
-            ".write": "auth != null && ((root.child('groups/' + $g + '/members/' + auth.uid).exists() && $pid.beginsWith(auth.uid + '_')) || root.child('groups/' + $g + '/meta/owner').val() === auth.uid)"
+            ".write": "auth != null && ((root.child('groups/' + $g + '/members/' + auth.uid).exists() && $pid.beginsWith(auth.uid + '_')) || (!newData.exists() && (root.child('groups/' + $g + '/meta/owner').val() === auth.uid || root.child('groups/' + $g + '/meta/op').val() === auth.uid || root.child('groups/' + $g + '/pw/' + auth.uid).exists())))"
           }
         },
         "events": {

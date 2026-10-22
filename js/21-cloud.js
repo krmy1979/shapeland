@@ -1,6 +1,6 @@
 /* Shapeland · a world by Shirel Yitzhak */
 /* ===================== CLOUD (Firebase): closed groups, kid logins, saves, time limits ===================== */
-window.CLOUD={on:false,auth:null,db:null,user:null,kid:null,gid:null,gname:'',offset:0,limit:0,min:0,session:Math.random().toString(36).slice(2,8)};
+window.CLOUD={on:false,auth:null,db:null,user:null,kid:null,gid:null,gname:'',groups:{},invites:{},offset:0,limit:0,min:0,session:Math.random().toString(36).slice(2,8)};
 const KID_DOMAIN='kids.shapeland.game';
 (function(){try{if(!window.firebase||!window.FIREBASE_CONFIG||!FIREBASE_CONFIG.apiKey)return;
   firebase.initializeApp(FIREBASE_CONFIG);CLOUD.auth=firebase.auth();CLOUD.db=firebase.database();CLOUD.on=true;
@@ -8,10 +8,16 @@ const KID_DOMAIN='kids.shapeland.game';
 const today=()=>new Date().toISOString().slice(0,10);
 
 async function loadKid(){const uid=CLOUD.user.uid;const k=(await CLOUD.db.ref('kids/'+uid).get()).val()||{};CLOUD.kid=k;
-  const gids=Object.keys((await CLOUD.db.ref('kidGroups/'+uid).get()).val()||{});CLOUD.gid=gids[0]||null;CLOUD.gname='';
-  if(CLOUD.gid){CLOUD.gname=(await CLOUD.db.ref('groups/'+CLOUD.gid+'/meta/name').get()).val()||''}
+  await loadGroups();
   const pr=k.progress||{};CLOUD.min=pr.day===today()?(+pr.min||0):0;CLOUD.limit=+k.limit||0;
-  CLOUD.db.ref('kids/'+uid+'/limit').on('value',s=>{CLOUD.limit=+s.val()||0;checkLimit()});return k}
+  CLOUD.db.ref('kids/'+uid+'/limit').on('value',s=>{CLOUD.limit=+s.val()||0;checkLimit()});
+  CLOUD.db.ref('kidInvites/'+uid).on('value',s=>{const before=Object.keys(CLOUD.invites||{}).length;CLOUD.invites=s.val()||{};const n=Object.keys(CLOUD.invites).length;
+    if(typeof renderFriends==='function'){friendsSig='';renderFriends()}if(n>before&&$('#title').hidden){toast('📩 קיבלת הזמנה לקבוצה! נוגעים ב־👫 חברים');sfx.coin()}if(PANEL==='friends'){KEEP=true;openFriends()}});
+  return k}
+async function loadGroups(){const uid=CLOUD.user.uid;const gids=Object.keys((await CLOUD.db.ref('kidGroups/'+uid).get()).val()||{});CLOUD.groups={};
+  await Promise.all(gids.map(async g=>{const m=(await CLOUD.db.ref('groups/'+g+'/meta').get()).val()||{};CLOUD.groups[g]={name:m.name||'קבוצה',owner:m.owner===uid}}));
+  let act=(CLOUD.kid&&CLOUD.kid.active)||'';try{act=localStorage.getItem('sl-active-'+uid)||act}catch(e){}
+  CLOUD.gid=CLOUD.groups[act]?act:(gids[0]||null);CLOUD.gname=CLOUD.gid?CLOUD.groups[CLOUD.gid].name:''}
 
 async function kidLogin(code,pin){code=String(code||'').trim().toLowerCase();pin=String(pin||'').trim();
   if(!/^[a-z0-9]{4,12}$/.test(code)||!/^\d{6}$/.test(pin))throw new Error('format');
@@ -65,7 +71,7 @@ if(CLOUD.on){
     if(!u.email||!u.email.endsWith('@'+KID_DOMAIN)){$('#kidWelcome').hidden=true;$('#kidLoginForm').hidden=false;$('#parentNote').hidden=false;return}
     CLOUD.user=u;try{await loadKid()}catch(e){console.warn(e)}
     $('#kidLoginForm').hidden=true;$('#kidWelcome').hidden=false;$('#kidHello').textContent=(CLOUD.kid&&CLOUD.kid.nick)||'';
-    $('#kidGroup').textContent=CLOUD.gid?('החבורה: '+(CLOUD.gname||'')):'עוד לא אושרת לחבורה, אפשר לשחק לבד בינתיים';
+    const ni=Object.keys(CLOUD.invites||{}).length;$('#kidGroup').textContent=CLOUD.gid?('הקבוצה: '+(CLOUD.gname||'')):(ni?'📩 מחכה לך הזמנה לקבוצה!':'עוד אין קבוצה. בתוך המשחק, בכפתור 👫, פותחים קבוצה ומזמינים חברים');
     if(CLOUD.limit&&CLOUD.min>=CLOUD.limit){$('#kidGroup').textContent='זמן המשחק להיום נגמר 🌙 נתראה מחר!';$('#kidGo').disabled=true}
     let go=false;try{go=sessionStorage.getItem('sl-go')==='1';sessionStorage.removeItem('sl-go')}catch(e){}
     if(go&&!$('#kidGo').disabled)cloudStartGame()});
@@ -76,3 +82,49 @@ document.addEventListener('click',async e=>{const b=e.target.closest('[data-c]')
   if(a==='kidgo')cloudStartGame();
   if(a==='solo'){$('#cloudBox').hidden=true;$('#localBox').hidden=false;$('#tCode').closest('.codewrap').hidden=true;$('#tCode').value='solo'}
   if(a==='logout'){try{await CLOUD.auth.signOut()}catch(err){}try{localStorage.removeItem(KEY)}catch(err){}location.reload()}});
+
+/* ===================== MY FRIENDS: kids make their own groups (invite-only) ===================== */
+const tsNow=()=>firebase.database.ServerValue.TIMESTAMP;
+function reconnectGroup(){try{if(NET.room)NET.room.leave()}catch(e){}NET.room=null;NET.peers=[];NET.avatars.forEach(a=>scene.remove(a.obj));NET.avatars.clear();friendsSig='';connect()}
+async function setActiveGroup(g){CLOUD.gid=g;CLOUD.gname=(CLOUD.groups[g]||{}).name||'';try{localStorage.setItem('sl-active-'+CLOUD.user.uid,g)}catch(e){}CLOUD.db.ref('kids/'+CLOUD.user.uid+'/active').set(g).catch(()=>{});reconnectGroup()}
+async function createGroup(name){const uid=CLOUD.user.uid,k=CLOUD.kid||{};const g=CLOUD.db.ref('groups').push().key;const up={};
+  up['groups/'+g+'/meta']={owner:uid,op:k.parent,name,onick:k.nick||'',created:tsNow()};
+  up['groups/'+g+'/members/'+uid]={nick:k.nick||'',parent:k.parent,pn:k.pname||'',t:tsNow(),by:'owner'};
+  up['groups/'+g+'/pw/'+k.parent+'/'+uid]=true;up['kidGroups/'+uid+'/'+g]=true;
+  await CLOUD.db.ref().update(up);CLOUD.groups[g]={name,owner:true};await setActiveGroup(g);return g}
+async function findFriend(fc){fc=String(fc||'').trim().toUpperCase().replace(/^F?-?/,'F-');if(!/^F-[A-Z0-9]{5}$/.test(fc))throw new Error('format');
+  const kid=(await CLOUD.db.ref('fcodes/'+fc).get()).val();if(!kid)throw new Error('none');if(kid===CLOUD.user.uid)throw new Error('me');
+  const pub=(await CLOUD.db.ref('pub/'+kid).get()).val()||{};return{kid,nick:pub.nick||'?'}}
+async function inviteFriend(g,f){const k=CLOUD.kid||{};const up={};up['groups/'+g+'/invites/'+f.kid]={nick:f.nick,by:k.nick||'',t:tsNow()};
+  up['kidInvites/'+f.kid+'/'+g]={gname:CLOUD.groups[g].name,from:k.nick||'',t:tsNow()};await CLOUD.db.ref().update(up)}
+async function acceptInvite(g){const uid=CLOUD.user.uid,k=CLOUD.kid||{};const inv=CLOUD.invites[g]||{};const up={};
+  up['groups/'+g+'/members/'+uid]={nick:k.nick||'',parent:k.parent,pn:k.pname||'',t:tsNow(),by:inv.from||''};up['groups/'+g+'/invites/'+uid]=null;
+  up['groups/'+g+'/pw/'+k.parent+'/'+uid]=true;up['kidGroups/'+uid+'/'+g]=true;up['kidInvites/'+uid+'/'+g]=null;
+  await CLOUD.db.ref().update(up);CLOUD.groups[g]={name:inv.gname||'קבוצה',owner:false};await setActiveGroup(g)}
+async function declineInvite(g){const uid=CLOUD.user.uid;await Promise.all([CLOUD.db.ref('kidInvites/'+uid+'/'+g).remove(),CLOUD.db.ref('groups/'+g+'/invites/'+uid).remove().catch(()=>{})])}
+async function removeMember(g,kid,parent){const up={};up['groups/'+g+'/members/'+kid]=null;up['kidGroups/'+kid+'/'+g]=null;if(parent)up['groups/'+g+'/pw/'+parent+'/'+kid]=null;await CLOUD.db.ref().update(up);
+  const pres=(await CLOUD.db.ref('groups/'+g+'/presence').get()).val()||{};Object.keys(pres).filter(p=>p.startsWith(kid+'_')).forEach(p=>CLOUD.db.ref('groups/'+g+'/presence/'+p).remove().catch(()=>{}))}
+async function leaveGroup(g){const uid=CLOUD.user.uid;await removeMember(g,uid,(CLOUD.kid||{}).parent);delete CLOUD.groups[g];if(CLOUD.gid===g){const next=Object.keys(CLOUD.groups)[0]||null;if(next)await setActiveGroup(next);else{CLOUD.gid=null;CLOUD.gname='';reconnectGroup()}}}
+let FR={members:{},find:{},msg:{}};
+async function openFriends(){PANEL='friends';const k=CLOUD.kid||{};const inv=Object.entries(CLOUD.invites||{});const gs=Object.entries(CLOUD.groups||{});
+  sheet(`<h2>👫 החברים שלי</h2>
+  ${inv.length?`<div class="box"><h3>📩 הזמנות</h3>${inv.map(([g,v])=>`<div class="row"><span class="grow"><b dir="auto">${esc(v.from)}</b> מזמינ/ה אותך לקבוצה <b dir="auto">${esc(v.gname)}</b></span><button class="btn mini" data-a="fraccept" data-v="${g}">✓ להצטרף</button><button class="btn ghost mini" data-a="frdecline" data-v="${g}">לא תודה</button></div>`).join('')}</div>`:''}
+  <div class="box center"><p class="sub" style="margin:0">קוד החבר/ה שלי</p><div class="fcode" dir="ltr">${esc(k.fc||'···')}</div><p class="sub" style="margin:0">נותנים את הקוד רק לחברים שמכירים באמת, מהכיתה או מהשכונה. עם הקוד הם יכולים להזמין אותך לקבוצה, ואת/ה מחליט/ה אם להצטרף.</p></div>
+  <h3>הקבוצות שלי</h3>${gs.length?gs.map(([g,v])=>{const mem=FR.members[g];return`<div class="box grp ${CLOUD.gid===g?'on':''}"><div class="row"><h3 class="grow" dir="auto">${v.owner?'⭐ ':''}${esc(v.name)}</h3>${CLOUD.gid===g?'<span class="pill">▶ משחקים עכשיו</span>':`<button class="btn mini" data-a="frplay" data-v="${g}">▶ לשחק עם הקבוצה</button>`}</div>
+    <div class="chips">${mem?Object.entries(mem).map(([kid,m])=>`<span class="mchip" dir="auto">${esc(m.nick)}${kid===CLOUD.user.uid?' (אני)':''}${v.owner&&kid!==CLOUD.user.uid?` <button class="x" data-a="frkick" data-v="${g}" data-k="${kid}" data-p="${esc(m.parent||'')}" aria-label="להוציא את ${esc(m.nick)}">✕</button>`:''}</span>`).join(''):'<span class="sub">טוען…</span>'}</div>
+    ${v.owner?`<div class="row"><input class="txt en" id="fc-${g}" dir="ltr" maxlength="7" placeholder="F-XXXXX" autocapitalize="characters" autocomplete="off" spellcheck="false" style="max-width:150px"><button class="btn ghost mini" data-a="frfind" data-v="${g}">🔎 למצוא חבר/ה</button></div>
+      ${FR.find[g]?`<div class="row"><span class="grow">נמצא/ה: <b dir="auto">${esc(FR.find[g].nick)}</b>. זה באמת החבר/ה שלך?</span><button class="btn mini" data-a="frinvite" data-v="${g}">📩 להזמין</button></div>`:''}`:`<button class="link" data-a="frleave" data-v="${g}">לצאת מהקבוצה</button>`}
+    ${FR.msg[g]?`<p class="sub">${FR.msg[g]}</p>`:''}</div>`}).join(''):'<p class="sub">עוד אין לך קבוצה. אפשר לפתוח אחת ולהזמין חברים, או לחכות להזמנה מחבר/ה.</p>'}
+  <div class="box"><h3>➕ קבוצה חדשה</h3><div class="row"><input class="txt" id="newgName" dir="auto" maxlength="30" placeholder="שם הקבוצה"><button class="btn mini" data-a="frcreate">לפתוח</button></div></div>
+  <p class="sub">🔒 נכנסים לקבוצה רק בהזמנה. ההורים רואים את הקבוצות ומי נמצא בהן, ויכולים לעזור אם מישהו לא מוכר.</p><button class="btn ghost" data-a="close">סגירה</button>`);
+  gs.forEach(([g])=>{if(!FR.members[g])CLOUD.db.ref('groups/'+g+'/members').get().then(s=>{FR.members[g]=s.val()||{};if(PANEL==='friends'){KEEP=true;openFriends()}}).catch(()=>{FR.members[g]={}})})}
+const frErr=e=>e&&e.message==='format'?'קוד חבר נראה כך: F-AB12C':e&&e.message==='none'?'לא מצאנו קוד כזה. כדאי לבדוק שוב עם החבר/ה':e&&e.message==='me'?'זה הקוד שלך 🙂':e&&/PERMISSION/i.test(e.code||e.message)?'אי אפשר להזמין את החבר/ה הזה/ו':'משהו לא הצליח, אפשר לנסות שוב';
+ACTX.friends=()=>{FR.members={};openFriends()};
+ACTX.frcreate=async()=>{const n=($('#newgName').value||'').trim();if(!n){toast('קודם כותבים שם לקבוצה');return}try{const g=await createGroup(n);FR.members={};sfx.win();burst('👫 '+n);openFriends()}catch(e){toast(frErr(e))}};
+ACTX.frplay=async d=>{await setActiveGroup(d.v);FR.members={};openFriends();toast('▶ משחקים עכשיו עם '+CLOUD.gname)};
+ACTX.frfind=async d=>{const g=d.v;FR.find[g]=null;FR.msg[g]='';try{const f=await findFriend($('#fc-'+g).value);if(FR.members[g]&&FR.members[g][f.kid]){FR.msg[g]=esc(f.nick)+' כבר בקבוצה'}else FR.find[g]=f}catch(e){FR.msg[g]=frErr(e)}KEEP=true;openFriends()};
+ACTX.frinvite=async d=>{const g=d.v,f=FR.find[g];if(!f)return;try{await inviteFriend(g,f);FR.msg[g]='📩 ההזמנה נשלחה ל־'+esc(f.nick)+'. כשהיא/הוא יאשרו, הם יופיעו בקבוצה.';FR.find[g]=null;sfx.coin()}catch(e){FR.msg[g]=frErr(e)}KEEP=true;openFriends()};
+ACTX.fraccept=async d=>{try{await acceptInvite(d.v);FR.members={};sfx.win();burst('👫');openFriends()}catch(e){toast(frErr(e))}};
+ACTX.frdecline=async d=>{try{await declineInvite(d.v)}catch(e){}KEEP=true;openFriends()};
+ACTX.frkick=async d=>{const b=document.querySelector(`[data-a="frkick"][data-k="${d.k}"]`);if(b&&!b.dataset.sure){b.dataset.sure='1';b.textContent='בטוח?';return}try{await removeMember(d.v,d.k,d.p);delete FR.members[d.v]}catch(e){toast(frErr(e))}KEEP=true;openFriends()};
+ACTX.frleave=async d=>{const b=document.querySelector(`[data-a="frleave"][data-v="${d.v}"]`);if(b&&!b.dataset.sure){b.dataset.sure='1';b.textContent='בטוח? ללחוץ שוב כדי לצאת';return}try{await leaveGroup(d.v);FR.members={}}catch(e){toast(frErr(e))}openFriends()};

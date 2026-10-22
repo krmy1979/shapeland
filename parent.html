@@ -6,7 +6,7 @@
 <title>Shapeland · אזור הורים</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Varela+Round&family=Dancing+Script:wght@700&display=swap">
-<link rel="stylesheet" href="css/parent.css?v=5">
+<link rel="stylesheet" href="css/parent.css?v=6">
 </head>
 <body>
 <header class="top">
@@ -32,24 +32,17 @@
       <p class="sub" id="addMsg" aria-live="polite"></p>
     </section>
     <section class="card">
-      <h2>חבורות</h2>
-      <p class="sub">חבורה היא קבוצה סגורה של ילדים שמשחקים יחד. מנהל החבורה מאשר כל ילד בנפרד, ורק ילדים מאושרים רואים אחד את השני.</p>
-      <div id="groups"></div>
-      <div class="two">
-        <form id="joinGroup" class="box">
-          <h3>להצטרף לחבורה קיימת</h3>
-          <label for="joinKid" class="sub">איזה ילד</label><select id="joinKid" class="txt"></select>
-          <label for="joinCode" class="sub">קוד החבורה (מקבלים ממנהל החבורה)</label><input id="joinCode" class="txt en" dir="ltr" maxlength="10" placeholder="SL-XXXX" required>
-          <button class="btn ghost" type="submit">שליחת בקשה</button>
-          <p class="sub" id="joinMsg" aria-live="polite"></p>
-        </form>
-        <form id="newGroup" class="box">
-          <h3>לפתוח חבורה חדשה</h3>
-          <label for="groupName" class="sub">שם החבורה</label><input id="groupName" class="txt" maxlength="30" placeholder="למשל: החברות של שיראל" dir="auto" required>
-          <button class="btn ghost" type="submit">פתיחת חבורה</button>
-          <p class="sub" id="groupMsg" aria-live="polite"></p>
-        </form>
+      <h2>קבוצות החברים ופיקוח 👀</h2>
+      <div class="box how">
+        <b>איך זה עובד</b>
+        <ul class="sub">
+          <li>לכל ילד יש <b>קוד חבר</b> אישי (למשל F-AB12C). נותנים אותו רק לחברים שמכירים באמת, בכיתה או בשכונה.</li>
+          <li>הילד פותח קבוצה בתוך המשחק ומזמין חברים לפי הקוד שלהם. החבר מחליט אם להצטרף. <b>בלי הזמנה אי אפשר להיכנס.</b></li>
+          <li>לא צריך לאשר כל ילד. אבל כל ההורים של ילדי הקבוצה רואים כאן מי בקבוצה, מי ההורה של כל ילד, ומתי הצטרף.</li>
+          <li>רואים מישהו שלא מוכר? מסמנים 🚩, חוסמים, או מוציאים את הילד שלכם מהקבוצה. ההורה של מי שפתח את הקבוצה יכול להוציא כל אחד.</li>
+        </ul>
       </div>
+      <div id="groups"></div>
     </section>
     <p class="sub center"><a href="index.html">← חזרה למשחק</a> · <button class="link" id="logout">יציאה</button></p>
   </div>
@@ -58,7 +51,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-<script src="js/firebase-config.js?v=5"></script>
-<script src="js/parent.js?v=5"></script>
+<script src="js/firebase-config.js?v=6"></script>
+<script src="js/parent.js?v=6"></script>
 </body>
 </html>

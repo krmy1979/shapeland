@@ -17,6 +17,7 @@ function renderFriends(){const el=$('#friends');let h='';
       return`<button class="fr" data-a="friend" data-p="${esc(p.peer)}"><span class="dot"></span>${charSVG(sanitizeCh(pr.ch))}<span>${esc(nameOf(p))} <span class="where">${where}</span></span></button>`}).join('')}
   else if(NET.state==='connecting')h=`<span class="net">מתחבר לחבורה…</span>`;
   else if(NET.state==='solo')h=`<span class="net">משחק לבד כרגע</span>`;
+  if(window.CLOUD&&CLOUD.user){const n=Object.keys(CLOUD.invites||{}).length;h=`<button class="frbtn" data-a="friends">👫 חברים${n?` <b class="badge">${n}</b>`:''}</button>`+h}
   if(h!==friendsSig){friendsSig=h;el.innerHTML=h}}
 function shapeIcon(k,color){return`<svg viewBox="0 0 24 24" fill="${color}" style="color:${color}">${ICONS[k]}</svg>`}
 const TOOLS={walk:['🚶','הליכה'],build:['🧱','בנייה'],item:['🛋️','רהיטים'],room:['🏗️','חדרים'],door:['🚪','דלתות'],erase:['🧽','הסרה']};
