@@ -39,8 +39,8 @@ DOORS.push({id:'mall',zone:'city',x:CX+17.8,z:CZ-14,ox:CX+16.5,oz:CZ-14});
 
 /* ---- Girls' Garden (pink) ---- */
 const GX0=-24,GX1=4,SZ0=-201.5,SZ1=-155.5;
-(()=>{const gr=wbox(GX1-GX0,.5,SZ1-SZ0,'#FFE1EF',(GX0+GX1)/2,-.25,(SZ0+SZ1)/2,false);EXTRA_PICK.push(gr);wbox(GX1-GX0,4,SZ1-SZ0,'#E9A8C6',(GX0+GX1)/2,-2.6,(SZ0+SZ1)/2,false);
-  EXTRA_PICK.push(wbox(4,.05,40,'#FBCFE8',-10,.03,-178,false));EXTRA_PICK.push(wbox(22,.05,4,'#FBCFE8',-10,.03,-180,false));
+(()=>{const gr=wbox(GX1-GX0,.5,SZ1-SZ0,'#F7BFDB',(GX0+GX1)/2,-.25,(SZ0+SZ1)/2,false);EXTRA_PICK.push(gr);wbox(GX1-GX0,4,SZ1-SZ0,'#E9A8C6',(GX0+GX1)/2,-2.6,(SZ0+SZ1)/2,false);
+  EXTRA_PICK.push(wbox(4,.05,40,'#FDE4F0',-10,.03,-178,false));EXTRA_PICK.push(wbox(22,.05,4,'#FDE4F0',-10,.03,-180,false));
   const cx=-10,cz=-180;const f=new THREE.Group();const basin=mesh(new THREE.CylinderGeometry(2,2.2,.6,32),mat('#F9A8D4'));basin.position.y=.3;f.add(basin);
   const w=mesh(new THREE.CylinderGeometry(1.8,1.8,.1,32),mat('#7DD3FC',{roughness:.1}));w.position.y=.58;f.add(w);
   const heart=new THREE.ExtrudeGeometry(shape2D('heart'),{depth:.3,bevelEnabled:true,bevelThickness:.06,bevelSize:.05,bevelSegments:2});heart.center();const hm=mesh(heart,mat('#EC4899'));hm.scale.setScalar(1.1);hm.position.y=1.9;hm.rotation.z=Math.PI;f.add(hm);ZFX.fount.push(hm);
@@ -58,7 +58,7 @@ const GX0=-24,GX1=4,SZ0=-201.5,SZ1=-155.5;
   const stg=new THREE.Group();const plat=mesh(new THREE.CylinderGeometry(3,3.1,.5,32),mat('#C084FC'));plat.position.y=.25;stg.add(plat);
   const top=mesh(new THREE.CylinderGeometry(2.85,2.85,.06,32),mat('#F5D0FE'));top.position.y=.52;stg.add(top);
   const pole=mesh(new THREE.CylinderGeometry(.05,.05,3.4,6),mat('#9CA3AF'));pole.position.set(0,2.2,-2.6);stg.add(pole);const arm=mesh(new THREE.CylinderGeometry(.04,.04,2.6,6),mat('#9CA3AF'));arm.rotation.x=Math.PI/2;arm.position.set(0,3.9,-1.3);stg.add(arm);
-  const db=mesh(new THREE.IcosahedronGeometry(.45,1),mat('#E5E7EB',{metalness:.9,roughness:.15,flatShading:true}));db.position.set(0,3.4,0);stg.add(db);ZFX.disco.push(db);
+  const db=mesh(new THREE.IcosahedronGeometry(.45,1),mat('#F5F3FF',{metalness:.3,roughness:.2,flatShading:true,emissive:'#C4B5FD',emissiveIntensity:.4}));db.position.set(0,3.4,0);stg.add(db);ZFX.disco.push(db);
   const sl=label('Dance Stage 💃','#A855F7','#FFFFFF',.5);sl.position.y=4.8;stg.add(sl);placeAt(stg,-19,-185);rootify(stg);stg.userData.zact=()=>danceParty();EXTRA_PICK.push(stg)})();
 [{id:'salon',en:'Beauty Salon',em:'💇‍♀️',color:'#FBCFE8',roof:'#DB2777',door:'#FDF2F8',x:-20,z:-168,fx:-10,fz:-172},
  {id:'makeup',en:'Makeup Studio',em:'💄',color:'#F5D0FE',roof:'#A21CAF',door:'#FDF4FF',x:-14,z:-197,fx:-14,fz:-180,flat:true},
@@ -66,8 +66,8 @@ const GX0=-24,GX1=4,SZ0=-201.5,SZ1=-155.5;
 
 /* ---- Sports Park (blue) ---- */
 const BX0=4,BX1=32;
-(()=>{const gr=wbox(BX1-BX0,.5,SZ1-SZ0,'#DBEAFE',(BX0+BX1)/2,-.25,(SZ0+SZ1)/2,false);EXTRA_PICK.push(gr);wbox(BX1-BX0,4,SZ1-SZ0,'#93C5FD',(BX0+BX1)/2,-2.6,(SZ0+SZ1)/2,false);
-  EXTRA_PICK.push(wbox(4,.05,40,'#BFDBFE',18,.03,-178,false));
+(()=>{const gr=wbox(BX1-BX0,.5,SZ1-SZ0,'#A7CBF5',(BX0+BX1)/2,-.25,(SZ0+SZ1)/2,false);EXTRA_PICK.push(gr);wbox(BX1-BX0,4,SZ1-SZ0,'#93C5FD',(BX0+BX1)/2,-2.6,(SZ0+SZ1)/2,false);
+  EXTRA_PICK.push(wbox(4,.05,40,'#E0EDFF',18,.03,-178,false));
   // soccer field
   const fx=24,fz=-168;EXTRA_PICK.push(wbox(13,.06,8.5,'#22A35A',fx,.04,fz,false));
   [[0,0,13,.08],[0,0,.08,8.5]].forEach(([x,z,w,d])=>wbox(w,.07,d,'#FFFFFF',fx+x,.05,fz+z,false));
