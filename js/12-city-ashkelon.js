@@ -91,7 +91,7 @@ car('#EF4444',-11,1,-10,-20);car('#FACC15',-9,-1,-10,15);car('#3B82F6',13,1,14,0
 // people walking in the street (game characters only)
 const WALKERS=[];const WNAMES=['Lily','Ben','Omar','Sara','Max'];
 const WPATHS=[[[-14,-12],[-14,23]],[[-7.3,-21],[-7.3,-3.3],[11.3,-3.3],[11.3,-21]],[[16.6,-22],[16.6,23]],[[-4.5,14],[6.5,14],[6.5,23],[-4.5,23]],[[-14.6,23],[-14.6,-12]]];
-WPATHS.forEach((path,i)=>{const ch={shape:pick(['round','tall','pear','drop']),color:COLORS[(i*2+1)%COLORS.length][0],pat:'plain',eyes:pick(['big','dots','happy']),mouth:'smile',ears:pick(['none','bear','cat','bunny']),back:'none',hat:pick(['none','cap','flower']),w:1,h:1};
+WPATHS.forEach((path,i)=>{const girl=i%2===1||i===4;const ch=Object.assign(humanCh(girl?'girl':'boy'),{skin:SKINS[(i*2+1)%SKINS.length][0],hair:pick(Object.keys(HAIRS).filter(k=>HAIRS[k][2]===(girl?'girl':'boy'))),hc:HAIRC[(i*3)%HAIRC.length][0],top:COLORS[(i*2+1)%COLORS.length][0],eyes:pick(['big','happy'])});
   const g=avatar3D(ch);const lb=label(WNAMES[i],'#FFFFFF','#1D2A48',.36);lb.position.y=g.userData.h+.3;g.add(lb);g.position.set(CX+path[0][0],0,CZ+path[0][1]);rootify(g);g.userData.walker=i;scene.add(g);WALKERS.push({g,path,i:1,ch,name:WNAMES[i],pause:0})});
 const ANCHORS={beach:[-19,0],marina:[-19,-18],'national park':[1,18],mall:[17,-14],school:[19,15]};
 const CITY_CHESTS=[[-1,20.5],[6,16.5],[-12.5,14],[18.5,-3],[9,-20],[-4,-21],[8.5,6],[-6,6]];

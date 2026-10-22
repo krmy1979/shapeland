@@ -4,7 +4,7 @@ function shade(hex,amt){const n=parseInt(hex.slice(1),16);let r=n>>16,g=(n>>8)&2
   const f=c=>Math.round(amt<0?c*(1+amt):c+(255-c)*amt);return'#'+[f(r),f(g),f(b)].map(v=>v.toString(16).padStart(2,'0')).join('')}
 
 /* ===================== CHARACTER SVG ===================== */
-function charSVG(c){
+function charSVG(c){if(c&&c.kind==='human')return humanSVG(c);
   const id='pt'+(++uid),col=c.color,dk=shade(col,-.28),lt=shade(col,.45),ink='#1D2A48';
   const w=+c.w,h=+c.h,cx=100,cy=128;
   let body='',top,bot,side,fy=cy-8*h;

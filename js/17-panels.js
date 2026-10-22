@@ -44,10 +44,12 @@ function pricePuzzle(price,r){const d=clamp(Math.round(r),1,10);let e,h;
   return{e,h,opts:numOpts(price),ans:String(price)}}
 function openShop(focus){PANEL='leo';const L=level();const items=Object.entries(SHAPES).filter(([k])=>!P.owned.includes(k));
   sheet(`${npcHead('leo',gemTag())}<div class="bubble">${en(items.length?'Welcome to my magic shape shop! What would you like?':'You have every shape! Amazing!')}</div>
-    <div class="chips">${items.map(([k,v])=>`<button class="ochip ${L<v.lvl?'lock':''}" data-a="buyshape" data-v="${k}" aria-pressed="${focus===k}">${shapeIcon(k,L<v.lvl?'#A9B6CC':'#8B5CF6')}<span class="en">${k}</span><span class="tag">${L<v.lvl?'🔒 Level '+v.lvl:'💎?'}</span></button>`).join('')}</div>
-    <p class="sub">המחיר אצל Leo הוא תמיד חידה קטנה. פותרים, ואז משלמים.</p><button class="btn ghost" data-a="close">${en('Bye, Leo!')}</button>`);
+    <div class="chips">${items.map(([k,v])=>`<button class="ochip ${L<v.lvl?'lock':''}" data-a="buyshape" data-v="${k}" aria-pressed="${focus===k}">${shapeIcon(k,L<v.lvl?'#A9B6CC':'#8B5CF6')}<span class="en">${k}</span><span class="tag">${L<v.lvl?'🔒 Level '+v.lvl:'💎 '+v.price}</span></button>`).join('')}</div>
+    <p class="sub">נוגעים בצורה כדי לקנות אותה.</p><button class="btn ghost" data-a="close">${en('Bye, Leo!')}</button>`);
   say(items.length?'Welcome to my magic shape shop!':'You have every shape!')}
-function buyShape(k){const v=SHAPES[k];if(level()<v.lvl){toast(`ה־${k} נפתח ב־Level ${v.lvl}`);return}PANEL='leobuy';PANEL_DATA={k,pz:pricePuzzle(v.price,P.sk.math),wrong:null};renderBuy()}
+function buyShape(k){const v=SHAPES[k];if(level()<v.lvl){toast(`ה־${k} נפתח ב־Level ${v.lvl}`);return}const price=v.price;
+  if(P.gems<price){say(`A ${k} costs ${price} gems. You need more gems.`);toast(`חסרים ${fmt(price-P.gems)} 💎. אפשר למשוך מהבנק או לעבוד בעיירה`);return}
+  P.gems-=price;P.owned.push(k);logm('קנייה: '+k,'Shopping',-price);SEL.s=k;save();sfx.win();burst(shapeIcon(k,'#fff').replace('<svg','<svg style="width:90px;height:90px"'));say(`Here is your ${k}! That's ${price} gems. Have fun!`);closeSheet();renderHud();setNpcMarks()}
 function renderBuy(){const{k,pz,wrong}=PANEL_DATA;
   sheet(`${npcHead('leo',gemTag())}<div class="pz">${shapeIcon(k,'#8B5CF6').replace('<svg','<svg style="width:70px;height:70px"')}<div class="word">${en('A '+k+'!')}</div></div>
     <div class="bubble">${en(pz.e)}</div><div class="row"><button class="spk" data-a="sayt" data-t="${esc(pz.e)}">🔊</button><button class="btn ghost mini" data-a="hint">💡</button></div><div class="hint" id="hintTxt" hidden>${esc(pz.h)}</div>
@@ -192,7 +194,7 @@ function openStore(store){PANEL='store';if(!CART||CART.store!==store)CART={store
 function checkout(){const items=storeItems(CART.store);const lines=Object.entries(CART.items).filter(([,q])=>q>0).map(([id,q])=>({it:items.find(x=>x.id===id),q}));
   const total=lines.reduce((s,l)=>s+l.it.price*l.q,0);if(!lines.length)return;
   const multi=lines.length>1||lines[0].q>1;const easy=P.sk.math<2.5&&!multi;const note=[5,10,20,50,100,200,500].find(v=>v>total)||total+50;
-  if(easy){payCart(lines,total);return}
+  payCart(lines,total);return;
   const ask=multi?`What is the total?`:`It costs ${total} gems. You pay with ${note}. How much change do you get?`;const ans=multi?total:note-total;
   PANEL='checkout';PANEL_DATA={lines,total,ans,ask,opts:numOpts(ans),wrong:null};renderCheckout();say(multi?'What is the total, please?':ask)}
 function renderCheckout(){const d=PANEL_DATA;sheet(`<div class="npchead"><div class="face" style="background:#FDE68A">🧑‍💼</div><div class="grow"><h2>${en('Checkout')}</h2><p class="sub">קופה</p></div>${gemTag()}</div>
@@ -209,9 +211,9 @@ function payCart(lines,total){if(P.gems<total){say("Oh no! You don't have enough
       P.mission=null;learnResult('vocab',true);addXp(30);adventure();setTimeout(()=>{burst('🛒 +'+rw+' 💎');sfx.win();say('You got everything on the list! Thank you!')},300)}
     else missionMsg=`<p class="sub">זה לא בדיוק מה שהיה ברשימה של Mrs. Kim, אז היא לא מחזירה את הכסף. אפשר לנסות שוב.</p>`}
   CART={store,items:{}};save();renderHud();sfx.coin();PANEL='receipt';
-  sheet(`<h2>${en('Thank you!')} 🧾</h2><div class="receipt"><div><b>${esc(BUILDINGS.find(b=>b.id===store).en.toUpperCase())}</b><span>RECEIPT</span></div>${lines.map(l=>`<div><span>${esc(l.it.en)} ${l.q>1?'x'+l.q:''}</span><span>${l.it.price*l.q}</span></div>`).join('')}<div><b>TOTAL</b><b>${total} gems</b></div></div>
+  say(`That's ${total} gems. Thank you!`);sheet(`<h2>${en('Thank you!')} 🧾</h2><div class="receipt"><div><b>${esc(BUILDINGS.find(b=>b.id===store).en.toUpperCase())}</b><span>RECEIPT</span></div>${lines.map(l=>`<div><span>${esc(l.it.en)} ${l.q>1?'x'+l.q:''}</span><span>${l.it.price*l.q}</span></div>`).join('')}<div><b>TOTAL</b><b>${total} gems</b></div></div>
     ${missionMsg}${store==='furniture'?`<p class="sub">הרהיטים מחכים במלאי. בבית בוחרים 🛋️ רהיטים ומציבים.</p>`:store==='clothes'?`<p class="sub">אפשר ללבוש ב־🎨 עיצוב הדמות.</p>`:store==='pets'?`<p class="sub">החיה החדשה הולכת איתך לכל מקום!</p>`:''}
-    <div class="row"><button class="btn" data-a="close">${en('Bye!')}</button><button class="btn ghost" data-a="store" data-v="${store}">להמשיך לקנות</button></div>`);say('Thank you! Have a nice day!')}
+    <div class="row"><button class="btn" data-a="close">${en('Bye!')}</button><button class="btn ghost" data-a="store" data-v="${store}">להמשיך לקנות</button></div>`)}
 
 /* --- Mrs. Kim shopping lists --- */
 function genMission(){const t=tierFor(P.sk.vocab);const k=clamp(t,1,4);const goods=shuffle(GOODS.filter(g=>g.tr<=t+1)).slice(0,k);const items={};goods.forEach(g=>items[g.en]=t===1?1:rnd(1,Math.min(4,t+1)));
@@ -227,15 +229,32 @@ function openKim(){PANEL='kim';if(P.mission){const m=P.mission;sheet(`${npcHead(
 
 /* --- avatar editor with wardrobe locks --- */
 const CH_LABELS={shape:'צורת גוף',pat:'דוגמה',eyes:'עיניים',mouth:'פה',ears:'על הראש',back:'מאחור',hat:'כובע'};
-function openAvatar(){PANEL='avatar';const c=P.ch;const group=k=>`<div style="display:flex;flex-direction:column;gap:6px"><h3>${CH_LABELS[k]}</h3><div class="chips">${CH[k].map(([v,he,e])=>{const lock=ACC[v]&&!P.ward.includes(v);
-    return`<button class="ochip ${lock?'lock':''}" data-a="ch" data-k="${k}" data-v="${v}" data-t="${e}" aria-pressed="${c[k]===v}">${he}${en(e)}${lock?`<span class="tag">🔒 💎${ACC[v][1]}</span>`:''}</button>`}).join('')}</div></div>`;
+const BOTC=[['#3B4A75','navy'],['#4F7CC2','denim'],['#1F2937','black'],['#FFFFFF','white'],['#B08968','beige'],...COLORS];
+function openAvatar(){PANEL='avatar';const c=P.ch;const girl=c.g==='girl';
+  const sec=(h,body)=>`<div style="display:flex;flex-direction:column;gap:6px"><h3>${h}</h3><div class="chips">${body}</div></div>`;
+  const sw=(k,list)=>list.map(([v,e,he,pr])=>{const lock=pr&&!salonOwned(k+':'+v);return`<button class="sw ${lock?'lk':''}" style="background:${v}" data-a="${lock?'salon':'ch'}" data-k="${k}" data-v="${v}" data-t="${e}" aria-pressed="${c[k]===v}" aria-label="${he||e}${lock?' · 💎'+pr:''}">${lock?'<span>🔒</span>':''}</button>`}).join('');
+  const hairChip=([id,[he,e,,pr]])=>{const lock=pr&&!salonOwned('hair:'+id);return`<button class="ochip ${lock?'lock':''}" data-a="${lock?'salon':'ch'}" data-k="hair" data-v="${id}" data-t="${e}" aria-pressed="${c.hair===id}">${he}${en(e)}${lock?`<span class="tag">🔒 💎${pr}</span>`:''}</button>`};
+  const mine=Object.entries(HAIRS).filter(([,v])=>v[2]===c.g),other=Object.entries(HAIRS).filter(([,v])=>v[2]!==c.g);
+  const acc=k=>CH[k].filter(([v])=>k==='hat'||v==='none'||v==='wings').map(([v,he,e])=>{const lock=ACC[v]&&!P.ward.includes(v);return`<button class="ochip ${lock?'lock':''}" data-a="ch" data-k="${k}" data-v="${v}" data-t="${e}" aria-pressed="${c[k]===v}">${he}${en(e)}${lock?`<span class="tag">🔒 💎${ACC[v][1]}</span>`:''}</button>`}).join('');
   sheet(`<div class="preview" id="pv">${charSVG(c)}</div><input class="txt" id="nm" dir="auto" maxlength="14" placeholder="שם במשחק" value="${esc(P.name)}" aria-label="שם במשחק">
-    <div style="display:flex;flex-direction:column;gap:6px"><h3>צבע</h3><div class="chips">${COLORS.map(([v,e])=>`<button class="sw" style="background:${v}" data-a="ch" data-k="color" data-v="${v}" data-t="${e}" aria-pressed="${c.color===v}" aria-label="${e}"></button>`).join('')}</div></div>
-    ${group('shape')}<div class="slider"><label for="sw">${en('wide')}</label><input type="range" id="sw" min="0.7" max="1.3" step="0.05" value="${c.w}"></div>
-    <div class="slider"><label for="sh">${en('tall')}</label><input type="range" id="sh" min="0.7" max="1.3" step="0.05" value="${c.h}"></div>
-    ${['eyes','mouth','ears','hat','back','pat'].map(group).join('')}
-    ${P.pets.length?`<div style="display:flex;flex-direction:column;gap:6px"><h3>חיית המחמד שלי</h3><div class="chips">${['none',...P.pets].map(k=>`<button class="ochip" data-a="setpet" data-v="${k}" aria-pressed="${(P.pet||'none')===k}">${k==='none'?'—':PETS[k].em}${en(k==='none'?'no pet':k)}</button>`).join('')}</div></div>`:''}
+    ${sec('אני',`<button class="ochip big" data-a="ch" data-k="g" data-v="girl" data-t="girl" aria-pressed="${girl}">👧 בת${en('girl')}</button><button class="ochip big" data-a="ch" data-k="g" data-v="boy" data-t="boy" aria-pressed="${!girl}">👦 בן${en('boy')}</button>`)}
+    ${sec('צבע עור',sw('skin',SKINS))}
+    ${sec(girl?'תסרוקות לבנות 💇‍♀️':'תספורות לבנים 💇‍♂️',mine.map(hairChip).join(''))}
+    <details class="more"><summary>${girl?'עוד תספורות (קצרות)':'עוד תסרוקות (ארוכות)'}</summary><div class="chips">${other.map(hairChip).join('')}</div></details>
+    ${sec('צבע שיער',sw('hc',HAIRC))}
+    <p class="sub">🔒 תסרוקות וצבעים נעולים קונים ביהלומים: נוגעים פעם אחת לראות מחיר, ופעם שנייה לקנות.</p>
+    ${sec('חולצה',sw('top',COLORS))}
+    ${sec('למטה',Object.entries(BOTTOMS).map(([v,[he,e]])=>`<button class="ochip" data-a="ch" data-k="bot" data-v="${v}" data-t="${e}" aria-pressed="${c.bot===v}">${he}${en(e)}</button>`).join(''))}
+    ${c.bot==='dress'?'':sec(c.bot==='skirt'?'צבע החצאית':'צבע המכנסיים',sw('bc',BOTC))}
+    ${sec('עיניים',Object.entries(HEYES).map(([v,[he,e]])=>`<button class="ochip" data-a="ch" data-k="eyes" data-v="${v}" data-t="${e}" aria-pressed="${c.eyes===v}">${he}${en(e)}</button>`).join(''))}
+    ${sec('אביזרים',acc('hat')+acc('back'))}
+    ${P.pets.length?sec('חיית המחמד שלי',['none',...P.pets].map(k=>`<button class="ochip" data-a="setpet" data-v="${k}" aria-pressed="${(P.pet||'none')===k}">${k==='none'?'—':PETS[k].em}${en(k==='none'?'no pet':k)}</button>`).join('')):''}
     <button class="btn" data-a="avdone">${en('Looking good!')} ✨</button>`)}
+function salonBuy(b,k,v){const pr=k==='hair'?hairPrice(v):hcPrice(v);const key=k+':'+v;if(salonOwned(key))return true;
+  if(!b.dataset.sure){document.querySelectorAll('[data-sure]').forEach(x=>{delete x.dataset.sure;x.classList.remove('ask')});b.dataset.sure='1';b.classList.add('ask');
+    const nm=k==='hair'?HAIRS[v][1]:(HAIRC.find(x=>x[0]===v)||[])[1];say(nm);toast(`💇 ${k==='hair'?'תסרוקת':'צבע שיער'} ב־💎${pr}. נוגעים שוב כדי לקנות`);return false}
+  if(P.gems<pr){toast(`חסרים ${fmt(pr-P.gems)} 💎. אפשר להרוויח בעבודה בעיירה או למשוך מהבנק`);sfx.bad();return false}
+  P.gems-=pr;P.salon.push(key);logm('מספרה: '+(k==='hair'?HAIRS[v][0]:'צבע שיער'),'Hair salon',-pr);sfx.coin();burst('💇 −'+pr+' 💎');renderHud();return true}
 
 /* --- map --- */
 function openMap(){PANEL='map';sheet(`<h2>לאן הולכים? 🗺️</h2><div class="mapgrid">
@@ -284,10 +303,10 @@ function openPlot(id){PANEL='plot';const head=npcHead('dana',gemTag());
 function buyPlot(id,mode){const pl=PLOTSC.find(x=>x.id===id);if(plotOwner(id))return;const head=npcHead('dana',gemTag());
   if(mode==='cash'){if(P.gems<pl.price){say("You don't have enough gems.");toast(`חסרים ${fmt(pl.price-P.gems)} 💎. אפשר למשוך מהבנק, לחסוך או לקחת הלוואה`);return}
     const finish=()=>{P.gems-=pl.price;logm('קניית מגרש: '+pl.he,'Land',-pl.price);gotPlot(pl)};
-    if(P.sk.math<3)finish();else openMoneyQ({head,ask:`You have ${fmt(P.gems)} gems. The land costs ${pl.price}. How many gems will you have left?`,ans:Math.round(P.gems*100)/100-pl.price,hint:`${fmt(P.gems)} פחות ${pl.price}`,onOk:finish});return}
+    finish();return}
   const down=pl.price/4;if(P.gems<down){toast(`למקדמה צריך ${down} 💎`);return}const pay=Math.ceil(pl.price*.75*1.1/5);
-  openMoneyQ({head,ask:`First you pay 25% of ${pl.price}. How many gems is that?`,ans:down,hint:`25% זה רבע: ${pl.price} לחלק ל־4`,onOk:()=>{P.gems-=down;P.loan={left:5,pay,plot:id};logm('מקדמה על מגרש: '+pl.he,'Down payment',-down);gotPlot(pl);
-    setTimeout(()=>toast(`🏦 ההלוואה תשולם ב־5 תשלומים של ${pay} 💎, אחד אחרי כל הרפתקה`),1600)}})}
+  P.gems-=down;P.loan={left:5,pay,plot:id};logm('מקדמה על מגרש: '+pl.he,'Down payment',-down);gotPlot(pl);
+  setTimeout(()=>toast(`🏦 שילמת מקדמה של ${down} 💎 (רבע מהמחיר). ההלוואה תשולם ב־5 תשלומים של ${pay} 💎, אחד אחרי כל הרפתקה`),1600)}
 function gotPlot(pl){P.plots.push(pl.id);save();closeSheet();updatePlotSigns();pushPresence(true);renderBar();renderHud();setNpcMarks();sfx.win();burst('🏡 '+pl.en+'!');say('Congratulations! This land is yours! Now you can build on it.');addXp(30)}
 
 /* --- Tom the tourist --- */
@@ -313,8 +332,7 @@ function crossTap(id,pt){const c=CROSS[id];
   if(!P.safeTask){walkTo(pt);return}
   if(!PEDGREEN){sfx.bad();say('Stop! The light is red. Wait for the green man.');toast('🔴 אדום! עוצרים ומחכים לאיש הירוק');return}
   const side=ME.pos.x-CX<c.x?1:-1;ME.path=[new THREE.Vector3(CX+c.x-side*2.6,0,CZ+c.z),new THREE.Vector3(CX+c.x+side*2.6,0,CZ+c.z)];
-  P.safeTask=false;P.badges.safe++;addGems(10,'אתגר מעבר חצייה','Safety star');addXp(20);sfx.win();burst('🚦⭐');say('Great! You waited for the green light. Well done!');save();renderQuestChip();setNpcMarks();
-  setTimeout(()=>{if(!PANEL)openPuzzle({head:npcHead('sam'),q:qSafety(),reward:5,onDone:ok=>{if(ok){P.badges.safe++;save()}}})},2600)}
+  P.safeTask=false;P.badges.safe++;addGems(10,'אתגר מעבר חצייה','Safety star');addXp(20);sfx.win();burst('🚦⭐');say('Great! You waited for the green light. Well done!');save();renderQuestChip();setNpcMarks();}
 
 /* --- Sea Tower escape room --- */
 function openEscape(){PANEL='escape';sheet(`<div class="npchead"><div class="face" style="background:#FEE2E2">🔐</div><div class="grow"><h2>${en('Sea Tower Escape')}</h2><p class="sub">חדר בריחה במגדל הים</p></div></div>
@@ -334,17 +352,18 @@ function openMall(){PANEL='mall';sheet(`<div class="npchead"><div class="face" s
   <button data-a="store" data-v="pets" style="background:#DCFCE7"><span class="ic">🐾</span>${en('Pets')}</button><button data-a="store" data-v="market" style="background:#DBEAFE"><span class="ic">🧺</span>${en('Supermarket')}</button></div>
   <p class="sub">💡 טיפ של Officer Sam: מי שהולך לאיבוד בקניון פונה למאבטח או לקופאית.</p><button class="btn ghost" data-a="close">סגירה</button>`);say('Welcome to the mall!')}
 const hm=m=>`8:${String(m).padStart(2,'0')}`;
-function openBus(id){PANEL='bus';const r=P.sk.math;const dest=id==='town'?'city':'town';const destName=dest==='city'?'Ashkelon':'Shapeland Town';let ask,ans,opts,hint;
-  if(r<3){const at=pick([20,30,40,45]),now=at-pick([5,10,15]);ask=`The bus to ${destName} comes at ${hm(at)}. It is ${hm(now)} now. How many minutes do we wait?`;ans=at-now;opts=numOpts(ans);hint=`${at} פחות ${now}`}
-  else{const every=pick([10,15,20]);let now=rnd(1,50);if(now%every===0)now++;const next=Math.ceil(now/every)*every;ask=`The bus to ${destName} comes every ${every} minutes. The first bus was at 8:00. It is ${hm(now)} now. When is the next bus?`;
-    ans=next;const set=new Set([next,next+every,Math.max(0,next-every),next+5]);while(set.size<4)set.add(next+5*set.size);opts=shuffle([...set]).map(v=>({html:`<span class="en" dir="ltr">${v>=60?'9:'+String(v-60).padStart(2,'0'):hm(v)}</span>`,val:String(v)}));hint=`מוסיפים ${every} דקות שוב ושוב מ־8:00 עד שעוברים את ${hm(now)}`}
-  PANEL_DATA={id,dest,ans:String(ans),opts,wrong:null,ask,hint};renderBus();say(ask)}
+function openBus(id){const dest=id==='town'?'city':'town';rideBus(dest)}
 function renderBus(){const d=PANEL_DATA;sheet(`<div class="npchead"><div class="face" style="background:#DBEAFE">🚌</div><div class="grow"><h2>${en('Bus Stop')}</h2><p class="sub">לוח זמנים</p></div></div>
   <div class="bubble">${en(d.ask)}</div><div class="row"><button class="spk" data-a="sayt" data-t="${esc(d.ask)}">🔊</button><button class="btn ghost mini" data-a="hint">💡</button></div><div class="hint" id="hintTxt" hidden>${esc(d.hint)}</div>
   <div class="opts">${d.opts.map((o,i)=>`<button class="opt ${d.wrong===o.val?'no':''}" data-a="busans" data-i="${i}">${o.html}</button>`).join('')}</div><button class="btn ghost" data-a="close">${en('I will walk')}</button>`)}
 function rideBus(dest){closeSheet();burst('🚌 💨');blip(330,.2,'square',.05);setTimeout(()=>blip(392,.25,'square',.05),200);say(dest==='city'?'Next stop: Ashkelon!':'Next stop: Shapeland Town!');
   setTimeout(()=>{teleport(dest,dest==='city'?[-12.5,-3.5]:[5.5,10.5]);addXp(5)},700)}
-function talkWalker(i){const w=WALKERS[i];w.pause=8;PANEL='walker';USED=new Set();
+const WLINES=["Hi! Nice to meet you!","Hello! What a sunny day!","Hi there! I love the beach in Ashkelon.","Hey! I'm going to the mall. See you!","Good morning! Do you like ice cream?","Hi! I like your hair!","Hello! The marina is so pretty today.","Hey! Let's play together later!"];
+function talkWalker(i){const w=WALKERS[i];w.pause=8;PANEL='walker';const line=pick(WLINES);
+  sheet(`<div class="npchead"><div class="face" style="background:var(--soft)">${charSVG(w.ch)}</div><div class="grow"><h2>${en(w.name)}</h2><p class="sub">${en('Someone in the street')}</p></div></div>
+    <div class="bubble">${en(line)}</div><div class="row"><button class="spk" data-a="sayt" data-t="${esc(line)}">🔊</button></div>
+    <div class="row"><button class="btn" data-a="close">${en('Bye!')} 👋</button><button class="btn ghost" data-a="wchat" data-v="${i}">💬 ${en('Chat')} <small dir="ltr" style="unicode-bidi:isolate">+3 💎</small></button></div>`);say(line)}
+function chatWalker(i){const w=WALKERS[i];w.pause=8;USED=new Set();
   openPuzzle({head:`<div class="npchead"><div class="face" style="background:var(--soft)">${charSVG(w.ch)}</div><div class="grow"><h2>${en(w.name)}</h2><p class="sub">${en('Someone in the street')}</p></div></div>`,q:qTalk(P.sk.talk),reward:3})}
 
 /* --- NPC routing & marks --- */

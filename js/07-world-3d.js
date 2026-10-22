@@ -64,7 +64,18 @@ const FLAG=(()=>{const g=new THREE.Group();const pole=mesh(new THREE.CylinderGeo
 
 /* NPCs */
 const NPCOBJ={};
-NPCS.forEach(n=>{const g=new THREE.Group();const b=mesh(new THREE.SphereGeometry(.62,24,18),mat(n.color));b.scale.set(1,1.2,1);b.position.y=.85;g.add(b);
+const NPCH={bella:{g:'girl',hair:'ponytail',hc:'#C8562A',skin:'#F6CBA5',top:'#FB923C',bot:'pants',bc:'#3B4A75'},leo:{g:'boy',hair:'messy',hc:'#EDE6D6',skin:'#E3A97F',top:'#8B5CF6',bot:'pants',bc:'#4C1D95'},
+  mia:{g:'girl',hair:'pigtails',hc:'#E8C268',skin:'#FFE3CC',top:'#F472B6',bot:'skirt',bc:'#FFFFFF',hat:'bow'},kim:{g:'girl',hair:'bun',hc:'#1F1B1A',skin:'#F6CBA5',top:'#60A5FA',bot:'dress',bc:'#60A5FA'},
+  dana:{g:'girl',hair:'bob',hc:'#1F1B1A',skin:'#C68657',top:'#10B981',bot:'skirt',bc:'#1D2A48'},tom:{g:'boy',hair:'short',hc:'#E8C268',skin:'#FFE3CC',top:'#F59E0B',bot:'shorts',bc:'#B08968'},
+  sam:{g:'boy',hair:'short',hc:'#1F1B1A',skin:'#9A6440',top:'#1E40AF',bot:'pants',bc:'#1E3A8A'}};
+NPCS.forEach(n=>{let g;if(NPCH[n.id]){g=human3D(Object.assign({kind:'human',eyes:'big'},NPCH[n.id]));const hd=g.userData.head;
+  if(n.id==='bella'){const h=mesh(new THREE.SphereGeometry(.39,18,10,0,Math.PI*2,0,Math.PI/2),mat(n.hat));h.position.y=.04;hd.add(h);const br=mesh(new THREE.CylinderGeometry(.47,.47,.04,18),mat(n.hat));br.position.y=.05;hd.add(br)}
+  if(n.id==='leo'){const h=mesh(new THREE.ConeGeometry(.36,.95,16),mat(n.hat));h.position.y=.66;h.rotation.z=.15;hd.add(h)}
+  if(n.id==='kim'){const h=mesh(new THREE.CylinderGeometry(.27,.24,.36,16),mat('#FFFFFF'));h.position.y=.42;hd.add(h);const top=mesh(new THREE.SphereGeometry(.32,14,10),mat('#FFFFFF'));top.position.y=.66;top.scale.y=.6;hd.add(top)}
+  if(n.id==='tom'){const h=mesh(new THREE.CylinderGeometry(.56,.56,.04,18),mat(n.hat));h.position.y=.2;hd.add(h);const c=mesh(new THREE.CylinderGeometry(.3,.34,.26,16),mat(n.hat));c.position.y=.33;hd.add(c)}
+  if(n.id==='sam'){const c=mesh(new THREE.CylinderGeometry(.39,.34,.24,16),mat(n.hat));c.position.y=.3;hd.add(c);const br=mesh(new THREE.BoxGeometry(.42,.04,.2),mat('#111827'));br.position.set(0,.22,.36);hd.add(br)}
+  if(n.id==='dana'){const b=mesh(new THREE.BoxGeometry(.3,.24,.1),mat('#7C4A2D'));b.position.set(.38,.42,.08);g.add(b)}}
+ else{g=new THREE.Group();const b=mesh(new THREE.SphereGeometry(.62,24,18),mat(n.color));b.scale.set(1,1.2,1);b.position.y=.85;g.add(b);
   [-1,1].forEach(s=>{const e=mesh(new THREE.SphereGeometry(.13,12,10),mat('#FFFFFF'));e.position.set(s*.22,1.1,.52);g.add(e);const p=mesh(new THREE.SphereGeometry(.07,10,8),mat('#1D2A48'));p.position.set(s*.22,1.1,.63);g.add(p)});
   const smile=mesh(new THREE.TorusGeometry(.12,.03,6,14,Math.PI),mat('#1D2A48'));smile.rotation.z=Math.PI;smile.position.set(0,.88,.6);g.add(smile);
   if(n.id==='bella'){const h=mesh(new THREE.SphereGeometry(.45,18,10,0,Math.PI*2,0,Math.PI/2),mat(n.hat));h.position.y=1.42;g.add(h);const br=mesh(new THREE.CylinderGeometry(.55,.55,.06,18),mat(n.hat));br.position.y=1.42;g.add(br)}
@@ -75,6 +86,7 @@ NPCS.forEach(n=>{const g=new THREE.Group();const b=mesh(new THREE.SphereGeometry
   if(n.id==='sam'){const c=mesh(new THREE.CylinderGeometry(.42,.36,.3,16),mat(n.hat));c.position.y=1.55;g.add(c);const br=mesh(new THREE.BoxGeometry(.5,.04,.25),mat('#111827'));br.position.set(0,1.42,.42);g.add(br)}
   if(n.id==='dana'){const b=mesh(new THREE.BoxGeometry(.35,.28,.12),mat('#7C4A2D'));b.position.set(.62,.7,.1);g.add(b)}
   if(n.id==='bear'){[-1,1].forEach(s=>{const ear=mesh(new THREE.SphereGeometry(.2,12,10),mat(n.color));ear.position.set(s*.4,1.5,0);g.add(ear)});const h=mesh(new THREE.CylinderGeometry(.3,.3,.4,16),mat(n.hat));h.position.y=1.7;g.add(h)}
+}
   const lb=label(n.name);lb.position.y=2.75;g.add(lb);const mk=marker('!','#EE4F7C');mk.position.y=3.35;g.add(mk);
   const[cx,cz]=ZC[n.zone];g.position.set(cx+n.x,0,cz+n.z);g.lookAt(cx,0,cz+(n.zone==='island'?2:0));rootify(g);g.userData.npc=n.id;g.userData.mk=mk;scene.add(g);NPCOBJ[n.id]=g});
 

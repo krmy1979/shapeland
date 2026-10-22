@@ -21,8 +21,12 @@ function act(a,d){
    case'rot':SEL.r=(SEL.r+1)%8;toast('↻ '+SEL.r*45+'°');break;
    case'avatar':openAvatar();break;
    case'avdone':closeSheet();if(!$('#title').hidden){$('#titleAv').innerHTML=charSVG(P.ch);break}rebuildMe();renderHud();pushPresence(true);renderExteriors();break;
-   case'ch':{if(ACC[d.v]&&!P.ward.includes(d.v)){say(d.t);toast(`${d.t} נמכר ב־Clothes Shop בעיירה 👗`);break}P.ch[d.k]=d.v;say(d.t);save();$('#pv').innerHTML=charSVG(P.ch);
+   case'salon':{const btn=document.querySelector(`[data-a="salon"][data-k="${d.k}"][data-v="${d.v}"]`);if(!salonBuy(btn,d.k,d.v))break;P.ch[d.k]=d.v;save();KEEP=true;openAvatar();if(!$('#title').hidden)$('#titleAv').innerHTML=charSVG(P.ch);break}
+   case'ch':{if(ACC[d.v]&&!P.ward.includes(d.v)){say(d.t);toast(`${d.t} נמכר ב־Clothes Shop בעיירה 👗`);break}P.ch[d.k]=d.v;say(d.t);
+     if(d.k==='g'){const g=d.v;if(HAIRS[P.ch.hair][2]!==g)P.ch.hair=g==='girl'?'long':'short';if(g==='boy'&&(P.ch.bot==='skirt'||P.ch.bot==='dress'))P.ch.bot='pants';if(g==='girl'&&P.ch.bot==='pants')P.ch.bot='skirt'}
+     save();if(d.k==='g'||d.k==='bot'){KEEP=true;openAvatar();if(!$('#title').hidden)$('#titleAv').innerHTML=charSVG(P.ch);break}$('#pv').innerHTML=charSVG(P.ch);
      document.querySelectorAll(`[data-a="ch"][data-k="${d.k}"]`).forEach(x=>x.setAttribute('aria-pressed',x.dataset.v===d.v));if(!$('#title').hidden)$('#titleAv').innerHTML=charSVG(P.ch);break}
+   case'wchat':chatWalker(+d.v);break;
    case'setpet':P.pet=d.v==='none'?null:d.v;save();rebuildPet();pushPresence(true);document.querySelectorAll('[data-a="setpet"]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.v===d.v));if(P.pet)say(P.pet);break;
    case'bank':openBank(true);break;
    case'arena':openArena();break;

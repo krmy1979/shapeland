@@ -4,7 +4,7 @@ const NET={room:null,state:'off',peers:[],myPeer:null,avatars:new Map(),names:ne
 const INVITED=new Set(),VISITORS=new Set(),VADDED=new Map();
 let VISIT=null;// {host,hostPeer,name,house,defs,mine:Set,pending}
 const HBUF={};
-const sanitizeCh=c=>{const o={};if(!c||typeof c!=='object')return P.ch;for(const k of['shape','pat','eyes','mouth','ears','back','hat']){const ok=CH[k].map(x=>x[0]);o[k]=ok.includes(c[k])?c[k]:ok[0]}
+const sanitizeCh=c=>{const o={};if(!c||typeof c!=='object')return P.ch;if(c.kind==='human')return sanitizeHuman(c);for(const k of['shape','pat','eyes','mouth','ears','back','hat']){const ok=CH[k].map(x=>x[0]);o[k]=ok.includes(c[k])?c[k]:ok[0]}
   o.color=COLORS.map(x=>x[0]).includes(c.color)?c.color:'#FF8FB1';o.w=clamp(+c.w||1,.7,1.3);o.h=clamp(+c.h||1,.7,1.3);return o};
 const nameOf=p=>String((p&&p.presence&&p.presence.n)||'חבר/ה').slice(0,14);
 const peerByKey=k=>NET.peers.find(p=>!p.sameTab&&(p.presence||{}).k===k);

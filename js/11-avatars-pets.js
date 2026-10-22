@@ -1,6 +1,6 @@
 /* Shapeland · a world by Shirel Yitzhak */
 /* ===================== AVATARS & PETS ===================== */
-function avatar3D(ch){const g=new THREE.Group();const col=ch.color,dk=shade(col,-.28),w=+ch.w||1,h=+ch.h||1;let body;
+function avatar3D(ch){if(ch&&ch.kind==='human')return human3D(ch);const g=new THREE.Group();const col=ch.color,dk=shade(col,-.28),w=+ch.w||1,h=+ch.h||1;let body;
   const M=mat(col),D=mat(dk);
   if(ch.shape==='tall'){body=mesh(new THREE.SphereGeometry(.5,24,18),M);body.scale.set(.82*w,1.35*h,.82*w)}
   else if(ch.shape==='pear'){body=mesh(new THREE.LatheGeometry([[0,0],[.42,.03],[.56,.28],[.5,.5],[.36,.72],[.18,.88],[0,.92]].map(p=>new THREE.Vector2(p[0],p[1])),24),M);body.scale.set(w,h,w)}

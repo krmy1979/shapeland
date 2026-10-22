@@ -166,3 +166,27 @@ input.txt{font:inherit;font-family:var(--f-display);font-size:18px;border:2px so
 @keyframes pop{0%{transform:scale(.3);opacity:0}20%{transform:scale(1.15);opacity:1}70%{transform:scale(1)}100%{transform:scale(1) translateY(-40px);opacity:0}}
 @media (max-width:420px){.tool{min-width:46px}.tool span{font-size:20px}.chip b{max-width:80px}.goods{grid-template-columns:repeat(3,1fr)}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* --- human avatar designer --- */
+.sw{position:relative;display:grid;place-items:center}
+.sw.lk span{font-size:13px;filter:drop-shadow(0 1px 1px #fff)}
+.sw.ask,.ochip.ask{outline:3px dashed var(--sun);outline-offset:2px}
+.ochip.big{font-size:17px;padding:8px 16px}
+details.more summary{cursor:pointer;color:var(--berry);font-weight:700;margin-bottom:6px}
+/* --- on-screen joystick & action buttons --- */
+#pad{left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + var(--padb,96px));display:flex;justify-content:space-between;align-items:flex-end;
+  padding-inline:max(14px,env(safe-area-inset-left,0px)) max(14px,env(safe-area-inset-right,0px));pointer-events:none}
+#pad>*{pointer-events:auto}
+.joy{width:128px;height:128px;border-radius:50%;background:radial-gradient(circle,#ffffff55 0 55%,#ffffff33 56%);border:3px solid #ffffffaa;box-shadow:0 4px 14px #1D2A4833;
+  display:grid;place-items:center;touch-action:none;user-select:none;-webkit-user-select:none}
+.joy.on{background:radial-gradient(circle,#ffffff77 0 55%,#ffffff44 56%)}
+.knob{width:56px;height:56px;border-radius:50%;background:linear-gradient(#FF8FB1,#EE4F7C);border:3px solid #fff;box-shadow:0 3px 0 #C23560;pointer-events:none;transition:transform .06s}
+.acts{display:grid;grid-template-columns:auto auto;grid-template-areas:"run jump" "roll jump";gap:10px;align-items:center}
+.act{border:3px solid #fff;border-radius:50%;width:62px;height:62px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:24px;line-height:1;
+  background:#ffffffcc;color:var(--ink);box-shadow:0 3px 0 #1D2A4833;touch-action:none;user-select:none;-webkit-user-select:none;cursor:pointer}
+.act small{font-size:11px;font-family:var(--f-body);margin-top:2px}
+.act.jump{grid-area:jump;width:84px;height:84px;font-size:34px;background:linear-gradient(#FFD36B,#FFB41F);box-shadow:0 4px 0 #C98500}
+.act.run{grid-area:run}.act.roll{grid-area:roll}
+.act.run[aria-pressed="true"]{background:linear-gradient(#7DE3A6,#1F9E60);color:#fff}
+.act:active{transform:translateY(2px)}
+@media (max-width:420px){.joy{width:112px;height:112px}.act{width:54px;height:54px;font-size:21px}.act.jump{width:74px;height:74px}}
