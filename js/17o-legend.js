@@ -104,7 +104,7 @@ function lgReady(){const s=LGS(),ch=s.ch;PANEL='lgready';const tips={4:'🪣 ע�
 ACTX.lggo=()=>{closeSheet();lgStart(LGS().ch)};
 
 /* ---------- starting and ending a trial ---------- */
-function lgStart(ch){lgCleanup();Object.assign(LG,{active:true,ch,hp:3,inv:1,t:0,cd:0,d:{}});const[cx,cz]=ZC.legend;ME.pos.set(cx,0,cz+12);ME.y=0;lightBtn();
+function lgStart(ch){lgCleanup();Object.assign(LG,{active:true,ch,hp:3,inv:1,t:0,cd:0,d:{}});const[cx,cz]=ZC.legend;const st={4:[0,-5],5:[6,4],6:[-5,5],7:[0,10]}[ch];ME.pos.set(cx+st[0],0,cz+st[1]);ME.y=0;lightBtn();
   ({4:startWell,5:startMountain,6:startGold,7:startBoss})[ch]();lgHud(LG.d.hud);say('Go!');if(AU.on)tone(523,.15,'square',.05)}
 function lgFail(){if(!LG.active)return;const ch=LG.ch;const s=LGS();s.fails[ch]=(s.fails[ch]||0)+1;save();lgCleanup();PANEL='lgfail';const n=s.fails[ch];
   if(AU.on){tone(196,.3,'triangle',.06);setTimeout(()=>tone(147,.5,'triangle',.06),250)}
@@ -122,9 +122,9 @@ function startWell(){const[wx,wz]=LW(0,-10);const g=new THREE.Group();const ring
   const lb=label('🪣 Bitter Well','#3F6212','#FFFFFF',.4);lb.position.y=2.2;g.add(lb);g.position.set(wx,0,wz);lgAdd(g);
   Object.assign(LG.d,{well:g,water,wx,wz,bitter:0,wave:0,left:0,spawnT:1.5,alive:0,phase:'waves',sizes:HELP()?[4,6,8]:[6,8,10]});nextWave()}
 function nextWave(){const d=LG.d;d.wave++;d.left=d.sizes[d.wave-1];d.hud=`גל ${d.wave}/3 · 🪣 ${d.bitter}/5`;lgHud(d.hud);toast(`🌊 גל ${d.wave}!`);say('Wave '+d.wave+'!')}
-function blob(){const d=LG.d;const a=Math.random()*Math.PI*2,r=RL-2.5;const[cx,cz]=ZC.legend;const g=new THREE.Group();const b=mesh(new THREE.SphereGeometry(.45,12,10),mat('#84CC16',{transparent:true,opacity:.85,emissive:'#4D7C0F',emissiveIntensity:.3}));b.position.y=.4;b.scale.y=.75;g.add(b);
+function blob(){const d=LG.d;const a=Math.random()*Math.PI*2,r=14;const cx=d.wx,cz=d.wz+3;const g=new THREE.Group();const b=mesh(new THREE.SphereGeometry(.45,12,10),mat('#84CC16',{transparent:true,opacity:.85,emissive:'#4D7C0F',emissiveIntensity:.3}));b.position.y=.4;b.scale.y=.75;g.add(b);
   [-1,1].forEach(k=>{const e=mesh(new THREE.SphereGeometry(.07,6,4),mat('#111827'));e.position.set(k*.14,.5,.36);g.add(e)});g.position.set(cx+Math.cos(a)*r,0,cz+Math.sin(a)*r);lgAdd(g);d.alive++;
-  const sp=(HELP()?.95:1.35)+d.wave*.15;LG.ents.push({g,body:b,kind:'blob',shootable:true,r:.7,aimY:.4,
+  const sp=(HELP()?.75:1)+d.wave*.12;LG.ents.push({g,body:b,kind:'blob',shootable:true,r:.7,aimY:.4,
     hit(){this.die()},die(){if(this.dead)return;this.dead=true;scene.remove(this.g);d.alive--;fxBurst(this.g.position.x,.4,this.g.position.z,'#84CC16',12,1.6);sfx.pop()},
     up(dt){const dx=d.wx-this.g.position.x,dz=d.wz-this.g.position.z,dd=Math.hypot(dx,dz);this.g.position.x+=dx/dd*sp*dt;this.g.position.z+=dz/dd*sp*dt;this.body.scale.y=.7+Math.abs(Math.sin(LG.t*6+this.g.position.x))*.2;this.g.rotation.y=Math.atan2(dx,dz);
       if(dd<1.8){this.die();d.bitter++;floatText('🤢 +1');if(AU.on)tone(140,.2,'sawtooth',.05);d.hud=`גל ${d.wave}/3 · 🪣 ${d.bitter}/5`;lgHud(d.hud);if(d.bitter>=5){toast('🪣 הבאר התמלאה במרירות…');lgFail()}return}
@@ -142,7 +142,7 @@ function stepWell(dt){const d=LG.d;if(d.phase==='waves'){if(d.left>0){d.spawnT-=
 /* ---------- 5: the Mountain of Shapes ---------- */
 const MPL=[];
 function startMountain(){const[mx,mz]=LW(13,-3);const N=12,step=HELP()?.62:.75;MPL.length=0;
-  for(let i=0;i<N;i++){const a=i*.62,r=3.3,x=mx+Math.cos(a)*r,z=mz+Math.sin(a)*r,top=step*(i+1);const c=mesh(new THREE.CylinderGeometry(.85,.95,top,8),mat(['#A8A29E','#78716C','#D6D3D1'][i%3]));c.position.set(x,top/2,z);lgAdd(c);
+  for(let i=0;i<N;i++){const a=i*.5,r=3.3,x=mx+Math.cos(a)*r,z=mz+Math.sin(a)*r,top=step*(i+1);const c=mesh(new THREE.CylinderGeometry(.85,.95,top,8),mat(['#A8A29E','#78716C','#D6D3D1'][i%3]));c.position.set(x,top/2,z);lgAdd(c);
     const pl={x0:x-.8,x1:x+.8,z0:z-.8,z1:z+.8,top};PLATS.push(pl);MPL.push(pl)}
   const st=step*N+.45;const sm=mesh(new THREE.CylinderGeometry(2.3,2.6,st,10),mat('#57534E'));sm.position.set(mx,st/2,mz);lgAdd(sm);const sp={x0:mx-2.2,x1:mx+2.2,z0:mz-2.2,z1:mz+2.2,top:st};PLATS.push(sp);MPL.push(sp);
   const tab=new THREE.Group();[-1,1].forEach(k=>{const t=mesh(new THREE.BoxGeometry(.8,1.2,.15),mat('#E7E5E4',{emissive:'#FDE68A',emissiveIntensity:.2}));t.position.set(k*.45,.6,0);tab.add(t)});tab.position.set(mx,st,mz);lgAdd(tab);
