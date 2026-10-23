@@ -15,7 +15,7 @@ function loop(){const dt=Math.min(clock.getDelta(),.05)*(window.HITSTOP>0?.15:1)
     ME.obj.position.x=ME.pos.x;ME.obj.position.z=ME.pos.z;
     if(ME.pet){const bx=ME.pos.x-Math.sin(ME.obj.rotation.y)*.9+Math.cos(ME.obj.rotation.y)*.6,bz=ME.pos.z-Math.cos(ME.obj.rotation.y)*.9-Math.sin(ME.obj.rotation.y)*.6;
       const dx=bx-ME.pet.position.x,dz=bz-ME.pet.position.z;const dd=Math.hypot(dx,dz);if(dd>12){ME.pet.position.set(bx,0,bz)}else if(dd>.05){ME.pet.position.x+=dx*.08;ME.pet.position.z+=dz*.08;ME.pet.rotation.y=Math.atan2(dx,dz);ME.pet.position.y=Math.abs(Math.sin(t*14))*.08}else ME.pet.position.y=0}}
-  sun.position.set(controls.target.x+12,24,controls.target.z+10);sun.target.position.copy(controls.target);
+  sun.position.set(controls.target.x+12,14,controls.target.z-22);sun.target.position.copy(controls.target);
   NET.avatars.forEach(a=>{if(a.tx==null||!a.obj.visible)return;const o=a.obj,dx=a.tx-o.position.x,dz=a.tz-o.position.z,dd=Math.hypot(dx,dz);if(dd>.03){o.position.x+=dx*.15;o.position.z+=dz*.15;o.rotation.y=Math.atan2(dx,dz);o.position.y=(a.ty||0)+(a.ty?0:Math.abs(Math.sin(t*12))*(o.userData.limbs?.05:.1));animLimbs(o,t,!a.ty)}else{o.position.y+=((a.ty||0)-o.position.y)*.2;animLimbs(o,t,false)}});
   OBJ.forEach(m=>{const g=m.userData.grow;if(g){const s=m.scale.x+(g-m.scale.x)*.25;m.scale.setScalar(s);if(Math.abs(g-s)<.01){m.scale.setScalar(g);m.userData.grow=0}}});
   Object.values(NPCOBJ).forEach((g,i)=>{g.userData.mk.position.y=3.35+Math.sin(t*3+i)*.12;if(g.userData.limbs)g.children[0].scale.y=1+Math.sin(t*2+i)*.015;else g.children[0].scale.y=1.2+Math.sin(t*2+i)*.025});
