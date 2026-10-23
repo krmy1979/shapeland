@@ -134,3 +134,40 @@ houseExterior=function(color,name){const g=new THREE.Group();const body=new THRE
   const pot=new THREE.Mesh(new THREE.CylinderGeometry(.18,.13,.3,8),facet('#B45309'));pot.position.set(.75,.15,1.35);g.add(pot);const pl=new THREE.Mesh(new THREE.IcosahedronGeometry(.22,0),facet('#4D7C3A'));pl.position.set(.75,.42,1.35);g.add(pl);
   const lb=label(name,'#FFF6E3','#5B3A1E',.38);lb.position.y=3.4;g.add(lb);return rootify(g)};
 EXT.forEach((v,k)=>{scene.remove(v.g)});EXT.clear();if(typeof renderExteriors==='function')renderExteriors();
+
+/* ===================== ART STEP 3 · THE REALM FLOATS: sky islands above a sea of clouds ===================== */
+const PALL0={top:'#141133',hor:'#5B3E8F',bot:'#2A2350',fog:'#3A2E62',sun:'#C4B5FD'},PALL1={top:'#2C6FCB',hor:'#FFC98A',bot:'#F2BC80',fog:'#F7D3A6',sun:'#FFD38C'};
+const PALNIGHT={top:'#05081A',hor:'#1E2A5A',bot:'#0B1026',fog:'#141B3A',sun:'#C7D2FE'},PALDUSK={top:'#3B4C8C',hor:'#FF9A55',bot:'#F07C3A',fog:'#F2A36B',sun:'#FFC37A'};
+let LGX=null;
+function buildFloat(){if(LGX||!LGW)return;const[cx,cz]=ZC.legend;const g=new THREE.Group();
+  const strata=canvasTex(512,128,(c,w,h)=>{let y=0;while(y<h){const bh=6+rnd01()*18;c.fillStyle=['#8C6A4A','#6E5238','#A07E5A','#5C4630'][Math.floor(rnd01()*4)];c.fillRect(0,y,w,bh);y+=bh}},1);strata.wrapS=THREE.RepeatWrapping;strata.repeat.set(8,1);
+  const under=new THREE.Mesh(new THREE.ConeGeometry(RL+1.2,16,24,4),new THREE.MeshStandardMaterial({map:strata,roughness:.95,flatShading:true}));under.rotation.x=Math.PI;under.position.set(cx,-8.6,cz);g.add(under);
+  const p=under.geometry.attributes.position;for(let i=0;i<p.count;i++){if(p.getY(i)<7.9){p.setX(i,p.getX(i)*(.9+rnd01()*.2));p.setZ(i,p.getZ(i)*(.9+rnd01()*.2))}}under.geometry.computeVertexNormals();
+  /* little floating islets around */
+  for(let i=0;i<9;i++){const a=i/9*Math.PI*2+rnd01()*.4,r=RL+10+rnd01()*26,s=1.5+rnd01()*3.5;const isl=new THREE.Group();const top=new THREE.Mesh(new THREE.CylinderGeometry(s,s*.9,.6,9),facet('#7FB24E'));isl.add(top);
+    const bot=new THREE.Mesh(new THREE.ConeGeometry(s*.9,s*2.6,8),new THREE.MeshStandardMaterial({map:strata,flatShading:true}));bot.rotation.x=Math.PI;bot.position.y=-s*1.3-.3;isl.add(bot);
+    if(rnd01()<.7){const tr=new THREE.Mesh(new THREE.IcosahedronGeometry(s*.45,0),facet('#93A877'));tr.position.y=s*.6;isl.add(tr);const tk=new THREE.Mesh(new THREE.CylinderGeometry(.1,.15,s*.5,5),facet('#7D6B57'));tk.position.y=s*.25;isl.add(tk)}
+    isl.position.set(cx+Math.cos(a)*r,-2+rnd01()*10,cz+Math.sin(a)*r);isl.userData.bob=rnd01()*6;g.add(isl)}
+  /* a sea of clouds below */
+  const ct=canvasTex(512,512,(c,w,h)=>{c.fillStyle='rgba(0,0,0,0)';c.fillRect(0,0,w,h);for(let i=0;i<160;i++){const x=rnd01()*w,y=rnd01()*h,r=20+rnd01()*50;const gr=c.createRadialGradient(x,y,0,x,y,r);gr.addColorStop(0,'rgba(255,255,255,.9)');gr.addColorStop(1,'rgba(255,255,255,0)');c.fillStyle=gr;c.beginPath();c.arc(x,y,r,0,7);c.fill()}},3);
+  const sea=new THREE.Mesh(new THREE.PlaneGeometry(520,520),new THREE.MeshBasicMaterial({map:ct,transparent:true,opacity:.95,depthWrite:false,fog:false}));sea.rotation.x=-Math.PI/2;sea.position.set(cx,-14,cz);g.add(sea);
+  const sea2=sea.clone();sea2.material=sea.material.clone();sea2.material.map=ct.clone();sea2.material.map.needsUpdate=true;sea2.position.y=-17;sea2.material.color=new THREE.Color('#DDD6FE');g.add(sea2);
+  /* waterfalls pour off the edge */
+  const wt=canvasTex(64,256,(c,w,h)=>{for(let y=0;y<h;y+=4){c.fillStyle=`rgba(${190+rnd01()*60},${230+rnd01()*25},255,${.5+rnd01()*.4})`;c.fillRect(0,y,w,3)}},1);wt.wrapT=THREE.RepeatWrapping;
+  const falls=[];[1.2,4.3].forEach(a=>{const f=new THREE.Mesh(new THREE.PlaneGeometry(2.4,16),new THREE.MeshBasicMaterial({map:wt.clone(),transparent:true,opacity:.85,side:THREE.DoubleSide,depthWrite:false}));f.material.map.needsUpdate=true;f.material.map.wrapT=THREE.RepeatWrapping;
+    f.position.set(cx+Math.cos(a)*(RL+.9),-7.5,cz+Math.sin(a)*(RL+.9));f.lookAt(cx,-7.5,cz);g.add(f);falls.push(f)});
+  scene.add(g);LGX={g,sea,sea2,falls}}
+const _buildLegendX=buildLegend;buildLegend=function(){_buildLegendX();buildFloat()};
+const _legendSkyX=legendSky;legendSky=function(){_legendSkyX();if(ME.zone==='legend')paintRealm()};
+function paintRealm(){const s=ST();const k=clamp(((s.shards||0)-3)/4+((s.ch||0)>7?.2:0),0,1);const night=document.body.classList.contains('lgnight'),dusk=LG.active&&LG.ch===14;
+  const A=night?PALNIGHT:dusk?PALDUSK:null;const pick2=key=>A?A[key]:lerpC(PALL0[key],PALL1[key],k);const u=LOL.dome.material.uniforms;
+  u.top.value.set(pick2('top'));u.hor.value.set(pick2('hor'));u.bot.value.set(pick2('bot'));u.sunCol.value.set(pick2('sun'));u.glow.value=night?.2:.5+k*.7;scene.fog.color.set(pick2('fog'));scene.background.set(pick2('fog'));
+  if(hemi){hemi.color.set(night?'#7C83B8':lerpC('#B7A8E0','#FFF0D2',k));hemi.groundColor.set(lerpC('#3B2F5C','#B88A55',k));hemi.intensity=night?.45:.55+k*.25}sun.color.set(pick2('sun'));sun.intensity=night?.35:.7+k*.6;
+  renderer.domElement.style.filter=night?'saturate(.9)':`saturate(${(1+k*.15).toFixed(2)})`}
+const _stepLandX=stepLand;stepLand=function(dt){_stepLandX(dt);const inL=ME.zone==='legend';if(inL){LOL.dome.visible=true;water.visible=false;if(LOL.foam)LOL.foam.visible=false;paintRealm()}else{if(LOL.foam)LOL.foam.visible=OUTDOOR(ME.zone)}
+  if(LGX){LGX.g.visible=inL;if(inL){LGX.sea.material.map.offset.x+=dt*.003;LGX.sea2.material.map.offset.y+=dt*.002;LGX.falls.forEach(f=>f.material.map.offset.y-=dt*.8);LGX.g.children.forEach(o=>{if(o.userData.bob!==undefined){o.userData.bob+=dt;o.position.y+=Math.sin(o.userData.bob)*.004}})}}};
+const _leaveLegendX=leaveLegend;leaveLegend=function(){_leaveLegendX();water.visible=true;setAtmos(ME.zone)};
+/* the realm's ground: a meadow that starts dusky violet and turns green and golden as the shards return */
+const _paintLegendX=paintLegend;paintLegend=function(){_paintLegendX();if(!LGW)return;const k=clamp(ST().shards-3,0,4)/4;if(!LOL.grassL){LOL.grassL=ground.material.map.clone();LOL.grassL.needsUpdate=true}
+  LGW.ground.material=new THREE.MeshStandardMaterial({map:LOL.grassL,color:lerpC('#8C7AB8','#FFFFFF',k),roughness:.95});LGW.g.children.forEach(o=>{if(o.geometry&&o.geometry.type==='TorusGeometry')o.material=new THREE.MeshStandardMaterial({color:lerpC('#7C3AED','#E9D8A6',k),emissive:lerpC('#5B21B6','#000000',k),emissiveIntensity:.5})})};
+const _buildLegendY=buildLegend;buildLegend=function(){_buildLegendY();paintLegend()};
