@@ -96,23 +96,25 @@ const INTROS={
   7:[['🌫️','Grabb אסף את כל הערפל לענן אחד גדול. זה הקרב האחרון.','Enough! I will take the whole Crystal for MYSELF!','grabb'],
      ['🤝','אבל לא באת לבד. כל מי שעזרת לו בא לעזור לך: Bella, Leo, Mia, Captain Shell ו־Mosh.','You helped us, now we help you! Together!'],
      ['🔴','נזהרים מהעיגולים האדומים, יורים אור, וכשהוא מרים מגן של "שלי", אוספים 3 כדורי אור.','Dodge the red circles, shoot light, and break his shield together!']]};
-function legendArrive(){const s=LGS();if(s.ch>7){toast('🌈 הממלכה שקטה ומוארת. תודה לך!');return}const ch=s.ch;s.seen=s.seen||{};if(!s.seen[ch]){s.seen[ch]=1;save();cut(INTROS[ch],()=>lgReady())}else lgReady()}
-ACTX.lgready=()=>{if(ST().ch>7){toast('כל המבחנים הושלמו 🌈');return}if(LG.active){toast('המשימה כבר רצה ⚔️');return}lgReady()};
-function lgReady(){const s=LGS(),ch=s.ch;PANEL='lgready';const tips={4:'🪣 עוצרים 3 גלים של יצורי ג׳לי לפני שהם מגיעים לבאר',5:'⛰️ מטפסים בקפיצות לראש ההר ועונים על 5 שאלות',6:'💛 מעירים 8 Shapelings ונזהרים מה־Grumblers',7:'😈 הקרב הגדול נגד Lord Grabb'};
+function legendArrive(){const s=LGS();if(!LGCH[s.ch]){toast('🌈 הממלכה שקטה ומוארת. תודה לך!');return}const ch=s.ch;s.seen=s.seen||{};if(!s.seen[ch]){s.seen[ch]=1;save();cut(INTROS[ch],()=>lgReady())}else lgReady()}
+ACTX.lgready=()=>{if(!LGCH[ST().ch]){toast('כל המבחנים הושלמו 🌈');return}if(LG.active){toast('המשימה כבר רצה ⚔️');return}lgReady()};
+function lgReady(){const s=LGS(),ch=s.ch;PANEL='lgready';const tips={4:'🪣 עוצרים 3 גלים של יצורי ג׳לי לפני שהם מגיעים לבאר',5:'⛰️ מטפסים בקפיצות לראש ההר ועונים על 5 שאלות',6:'💛 מעירים 8 Shapelings ונזהרים מה־Grumblers',7:'😈 הקרב הגדול נגד Lord Grabb'};if(LGCH[ch].tip)tips[ch]=LGCH[ch].tip;
   sheet(`<h2>${CHAPTERS[ch].em} ${CHAPTERS[ch].he} · ${en(CHAPTERS[ch].en)}</h2><p class="sub">${tips[ch]}</p><p class="sub">❤️❤️❤️ · ✨ יורים אור · ⤴ קופצים על אויבים${s.fails[ch]?` · ניסיונות: ${s.fails[ch]}`:''}</p>
   ${HELP()?'<p class="sub">📨 ה־Keeper עונה לך ועוזר במשימה הזאת ✓</p>':''}<div class="row"><button class="btn sun" data-a="lggo">⚔️ ${en('Start!')}</button><button class="btn ghost" data-a="close">אחר כך</button></div>`)}
 ACTX.lggo=()=>{closeSheet();lgStart(LGS().ch)};
 
+/* ---------- the chapter registry (later acts add their own) ---------- */
+const LGCH={};
 /* ---------- starting and ending a trial ---------- */
-function lgStart(ch){lgCleanup();Object.assign(LG,{active:true,ch,hp:ch===7?5:3,max:ch===7?5:3,inv:1,t:0,cd:0,d:{}});const[cx,cz]=ZC.legend;const st={4:[0,-5],5:[6,4],6:[-5,5],7:[0,10]}[ch];ME.pos.set(cx+st[0],0,cz+st[1]);ME.y=0;lightBtn();
-  ({4:startWell,5:startMountain,6:startGold,7:startBoss})[ch]();lgHud(LG.d.hud);say('Go!');if(AU.on)tone(523,.15,'square',.05)}
+function lgStart(ch){lgCleanup();const C=LGCH[ch];Object.assign(LG,{active:true,ch,hp:C.hp||3,max:C.hp||3,inv:1,t:0,cd:0,d:{}});const[cx,cz]=ZC.legend;const st=C.at||[0,10];ME.pos.set(cx+st[0],0,cz+st[1]);ME.y=0;lightBtn();
+  C.start();lgHud(LG.d.hud);say('Go!');if(AU.on)tone(523,.15,'square',.05)}
 function lgFail(){if(!LG.active)return;const ch=LG.ch;const s=LGS();s.fails[ch]=(s.fails[ch]||0)+1;save();lgCleanup();PANEL='lgfail';const n=s.fails[ch];
   if(AU.on){tone(196,.3,'triangle',.06);setTimeout(()=>tone(147,.5,'triangle',.06),250)}
   sheet(`<h2>😵 ${en('Lord Grabb won… this time.')}</h2><div class="bubble evilb">${en('HAHAHA! You will never beat me alone!')}</div>
   <p class="sub">${n>=2&&!s.help[ch]?'נתקעת? בעולם הזה יש מנהל: Keeper of Shapeland. כותבים לו מכתב באנגלית ומבקשים עזרה. מי שלא מבקש, ממשיך להפסיד…':'אפשר לנסות שוב. כל ניסיון מלמד משהו.'}</p>
   <div class="row"><button class="btn sun" data-a="lggo">🔄 ${en('Try again')}</button>${n>=2&&!s.help[ch]?`<button class="btn" data-a="keeper">📨 ${en('Write to the Keeper')}</button>`:''}<button class="btn ghost" data-a="close">אחר כך</button></div>`);say('HAHAHA! You will never beat me alone!')}
-function lgEnd(win,quiet){const ch=LG.ch;lgCleanup();if(quiet||!win)return;const s=LGS();s.shards=Math.max(s.shards,ch);s.ch=ch+1;save();paintShards();paintLegend();legendSky();
-  burst(`<span style="color:${SHARDC[ch-1]}">💎</span> ${CHAPTERS[ch].he}`);sfx.win();if(typeof shake==='function')shake(.25,.4);fxBurst(ME.pos.x,2,ME.pos.z,SHARDC[ch-1],40,3.5);
+function lgEnd(win,quiet){const ch=LG.ch;lgCleanup();if(quiet||!win)return;const s=LGS();if(ch<=7)s.shards=Math.max(s.shards,ch);s.ch=ch+1;save();paintShards();paintLegend();legendSky();
+  burst(`<span style="color:${SHARDC[ch-1]||'#FDE047'}">${ch<=7?'💎':'🕯️'}</span> ${CHAPTERS[ch].he}`);sfx.win();if(typeof shake==='function')shake(.25,.4);fxBurst(ME.pos.x,2,ME.pos.z,SHARDC[ch-1]||'#FDE047',40,3.5);
   addGems(15+ch*2,'מבחן: '+CHAPTERS[ch].he,'Trial won');addXp(60);kind(3,'ניצחת את '+CHAPTERS[ch].he);renderQuestChip();updateMoshMark()}
 function hiddenHand(he,enl){const s=LGS();if(!s.hh.includes(he)){s.hh.push(he);save()}toast('🖐️ '+he);say(enl);if(AU.on){tone(1318,.4,'sine',.05);setTimeout(()=>tone(1760,.5,'sine',.04),180)}}
 
@@ -223,7 +225,7 @@ function finale(){const s=LGS();s.done1=1;s.shards=7;save();paintShards();P.badg
 /* ---------- the Keeper of Shapeland: write in English to ask for help ---------- */
 const TOPIC={4:/water|well|bitter|blob|goo|slime|wave/,5:/mountain|climb|fog|ghost|top|question|jump/,6:/gold|golden|statue|wake|grumbler|shapeling|steal/,7:/grabb|lord|boss|shield|fight|fog|bomb|battle/};
 ACTX.keeper=()=>openKeeper();
-function openKeeper(){const s=LGS();PANEL='keeper';const ch=s.ch;const stuck=ch>=4&&ch<=7;
+function openKeeper(){const s=LGS();PANEL='keeper';const ch=s.ch;const stuck=!!LGCH[ch];
   sheet(`<div class="npchead"><div class="face" style="background:#E0E7FF">🏛️</div><div class="grow"><h2>${en('The Keeper of Shapeland')}</h2><p class="sub">המנהל של העולם · עונה רק למכתבים באנגלית</p></div></div>
   <p class="sub">${stuck?`נתקעת ב${CHAPTERS[ch].he}? כותבים מכתב מנומס באנגלית: למי כותבים, מה הבעיה, ומה מבקשים.`:'אפשר לכתוב ל־Keeper בכל זמן ולבקש רמז.'}</p>
   <textarea id="kpIn" dir="ltr" rows="4" placeholder="Dear Keeper, ..." class="kp"></textarea>
@@ -237,13 +239,13 @@ ACTX.kpsend=()=>{const t=($('#kpIn')||{}).value||'';const s=LGS(),ch=s.ch;const 
   if(!/help|assist/.test(low)){no('What do you need? Use the word help.','מה את צריכה? משתמשים במילה help');return}
   if(!/please|could you|can you|would you/.test(low)){no('The Keeper likes polite letters.','ה־Keeper אוהב מכתבים מנומסים. מוסיפים please 🙂');return}
   let reply,he,granted=false;
-  if(ch>=4&&ch<=7&&!TOPIC[ch].test(low)){reply='Dear friend, I want to help! But what is the problem? Tell me more.';he='"אני רוצה לעזור! אבל מה הבעיה? ספרי לי יותר." מוסיפים במכתב מה קשה (למשל: water, mountain, gold, Grabb)'}
-  else if(ch>=4&&ch<=7){granted=!s.help[ch];s.help[ch]=1;reply={4:'Dear friend, I will slow the blobs, and the wind will be with you.',5:'Dear friend, I will make the steps lower and the ghosts slower.',6:'Dear friend, I will send fewer Grumblers, and they will sleep longer.',7:"Dear friend, Grabb's fog will be slower, and your friends will shine brighter."}[ch];
+  if(LGCH[ch]&&!LGCH[ch].topic.test(low)){reply='Dear friend, I want to help! But what is the problem? Tell me more.';he='"אני רוצה לעזור! אבל מה הבעיה? ספרי לי יותר." מוסיפים במכתב באנגלית מה בדיוק קשה במשימה'}
+  else if(LGCH[ch]){granted=!s.help[ch];s.help[ch]=1;reply=LGCH[ch].reply||{4:'Dear friend, I will slow the blobs, and the wind will be with you.',5:'Dear friend, I will make the steps lower and the ghosts slower.',6:'Dear friend, I will send fewer Grumblers, and they will sleep longer.',7:"Dear friend, Grabb's fog will be slower, and your friends will shine brighter."}[ch];
     he='"חבר/ה יקר/ה, אני אעזור לך." המשימה עכשיו קלה יותר ✓'}
   else{reply='Dear friend, '+objective().replace(/[^\x20-\x7E]/g,'').trim()+' Keep going!';he=objective()}
   s.letters.unshift({t:txt.slice(0,200),r:reply});s.letters=s.letters.slice(0,20);learnResult('sentence',true);save();if(granted){kind(1,'ביקשת עזרה בחוכמה');hiddenHand('מכתב זוהר הגיע בחזרה…','A glowing letter came back…')}
   PANEL='kpreply';sfx.win();sheet(`<h2>✉️ ${en('A letter from the Keeper')}</h2><div class="letter" dir="ltr">${esc(reply)}<br><br>— The Keeper of Shapeland 🏛️</div><p class="sub">${he}</p>
-    <div class="row"><button class="spk" data-a="sayt" data-t="${esc(reply)}">🔊</button>${ch>=4&&ch<=7&&granted?`<button class="btn sun" data-a="lggo">⚔️ ${en('Try again')}</button>`:''}<button class="btn ghost" data-a="close">סגירה</button></div>`);say(reply)};
+    <div class="row"><button class="spk" data-a="sayt" data-t="${esc(reply)}">🔊</button>${LGCH[ch]&&granted?`<button class="btn sun" data-a="lggo">⚔️ ${en('Try again')}</button>`:''}<button class="btn ghost" data-a="close">סגירה</button></div>`);say(reply)};
 
 /* ---------- Mosh, the HUD and the loop ---------- */
 const _talkMoshL=talkMosh;talkMosh=function(){const s=LGS();if(s.ch<4)return _talkMoshL();placePortal();
@@ -257,9 +259,10 @@ function stepLegend(dt,t){if(PORTAL){PORTAL.userData.ring.rotation.z+=dt;if(ME.z
   if(LGW){LGW.back.userData.ring.rotation.z-=dt}if(!LG.active)return;LG.t+=dt;if(ME.zone!=='legend'){lgEnd(false,true);return}if(!$('#sheet').hidden)return;
   LG.cd=Math.max(0,LG.cd-dt);LG.inv=Math.max(0,LG.inv-dt);if(ME.obj&&LG.inv>0)ME.obj.visible=Math.floor(LG.t*12)%2===0;else if(ME.obj)ME.obj.visible=true;
   stepShots(dt);for(const e of LG.ents)if(!e.dead&&e.up)e.up(dt);LG.ents=LG.ents.filter(e=>!e.dead);LG.fx=LG.fx.filter(f=>{const k=f.up(dt);if(!k&&f.o.parent)scene.remove(f.o);return k});
-  if(!LG.active)return;({4:stepWell,5:stepMountain,6:()=>{},7:()=>{}})[LG.ch](dt);if(LG.ch!==5&&MPL.length){MPL.forEach(p=>{const i=PLATS.indexOf(p);if(i>=0)PLATS.splice(i,1)});MPL.length=0}}
+  if(!LG.active)return;(LGCH[LG.ch].step||(()=>{}))(dt);if(LG.ch!==5&&MPL.length){MPL.forEach(p=>{const i=PLATS.indexOf(p);if(i>=0)PLATS.splice(i,1)});MPL.length=0}}
 const _lgCleanup0=lgCleanup;lgCleanup=function(){_lgCleanup0();MPL.forEach(p=>{const i=PLATS.indexOf(p);if(i>=0)PLATS.splice(i,1)});MPL.length=0;if(ME.obj)ME.obj.visible=true;
   for(let i=EXTRA_PICK.length-1;i>=0;i--)if(EXTRA_PICK[i].userData&&EXTRA_PICK[i].userData.talker==='Shapeling')EXTRA_PICK.splice(i,1)};
+Object.assign(LGCH,{4:{start:startWell,step:stepWell,at:[0,-5],topic:TOPIC[4]},5:{start:startMountain,step:stepMountain,at:[6,4],topic:TOPIC[5]},6:{start:startGold,at:[-5,5],topic:TOPIC[6]},7:{start:startBoss,at:[0,10],hp:5,topic:TOPIC[7]}});
 (function startLegend(){placePortal()})();
 /* safety: never let a bad number break the camera */
 const _stepCamL=stepCamera;stepCamera=function(dt){if(!isFinite(ME.y))ME.y=0;if(!isFinite(CAM.ty))CAM.ty=0;if(ME.zone==='legend'&&Math.hypot(ME.pos.x-ZC.legend[0],ME.pos.z-ZC.legend[1])>RL){ME.pos.x=ZC.legend[0];ME.pos.z=ZC.legend[1]+12}return _stepCamL(dt)};

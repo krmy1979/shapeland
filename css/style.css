@@ -318,3 +318,9 @@ details summary{font-family:var(--f-display);font-size:16px;cursor:pointer;margi
 .sbart.evil{background:radial-gradient(circle,#4C1D95,#1E1B4B);}.bubble.evilb{background:#2E1065;color:#F5F3FF}
 textarea.kp{width:100%;box-sizing:border-box;border-radius:14px;border:2px solid #C7D2FE;padding:10px;font:inherit;font-size:16px;text-align:left}
 .letter{background:#FFFBEB;border:2px solid #E5D9B6;border-radius:14px;padding:14px;font-family:Georgia,serif;font-size:17px;text-align:left;line-height:1.5}
+/* act II */
+.tribes{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:7px}
+.trb{border:3px solid transparent;border-radius:16px;background:#fff;padding:7px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;font:inherit;cursor:pointer;box-shadow:0 3px 0 var(--tc);text-align:center}
+.trb .em{font-size:30px}.trb b{font-size:13px}.trb small{font-size:10.5px;opacity:.75}.trb.on{border-color:var(--tc);background:#FFFBEB}
+.btn.shofar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 150px);z-index:30;font-size:22px;padding:14px 22px;animation:pulseS 1s infinite}
+@keyframes pulseS{50%{transform:translateX(-50%) scale(1.08)}}
