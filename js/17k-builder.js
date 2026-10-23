@@ -77,12 +77,12 @@ const _renderTrayB=renderTray;renderTray=function(){_renderTrayB();const t=$('#t
 function alignedSpot(h,root,zone,s,sz,self){const[cx,cz]=ZC[zone];const w=SIZES[sz]?SIZES[sz][0]:1;let half=w/2,hh=hOf(s,sz)/2;const isItem=self&&self.userData.item;
   if(self){const sc=pieceCol(self);half=Math.max(sc.hx,sc.hz);hh=(sc.top-sc.bottom)/2}const lift=v=>isItem?v:v+hh;
   if(root&&root.userData&&root.userData.piece&&root!==self){const c=pieceCol(root);const bx=root.position.x+c.cx,bz=root.position.z+c.cz;const n=surfaceNormal(h);
-    if(n.y>.6)return{x:bx-cx,z:bz-cz,y:lift(c.top)};
-    if(Math.abs(n.x)>=Math.abs(n.z)){const sg=Math.sign(n.x)||1;return{x:bx-cx+sg*(c.hx+half),z:bz-cz,y:lift(c.bottom)}}
-    const sg=Math.sign(n.z)||1;return{x:bx-cx,z:bz-cz+sg*(c.hz+half),y:lift(c.bottom)}}
+    if(n.y>.6)return{x:+(bx-cx).toFixed(2),z:+(bz-cz).toFixed(2),y:lift(c.top)};
+    if(Math.abs(n.x)>=Math.abs(n.z)){const sg=Math.sign(n.x)||1;return{x:+(bx-cx+sg*(c.hx+half)).toFixed(2),z:+(bz-cz).toFixed(2),y:lift(c.bottom)}}
+    const sg=Math.sign(n.z)||1;return{x:+(bx-cx).toFixed(2),z:+(bz-cz+sg*(c.hz+half)).toFixed(2),y:lift(c.bottom)}}
   const g=BK.step||w;const x=Math.round((h.point.x-cx)/g)*g,z=Math.round((h.point.z-cz)/g)*g;let sup=0;
   for(const o of OBJ.values()){if(o===self||o.userData.zone!==zone||o.userData.grow)continue;const oc=pieceCol(o);if(Math.abs(cx+x-(o.position.x+oc.cx))<oc.hx+half-.06&&Math.abs(cz+z-(o.position.z+oc.cz))<oc.hz+half-.06&&oc.top>sup)sup=oc.top}
-  return{x,z,y:lift(sup)}}
+  return{x:+x.toFixed(2),z:+z.toFixed(2),y:lift(sup)}}
 function updateHands(){const acts=document.querySelector('#pad .acts');if(!acts)return;let b=$('#bHands');if(!b){b=document.createElement('button');b.id='bHands';b.className='act hands';acts.appendChild(b);
     b.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();liftPiece()})}
   const show=!!BK.carry||(BUILDZ.includes(ME.zone)&&!!BK.near&&!['build','move','erase','item'].includes(MODE));b.hidden=!show;b.innerHTML=BK.carry?'⬇️<small>להניח</small>':'🤲<small>להרים</small>';b.classList.toggle('on',!!BK.carry)}

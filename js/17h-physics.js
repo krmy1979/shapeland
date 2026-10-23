@@ -99,7 +99,7 @@ ACTX.mvrot=()=>{const m=MV.sel,p=m&&pieceData(m);if(!p)return;p.r=((p.r||0)+1)%8
 ACTX.mvup=d=>{const m=MV.sel,p=m&&pieceData(m);if(!p)return;const dy=d.v==='up'?.25:-.25;const c=pieceCol(m);const half=(c.top-c.bottom)/2;const minY=m.userData.item?0:half;
   p.y=+clamp(p.y+dy,minY,8).toFixed(2);m.position.y=p.y;m.userData.col=null;syncMoved(m);if(AU.on)tone(d.v==='up'?700:400,.07,'sine',.06)};
 ACTX.mvdone=()=>{mvSelect(null);setMode(ME.zone==='work'?'build':'walk')};
-const _setMode=setMode;setMode=function(m){if(m!=='move'&&MV.sel)mvSelect(null);_setMode(m);if(m==='move')toast('✋ נוגעים במשהו שבנית, ואז גוררים אותו. אפשר גם פשוט ללכת לתוכו ולדחוף!')};
+const _setMode=setMode;setMode=function(m){if(m!=='move'&&MV.sel)mvSelect(null);_setMode(m);if(m==='move')toast('✋ נוגעים בצורה שבנית כדי להרים אותה, ואז נוגעים איפה לשים')};
 const _renderTray=renderTray;renderTray=function(){_renderTray();const t=$('#tray');if(MODE!=='move'||!t)return;t.hidden=false;
   t.innerHTML=MV.sel?`<p class="sub" style="margin:0;text-align:center">👆 נוגעים איפה לשים אותה: על הקרקע, על צורה (מעליה) או בצד של צורה (לידה)</p><div class="row" style="justify-content:center"><button class="btn mini" data-a="mvrot">🔄 לסובב</button><button class="btn mini ghost" data-a="mvcancel">✖ לבטל</button></div>`
     :`<p class="sub" style="margin:0;text-align:center">✋ נוגעים בצורה שבנית כדי להרים אותה</p><div class="row" style="justify-content:center"><button class="btn mini ghost" data-a="bkundo">↩️ ביטול פעולה</button></div>`};
