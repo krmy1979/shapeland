@@ -43,7 +43,7 @@ function dropPiece(){const m=BK.carry;if(!m)return;const L=landingFor(m);if(!L.o
   const p=pieceData(m);const prev=BK.from;m.position.set(L.wx,L.y,L.wz);p.x=+L.lx.toFixed(2);p.z=+L.lz.toFixed(2);p.y=+L.y.toFixed(2);m.userData.col=null;BK.carry=null;killGhost();
   BK.undo.push({t:'move',m,id:p.id,zone:prev.zone,prev});if(BK.undo.length>30)BK.undo.shift();syncMoved(m);
   if(AU.on){SND.thud();tone(L.on?200:120,.1,'sine',.12)}fxBurst(L.wx,L.y-.2,L.wz,'#E7E5E4',8,2);say(L.on?'On top!':'Down!');updateHands();renderTray();checkQuest&&checkQuest()}
-function makeGhost(m){killGhost();const g=m.clone(true);const gm=new THREE.MeshStandardMaterial({color:'#22C55E',transparent:true,opacity:.35,depthWrite:false});
+function makeGhost(m){killGhost();const g=safeClone(m);const gm=new THREE.MeshStandardMaterial({color:'#22C55E',transparent:true,opacity:.35,depthWrite:false});
   g.traverse(o=>{if(o.isMesh){o.material=gm;o.castShadow=false}if(o.type==='Sprite')o.visible=false});g.userData={};scene.add(g);BK.ghost=g;BK.gm=gm}
 function killGhost(){if(BK.ghost)scene.remove(BK.ghost);BK.ghost=null}
 ACTX.bklift=()=>liftPiece();

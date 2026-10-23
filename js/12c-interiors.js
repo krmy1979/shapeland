@@ -2,6 +2,7 @@
 /* ===================== GOING INSIDE BUILDINGS ===================== */
 /* every thing inside has its English name on it. Touch it to hear the word. */
 let INSIDE=null,INROOM=null,INPICK=[];
+function safeClone(o){const st=[];o.traverse(x=>{st.push([x,x.userData]);x.userData={}});let c;try{c=o.clone(true)}finally{st.forEach(([x,u])=>x.userData=u)}return c}
 function pb(g,w,h,d,c,x,y,z,o){const m=mesh(new THREE.BoxGeometry(w,h,d),mat(c,o));m.position.set(x,y,z);g.add(m);return m}
 function pc(g,rt,rb,h,c,x,y,z,seg,o){const m=mesh(new THREE.CylinderGeometry(rt,rb,h,seg||14),mat(c,o));m.position.set(x,y,z);g.add(m);return m}
 function ps(g,r,c,x,y,z,o){const m=mesh(new THREE.SphereGeometry(r,14,10),mat(c,o));m.position.set(x,y,z);g.add(m);return m}
@@ -105,7 +106,7 @@ function buildRoom(id){if(INROOM){scene.remove(INROOM);INROOM=null}INPICK=[];con
   const tl=label(R0.en,'#FFFFFF','#1D2A48',.6);tl.position.set(0,4.5,-D/2);g.add(tl);
   R0.props.forEach(pr=>{const[k,x,z,r,c]=pr;const p=roomProp(k,c);p.position.set(x,0,z);p.rotation.y=r||0;const nm=pr.word||PNAME[k]||k;const lb=label(nm,'#FFFFFF','#1D2A48',.32);
     const bb=new THREE.Box3().setFromObject(p);lb.position.y=Math.max(1.2,bb.max.y+.35);p.add(lb);rootify(p);p.userData.zact=()=>sayWord(nm,(typeof CAVE_HE!=='undefined'&&CAVE_HE[nm])||HE[k]||'');g.add(p);INPICK.push(p)});
-  const hz=R0.host;let hostObj;if(hz.bear){hostObj=NPCOBJ.bear.clone();hostObj.position.set(0,0,0);hostObj.rotation.set(0,0,0)}else hostObj=human3D(Object.assign({kind:'human',eyes:'big'},hz.ch));
+  const hz=R0.host;let hostObj;if(hz.bear){hostObj=safeClone(NPCOBJ.bear);hostObj.position.set(0,0,0);hostObj.rotation.set(0,0,0)}else hostObj=human3D(Object.assign({kind:'human',eyes:'big'},hz.ch));
   if(!hz.bear){const hl=label(hz.name,'#EE4F7C','#FFFFFF',.42);hl.position.y=2.4;hostObj.add(hl);const mk=marker('!','#EE4F7C');mk.position.y=3;hostObj.add(mk)}hostObj.position.set(3.5,0,-1);hostObj.lookAt(3.5,0,4);
   pb(g,2.4,1,.7,'#FFFFFF',3.5,.5,.2);rootify(hostObj);hostObj.userData.zact=()=>{say(hz.line);hz.act()};hostObj.userData.talker=hz.name;g.add(hostObj);INPICK.push(hostObj);
   const ex=new THREE.Group();const mt=mesh(new THREE.BoxGeometry(2.2,.05,1.1),mat('#16A34A'));mt.position.y=.03;ex.add(mt);const el=label('EXIT 🚪','#16A34A','#FFFFFF',.45);el.position.y=1.2;ex.add(el);
