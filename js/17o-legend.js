@@ -20,7 +20,7 @@ function buildLegend(){if(LGW)return;const[cx,cz]=ZC.legend;const g=new THREE.Gr
   const ground=mesh(new THREE.CylinderGeometry(RL+1,RL+1.5,1,64),mat('#4C3D6B'),false);ground.position.set(cx,-.5,cz);ground.receiveShadow=true;g.add(ground);
   const rim=mesh(new THREE.TorusGeometry(RL+.6,.35,8,64),mat('#7C3AED',{emissive:'#7C3AED',emissiveIntensity:.5}),false);rim.rotation.x=Math.PI/2;rim.position.set(cx,.05,cz);g.add(rim);
   for(let i=0;i<22;i++){const a=i/22*Math.PI*2+.1,r=RL-1.2-(i%3)*.8;const c=mesh(new THREE.ConeGeometry(.35+Math.random()*.3,1.2+Math.random()*1.4,5),mat(['#A78BFA','#8B5CF6','#C4B5FD'][i%3],{emissive:'#6D28D9',emissiveIntensity:.35}));c.position.set(cx+Math.cos(a)*r,.6,cz+Math.sin(a)*r);g.add(c)}
-  scene.add(g);const back=portalMesh('#22C55E','🌀 Back to the island');const[bx,bz]=LW(0,19.5);back.position.set(bx,0,bz);scene.add(back);rootify(back);back.userData.zact=()=>leaveLegend();EXTRA_PICK.push(back);
+  scene.add(g);EXTRA_PICK.push(ground);const back=portalMesh('#22C55E','🌀 Back to the island');const[bx,bz]=LW(0,19.5);back.position.set(bx,0,bz);scene.add(back);rootify(back);back.userData.zact=()=>leaveLegend();EXTRA_PICK.push(back);
   LGW={g,ground,back};paintLegend()}
 function paintLegend(){if(!LGW)return;const n=clamp(ST().shards-3,0,4);const k=n/4;const c=new THREE.Color('#4C3D6B').lerp(new THREE.Color('#86D97B'),k);LGW.ground.material=mat('#'+c.getHexString())}
 function portalMesh(col,txt){const g=new THREE.Group();const ring=mesh(new THREE.TorusGeometry(1.25,.18,10,32),mat(col,{emissive:col,emissiveIntensity:.8}));ring.position.y=1.45;g.add(ring);
@@ -48,7 +48,7 @@ function lgHud(txt){let h=$('#lgHud');if(!h){h=document.createElement('div');h.i
   h.innerHTML=`<span class="hp">${'❤️'.repeat(Math.max(0,LG.hp))}${'🖤'.repeat(Math.max(0,3-LG.hp))}</span><b>${CHAPTERS[LG.ch].em} ${CHAPTERS[LG.ch].he}</b><span>${txt||''}</span>${HELP()?'<span class="kp">📨✓</span>':''}`}
 function lgAdd(o){scene.add(o);LG.objs.push(o);return o}
 function lgCleanup(){LG.objs.forEach(o=>scene.remove(o));LG.objs=[];LG.ents=[];LG.shots=[];LG.fx=[];LG.d={};LG.active=false;const h=$('#lgHud');if(h)h.hidden=true;lightBtn()}
-function lgHurt(why){if(LG.inv>0||!LG.active)return;LG.hp--;LG.inv=1.2;if(typeof shake==='function')shake(.35,.35);sfx.bad();if(AU.on)tone(110,.25,'sawtooth',.08);
+function lgHurt(why){if(LG.inv>0||!LG.active)return;LG.hp--;LG.inv=1.6;if(typeof shake==='function')shake(.35,.35);sfx.bad();if(AU.on)tone(110,.25,'sawtooth',.08);
   const f=$('#hurtFx')||(()=>{const d=document.createElement('div');d.id='hurtFx';document.body.appendChild(d);return d})();f.classList.remove('on');void f.offsetWidth;f.classList.add('on');if(why)floatText(why,'#FCA5A5');lgHud(LG.d.hud);
   if(LG.hp<=0)setTimeout(()=>lgFail(),300)}
 function lightBtn(){const acts=document.querySelector('#pad .acts');if(!acts)return;let b=$('#bLight');if(!b){b=document.createElement('button');b.id='bLight';b.className='act lightb';b.innerHTML='✨<small>אור</small>';acts.appendChild(b);
@@ -75,7 +75,7 @@ function grumbler(x,z){const g=new THREE.Group();const b=mesh(new THREE.SphereGe
     hit(){this.stun=HELP()?6:4;this.body.material=mat('#A8A29E');floatText('💫 stunned');sfx.pop()},
     up(dt){if(this.stun>0){this.stun-=dt;if(this.stun<=0)this.body.material=mat('#57534E');return}const dx=ME.pos.x-this.g.position.x,dz=ME.pos.z-this.g.position.z,d=Math.hypot(dx,dz)||1;const sp=HELP()?2.1:2.7;
       this.g.position.x+=dx/d*sp*dt;this.g.position.z+=dz/d*sp*dt;this.g.rotation.y=Math.atan2(dx,dz);this.g.position.y=Math.abs(Math.sin(LG.t*9))*.12;
-      if(d<.95&&ME.y<.8){lgHurt('😠');if(P.gems>0){P.gems--;logm('Grumbler גנב','Stolen',-1);renderHud();toast('😠 Grumbler גנב לך 1 💎! יורים בו אור ✨')}const k=2/d;ME.pos.x+=dx*k*.5;ME.pos.z+=dz*k*.5}}}}
+      if(d<.95&&ME.y<.8&&LG.inv<=0){lgHurt('😠');if(P.gems>0){P.gems--;logm('Grumbler גנב','Stolen',-1);renderHud();toast('😠 Grumbler גנב לך 1 💎! יורים בו אור ✨')}const k=1/d;for(let i=0;i<6;i++)tryMove(dx*k*.25,dz*k*.25)}}}}
 
 /* ---------- cut scenes (storybook style) ---------- */
 const CUT={pages:null,i:0,done:null};
@@ -147,12 +147,12 @@ function startMountain(){const[mx,mz]=LW(13,-3);const N=12,step=HELP()?.62:.75;M
   const st=step*N+.45;const sm=mesh(new THREE.CylinderGeometry(2.3,2.6,st,10),mat('#57534E'));sm.position.set(mx,st/2,mz);lgAdd(sm);const sp={x0:mx-2.2,x1:mx+2.2,z0:mz-2.2,z1:mz+2.2,top:st};PLATS.push(sp);MPL.push(sp);
   const tab=new THREE.Group();[-1,1].forEach(k=>{const t=mesh(new THREE.BoxGeometry(.8,1.2,.15),mat('#E7E5E4',{emissive:'#FDE68A',emissiveIntensity:.2}));t.position.set(k*.45,.6,0);tab.add(t)});tab.position.set(mx,st,mz);lgAdd(tab);
   Object.assign(LG.d,{mx,mz,st,tab,ghosts:[],q:0,asked:false,hud:'⛰️ מטפסים לפסגה'});
-  for(let i=0;i<3;i++){const g=new THREE.Group();const b=mesh(new THREE.SphereGeometry(.55,12,10),mat('#E5E7EB',{transparent:true,opacity:.75}));g.add(b);const tail=mesh(new THREE.ConeGeometry(.5,.9,10),mat('#E5E7EB',{transparent:true,opacity:.6}));tail.rotation.x=Math.PI;tail.position.y=-.6;g.add(tail);
+  for(let i=0;i<(HELP()?1:2);i++){const g=new THREE.Group();const b=mesh(new THREE.SphereGeometry(.55,12,10),mat('#E5E7EB',{transparent:true,opacity:.75}));g.add(b);const tail=mesh(new THREE.ConeGeometry(.5,.9,10),mat('#E5E7EB',{transparent:true,opacity:.6}));tail.rotation.x=Math.PI;tail.position.y=-.6;g.add(tail);
     [-1,1].forEach(k=>{const e=mesh(new THREE.SphereGeometry(.09,6,4),mat('#1F2937'));e.position.set(k*.18,.1,.48);g.add(e)});lgAdd(g);
-    const gh={g,kind:'ghost',shootable:true,r:.9,hy:1.6,a:i*2.1,stun:0,cd:1+i,aimY:0,hit(){this.stun=5;this.g.visible=false;floatText('👻💨')},
+    const gh={g,kind:'ghost',shootable:true,r:.9,hy:1.6,a:i*3.1,stun:0,cd:2.5+i*1.5,aimY:0,hit(){this.stun=5;this.g.visible=false;floatText('👻💨')},
       up(dt){if(this.stun>0){this.stun-=dt;if(this.stun<=0)this.g.visible=true;return}this.a+=dt*(HELP()?.35:.5);const y=clamp(ME.y+2.5,2.5,LG.d.st+2);this.g.position.set(mx+Math.cos(this.a)*7.5,y+Math.sin(LG.t*2+this.a)*.4,mz+Math.sin(this.a)*7.5);this.aimY=this.g.position.y;
-        this.g.lookAt(ME.pos.x,ME.y+1,ME.pos.z);this.cd-=dt;if(this.cd<=0){this.cd=HELP()?4.2:2.6;fogBall(this.g.position)}}};LG.ents.push(gh)}}
-function fogBall(from){const o=mesh(new THREE.SphereGeometry(.35,10,8),mat('#6B7280',{transparent:true,opacity:.85}),false);o.position.copy(from);lgAdd(o);const v=new THREE.Vector3(ME.pos.x-from.x,ME.y+1-from.y,ME.pos.z-from.z).normalize().multiplyScalar(HELP()?4:5.5);
+        this.g.lookAt(ME.pos.x,ME.y+1,ME.pos.z);this.cd-=dt;if(this.cd<=0){this.cd=HELP()?5.5:3.6;if(Math.hypot(this.g.position.x-ME.pos.x,this.g.position.z-ME.pos.z)<13)fogBall(this.g.position)}}};LG.ents.push(gh)}}
+function fogBall(from){const o=mesh(new THREE.SphereGeometry(.35,10,8),mat('#6B7280',{transparent:true,opacity:.85}),false);o.position.copy(from);lgAdd(o);const v=new THREE.Vector3(ME.pos.x-from.x,ME.y+1-from.y,ME.pos.z-from.z).normalize().multiplyScalar(HELP()?3:4);
   LG.fx.push({o,v,life:4,up(dt){this.o.position.addScaledVector(this.v,dt);this.life-=dt;const d=Math.hypot(this.o.position.x-ME.pos.x,this.o.position.y-(ME.y+1),this.o.position.z-ME.pos.z);if(d<.75){lgHurt('🌫️');this.life=0}return this.life>0}})}
 function stepMountain(dt){const d=LG.d;d.tab.rotation.y+=dt*.4;if(!d.asked&&ME.y>d.st-.3&&Math.hypot(ME.pos.x-d.mx,ME.pos.z-d.mz)<2.6){d.asked=true;d.q=0;d.hud='📜 מילות הנתינה';lgHud(d.hud);
     hiddenHand('העננים נפתחו מעל הפסגה…','The clouds opened above the top.');nextWord()}}
@@ -261,3 +261,5 @@ function stepLegend(dt,t){if(PORTAL){PORTAL.userData.ring.rotation.z+=dt;if(ME.z
 const _lgCleanup0=lgCleanup;lgCleanup=function(){_lgCleanup0();MPL.forEach(p=>{const i=PLATS.indexOf(p);if(i>=0)PLATS.splice(i,1)});MPL.length=0;if(ME.obj)ME.obj.visible=true;
   for(let i=EXTRA_PICK.length-1;i>=0;i--)if(EXTRA_PICK[i].userData&&EXTRA_PICK[i].userData.talker==='Shapeling')EXTRA_PICK.splice(i,1)};
 (function startLegend(){placePortal()})();
+/* safety: never let a bad number break the camera */
+const _stepCamL=stepCamera;stepCamera=function(dt){if(!isFinite(ME.y))ME.y=0;if(!isFinite(CAM.ty))CAM.ty=0;if(ME.zone==='legend'&&Math.hypot(ME.pos.x-ZC.legend[0],ME.pos.z-ZC.legend[1])>RL){ME.pos.x=ZC.legend[0];ME.pos.z=ZC.legend[1]+12}return _stepCamL(dt)};
