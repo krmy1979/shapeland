@@ -4,14 +4,16 @@
    Water, Lightning and Strength come from the Power Academy (the stronger you trained, the stronger they hit).
    In every trial they appear as buttons on the right; each has its own cooldown. */
 const ARM={
-  shield:{em:'🛡️',he:'מגן האמונה',en:'Shield of Faith',cd:9,txt:'חוסם כל פגיעה למשך כמה שניות.',how:'מקבלים אחרי שמגיעים לפסגת הר הצורות (פרק 5)',wise:'"מגן הוא לכל החוסים בו". איפה זה כתוב?'},
-  sling:{em:'🎯',he:'הקלע של דוד',en:"David's Sling",cd:2.5,txt:'אבן מהירה וחזקה פי שלושה, מכל מרחק.',how:'מנצחים את הענק בעמק',trial:'giant',wise:'"ויקח חמישה חלוקי אבנים מן הנחל". מול מי עמד הנער?'},
-  fire:{em:'🔥',he:'האש של גדעון',en:"Gideon's Fire",cd:7,txt:'טבעת אש סביבך שפוגעת בכל מי שקרוב.',how:'מנצחים בלילה של גדעון',trial:'gideon',wise:'שלוש מאות לוחמים, כדים, לפידים ושופרות. איך ניצחו צבא שלם?'},
-  wind:{em:'💨',he:'רוח הקדים',en:'The East Wind',cd:8,txt:'דוחפת את כל האויבים אחורה ומעיפה חיצים וערפל.',how:'תופסים את הנוצות במקדש הרוח',trial:'wind',wise:'"ויולך ה׳ את הים ברוח קדים עזה כל הלילה". איזה ים נקרע?'},
-  water:{em:'💧',he:'כוח המים',en:'Water Power',cd:6,txt:'סילון מים שמקפיא אויבים לכמה שניות.',how:'מתאמנים באקדמיית הכוחות',elem:'water',wise:'"מים רבים לא יוכלו לכבות את האהבה".'},
-  elec:{em:'⚡',he:'כוח הברק',en:'Lightning Power',cd:7,txt:'ברק שקופץ בין 4 אויבים.',how:'מתאמנים באקדמיית הכוחות',elem:'elec',wise:'בספר העתיק ירדה אש מהשמיים על ההר, ליד נביא אחד. מי?'},
-  str:{em:'💪',he:'כוח שמשון',en:"Samson's Strength",cd:8,txt:'מכה באדמה שמעיפה את כולם מסביב.',how:'מתאמנים באקדמיית הכוחות',elem:'str',wise:'הגיבור החזק ביותר בספר העתיק. מאיפה בא הכוח שלו?'}};
-const armLv=k=>{const A=ARM[k];if(A.elem)return(P.elem&&P.elem[A.elem])||0;const s=ST();s.arm=s.arm||{};if(k==='shield'&&s.ch>5)s.arm.shield=1;return s.arm[k]?1:0};
+  spin:{em:'🌀',he:'סיבוב האור',en:'Light Spin',cd:4,free:1,txt:'מסתובבים ופוגעים בכל מי שקרוב מסביב.',how:'חינם מההתחלה',wise:'"ויהי אור". מה נברא ביום הראשון?'},
+  wshield:{em:'🪵',he:'מגן עץ',en:'Wooden Shield',cd:12,free:1,txt:'חוסם פגיעות לשנייה וחצי. מגן האמונה חזק ממנו.',how:'חינם מההתחלה',wise:'גם הגיבורים הגדולים התחילו עם כלים פשוטים.'},
+  shield:{em:'🛡️',he:'מגן האמונה',en:'Shield of Faith',cd:9,price:90,txt:'חוסם כל פגיעה למשך כמה שניות.',how:'מקבלים אחרי שמגיעים לפסגת הר הצורות (פרק 5)',wise:'"מגן הוא לכל החוסים בו". איפה זה כתוב?'},
+  sling:{em:'🎯',he:'הקלע של דוד',en:"David's Sling",cd:2.5,price:60,txt:'אבן מהירה וחזקה פי שלושה, מכל מרחק.',how:'מנצחים את הענק בעמק',trial:'giant',wise:'"ויקח חמישה חלוקי אבנים מן הנחל". מול מי עמד הנער?'},
+  fire:{em:'🔥',he:'האש של גדעון',en:"Gideon's Fire",cd:7,price:80,txt:'טבעת אש סביבך שפוגעת בכל מי שקרוב.',how:'מנצחים בלילה של גדעון',trial:'gideon',wise:'שלוש מאות לוחמים, כדים, לפידים ושופרות. איך ניצחו צבא שלם?'},
+  wind:{em:'💨',he:'רוח הקדים',en:'The East Wind',cd:8,price:70,txt:'דוחפת את כל האויבים אחורה ומעיפה חיצים וערפל.',how:'תופסים את הנוצות במקדש הרוח',trial:'wind',wise:'"ויולך ה׳ את הים ברוח קדים עזה כל הלילה". איזה ים נקרע?'},
+  water:{em:'💧',he:'כוח המים',en:'Water Power',cd:6,price:50,txt:'סילון מים שמקפיא אויבים לכמה שניות.',how:'מתאמנים באקדמיית הכוחות',elem:'water',wise:'"מים רבים לא יוכלו לכבות את האהבה".'},
+  elec:{em:'⚡',he:'כוח הברק',en:'Lightning Power',cd:7,price:70,txt:'ברק שקופץ בין 4 אויבים.',how:'מתאמנים באקדמיית הכוחות',elem:'elec',wise:'בספר העתיק ירדה אש מהשמיים על ההר, ליד נביא אחד. מי?'},
+  str:{em:'💪',he:'כוח שמשון',en:"Samson's Strength",cd:8,price:50,txt:'מכה באדמה שמעיפה את כולם מסביב.',how:'מתאמנים באקדמיית הכוחות',elem:'str',wise:'הגיבור החזק ביותר בספר העתיק. מאיפה בא הכוח שלו?'}};
+const armLv=k=>{const A=ARM[k];if(A.free)return k==='wshield'&&ST().ch>5||k==='wshield'&&(ST().arm||{}).shield?0:1;if(A.elem)return(P.elem&&P.elem[A.elem])||0;const s=ST();s.arm=s.arm||{};if(k==='shield'&&s.ch>5)s.arm.shield=1;return s.arm[k]?1:0};
 const armHas=k=>armLv(k)>0||(LG.active&&LG.temp&&LG.temp.includes(k));
 CHAPTERS.giant={en:'The Giant of the Valley',he:'הענק בעמק',em:'🎯'};CHAPTERS.gideon={en:"Gideon's Night",he:'הלילה של גדעון',em:'🔥'};CHAPTERS.wind={en:'Shrine of the Wind',he:'מקדש הרוח',em:'💨'};
 PAGES.push({ch:6,em:'📜',t:'מגילת בני האור',en:'The Scroll of the Sons of Light',txt:'יש אגדה על מלחמה גדולה בין בני האור לבני החושך. בני האור לא מנצחים לבד, אלא כשהם מאוחדים ומחזיקים בכלים של האור.',wise:'במערות ליד ים המלח נמצאה מגילה עתיקה בשם "מלחמת בני אור בבני חושך". איך קוראים למקום?'});
@@ -29,6 +31,9 @@ function dmg(e,n){for(let i=0;i<n&&!e.dead;i++)e.hit&&e.hit()}
 function stunE(e,s){if('stun'in e){e.stun=Math.max(e.stun||0,s);floatText('💫','#BAE6FD');return true}return false}
 function useArm(k){if(!LG.active||!$('#sheet').hidden)return;if((ARMCD[k]||0)>0){toast(`${ARM[k].em} עוד ${Math.ceil(ARMCD[k])} שניות`);return}const lv=Math.max(1,armLv(k));ARMCD[k]=Math.max(1.5,ARM[k].cd-(ARM[k].elem?(lv-1)*.6:0));
   const[mx,mz]=[ME.pos.x,ME.pos.z];const a=ME.obj?ME.obj.rotation.y:0;
+  if(k==='spin'){fxBurst(mx,1,mz,'#FDE047',30,3);ring('#FDE047',3);if(ME.obj){const o=ME.obj;let r=0;const iv=setInterval(()=>{r+=.5;o.rotation.y+=.5;if(r>=Math.PI*2)clearInterval(iv)},16)}if(AU.on)tone(700,.12,'triangle',.05,null,null,.01,1100);
+    foes().forEach(e=>{const d=dist2(e);if(d<3.2){dmg(e,1+((P.lightLv||1)>=4?1:0));if(e.kind!=='king'&&e.kind!=='boss'&&e.kind!=='giant'){const dx=(e.g.position.x-mx)/(d||1),dz=(e.g.position.z-mz)/(d||1);e.g.position.x+=dx*1.5;e.g.position.z+=dz*1.5}}});say('Light spin!')}
+  if(k==='wshield'){LG.shieldT=1.6;sfx.coin();if(!LG.bubble){LG.bubble=mesh(new THREE.SphereGeometry(1.25,18,12),mat('#D6B38A',{transparent:true,opacity:.3}),false);scene.add(LG.bubble)}LG.bubble.visible=true}
   if(k==='shield'){LG.shieldT=2.6+lv*.4;sfx.coin();say('Shield of faith!');if(!LG.bubble){LG.bubble=mesh(new THREE.SphereGeometry(1.25,18,12),mat('#93C5FD',{transparent:true,opacity:.32,emissive:'#3B82F6',emissiveIntensity:.5}),false);scene.add(LG.bubble)}LG.bubble.visible=true}
   if(k==='sling'){let t=null,best=18;for(const e of foes()){const d=dist2(e);if(d<best){best=d;t=e}}slingShot(t);say('Sling!')}
   if(k==='fire'){fxBurst(mx,.6,mz,'#F97316',40,4.5);fxBurst(mx,1.2,mz,'#FACC15',24,3);if(AU.on)hiss&&hiss(.5,'bandpass',900,1,.12);foes().forEach(e=>{if(dist2(e)<4.8)dmg(e,1+lv)});ring('#F97316',4.8);say('Fire!')}
@@ -114,7 +119,19 @@ ACTX.armory=()=>openArmory();ACTX.armgo=d=>{closeSheet();sideStart(d.v)};ACTX.ac
 function openArmory(){PANEL='armory';const s=ST();
   sheet(`<div class="npchead"><div class="face" style="background:#FEF3C7">⚔️</div><div class="grow"><h2>${en('The Armory of Light')}</h2><p class="sub">הנשקייה של בני האור · משיגים כלים ומשתמשים בהם במבחנים</p></div></div>
   <div class="arms">${Object.entries(ARM).map(([k,A])=>{const has=armLv(k)>0;return`<div class="armc ${has?'on':''}"><span class="em">${A.em}</span><b>${A.he}</b>${en(A.en)}${A.elem&&has?`<small>${'★'.repeat(armLv(k))}</small>`:''}
-    <p>${A.txt}</p>${has?'<span class="ok">✓ שלך</span>':A.trial?`<button class="btn mini sun" data-a="armgo" data-v="${A.trial}">⚔️ ${en('Earn it')}</button>`:`<span class="how">🔒 ${A.how}</span>`}${has?`<p class="wise">🦉 ${A.wise}</p>`:''}</div>`}).join('')}</div>
-  <p class="sub">במבחנים: הכפתורים בצד ימין, או המקשים 1–7. אחרי כל שימוש צריך לחכות קצת (העיגול מתמלא).</p><button class="btn ghost" data-a="close">סגירה</button>`)}
+    <p>${A.txt}</p>${has?'<span class="ok">✓ שלך</span>':`${A.trial?`<button class="btn mini sun" data-a="armgo" data-v="${A.trial}">⚔️ ${en('Earn it')}</button>`:`<span class="how">🔒 ${A.how}</span>`}${A.price?`<button class="btn mini gem" data-a="armbuy" data-v="${k}">💎 ${A.price} ${en('Buy')}</button>`:''}`}${has?`<p class="wise">🦉 ${A.wise}</p>`:''}</div>`}).join('')}</div>
+  ${lightUpRow()}<p class="sub">💡 עוד דרכים להשיג כלים: מבחנים מיוחדים, קנייה ביהלומים, אקדמיית הכוחות, ותיבת נשק 🎁 שנופלת לפעמים אחרי ניצחון על פלישת צללים.</p><p class="sub">במבחנים ובעולם: הכפתורים בצד ימין, או המקשים 1–7. אחרי כל שימוש צריך לחכות קצת (העיגול מתמלא).</p><button class="btn ghost" data-a="close">סגירה</button>`)}
 const _barA=renderBar;renderBar=function(){_barA();if(ME.zone!=='legend')return;const b=$('#bar');if(b&&!b.querySelector('[data-a="armory"]'))b.insertAdjacentHTML('beforeend','<button class="tool" data-a="armory"><span>⚔️</span>נשקייה</button>')};
 const _bookA=openBook;openBook=function(){_bookA();const r=$('#sheet .row');if(r&&ST().ch>=4)r.insertAdjacentHTML('afterbegin','<button class="btn mini" data-a="armory">⚔️ הנשקייה</button>')};
+
+/* buying tools and upgrading the light */
+const LIGHTUP=[0,0,25,50,90,140];
+function lightUpRow(){const lv=P.lightLv||1;const nx=LIGHTUP[lv+1];return`<div class="armc on" style="flex-direction:row;justify-content:space-between;gap:8px;text-align:right"><span class="em">✨</span><div style="flex:1"><b>${en('Light Shot')} · יריית אור</b> ${'★'.repeat(lv)}<p>${lv>=3?'כל יריה פוגעת פעמיים. ':''}${lv>=4?'סיבוב האור חזק יותר. ':''}ככל שהרמה גבוהה, יורים מהר יותר.</p></div>${nx?`<button class="btn mini gem" data-a="lightup">⬆️ 💎 ${nx}</button>`:'<span class="ok">MAX</span>'}</div>`}
+ACTX.lightup=()=>{const lv=P.lightLv||1;const c=LIGHTUP[lv+1];if(!c)return;if(P.gems<c){toast(`חסרים ${c-P.gems} 💎. מנצחים יצורי חושך ופלישות כדי להרוויח`);sfx.bad();return}P.gems-=c;logm('שדרוג יריית האור','Light upgrade',-c);P.lightLv=lv+1;save();renderHud();sfx.win();burst('✨ '+'★'.repeat(P.lightLv));openArmory()};
+ACTX.armbuy=d=>{const k=d.v,A=ARM[k];if(!A||!A.price||armLv(k)>0)return;if(P.gems<A.price){toast(`חסרים ${A.price-P.gems} 💎. אפשר גם להשיג במבחן ⚔️`);sfx.bad();return}
+  P.gems-=A.price;logm('נשקייה: '+A.he,'Armory',-A.price);if(A.elem){P.elem=P.elem||{};P.elem[A.elem]=Math.max(1,P.elem[A.elem]||0)}else{const s=ST();s.arm=s.arm||{};s.arm[k]=1}save();renderHud();sfx.win();burst(A.em+' '+A.he);say(A.en+'!');openArmory()};
+/* a lucky armory chest after a won raid */
+function armoryChest(){const locked=Object.keys(ARM).filter(k=>ARM[k].price&&armLv(k)===0);let msg;
+  if(locked.length&&Math.random()<.6){const k=pick(locked),A=ARM[k];if(A.elem){P.elem=P.elem||{};P.elem[A.elem]=Math.max(1,P.elem[A.elem]||0)}else{const s=ST();s.arm=s.arm||{};s.arm[k]=1}msg=A.em+' '+A.he}
+  else if((P.lightLv||1)<5){P.lightLv=(P.lightLv||1)+1;msg='✨ '+'★'.repeat(P.lightLv)+' יריית אור'}else{addGems(15,'תיבת נשק','Armory chest');msg='💎 15'}
+  save();sfx.win();PANEL='chest';sheet(`<h2>🎁 ${en('Armory chest!')}</h2><div class="bigem">🎁</div><p class="sub" style="text-align:center">מצאת בתיבה: <b>${msg}</b></p><div class="row"><button class="btn sun" data-a="armory">⚔️ לנשקייה</button><button class="btn ghost" data-a="close">סגירה</button></div>`);say('An armory chest!')}

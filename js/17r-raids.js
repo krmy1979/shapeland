@@ -45,7 +45,7 @@ function raidHurt(why,dx,dz,d){if(RAID.inv>0)return;if(LG.shieldT>0){RAID.inv=.4
   const k=1/(d||1);for(let i=0;i<5;i++)tryMove(dx*k*.3,dz*k*.3);
   if(RAID.hp<=0){RAID.hp=5;toast('😵 הצללים הפילו אותך! חוזרים לנקודת ההתחלה');say('Ouch! Back to the start.');teleport(ME.zone);if(RAID.raid)endRaid(false)}raidHud()}
 /* light shots in the open world */
-const _fireR=fireLight;fireLight=function(){if(LG.active)return _fireR();if(!raidOK()||RAID.cd>0||!$('#sheet').hidden)return;RAID.cd=.3;let tx=null,best=12;
+const _fireR=fireLight;fireLight=function(){if(LG.active)return _fireR();if(!raidOK()||RAID.cd>0||!$('#sheet').hidden)return;RAID.cd=Math.max(.14,.32-((P.lightLv||1)-1)*.045);let tx=null,best=12;
   for(const e of RAID.ents){if(e.dead)continue;const d=Math.hypot(e.g.position.x-ME.pos.x,e.g.position.z-ME.pos.z);if(d<best){best=d;tx=e}}const a=ME.obj?ME.obj.rotation.y:0;let dx=Math.sin(a),dz=Math.cos(a),dy=0;
   if(tx){const v=new THREE.Vector3(tx.g.position.x-ME.pos.x,(tx.aimY||.8)-(ME.y+1.1),tx.g.position.z-ME.pos.z).normalize();dx=v.x;dz=v.z;dy=v.y;if(ME.obj)ME.obj.rotation.y=Math.atan2(dx,dz)}
   const o=mesh(new THREE.SphereGeometry(.22,10,8),mat('#FEF9C3',{emissive:'#FDE047',emissiveIntensity:1}),false);o.position.set(ME.pos.x,ME.y+1.1,ME.pos.z);rAdd(o);RAID.shots.push({o,vx:dx*16,vy:dy*16,vz:dz*16,life:.85});if(AU.on)tone(880,.07,'triangle',.05,null,null,.005,1320)};
@@ -53,16 +53,16 @@ const _fireR=fireLight;fireLight=function(){if(LG.active)return _fireR();if(!rai
 const _useArmR=useArm;useArm=function(k){if(LG.active)return _useArmR(k);if(!raidOK())return;const sv={ents:LG.ents,fx:LG.fx,objs:LG.objs,active:LG.active,ch:LG.ch,d:LG.d};
   Object.assign(LG,{ents:RAID.ents,fx:RAID.fx,objs:RAID.objs,active:true,ch:0,d:{}});try{_useArmR(k)}finally{Object.assign(LG,sv)}};
 
-const _armBarR=armBar;armBar=function(){_armBarR();const b=$('#armBar');if(!b||LG.active)return;const show=raidOK()&&RAID.ents.length>0;const ks=Object.keys(ARM).filter(k=>armLv(k)>0);if(!show||!ks.length){b.hidden=true;return}b.hidden=false;
-  const sig=ks.join(',');if(b.dataset.sig!==sig){b.dataset.sig=sig;b.innerHTML=ks.map(k=>`<button class="arm" data-arm="${k}" aria-label="${ARM[k].he}"><span>${ARM[k].em}</span><i></i></button>`).join('')}
+const _armBarR=armBar;armBar=function(){_armBarR();const b=$('#armBar');if(!b||LG.active)return;const show=raidOK();const ks=Object.keys(ARM).filter(k=>armLv(k)>0);if(!show){b.hidden=true;return}b.hidden=false;
+  const sig='o'+ks.join(',');if(b.dataset.sig!==sig){b.dataset.sig=sig;b.innerHTML='<button class="arm open" data-open="1" aria-label="נשקייה"><span>⚔️</span></button>'+ks.map(k=>`<button class="arm" data-arm="${k}" aria-label="${ARM[k].he}"><span>${ARM[k].em}</span><i></i></button>`).join('')}
   ks.forEach(k=>{const el=b.querySelector(`[data-arm="${k}"] i`);const c=ARMCD[k]||0;if(el)el.style.background=c>0?`conic-gradient(rgba(29,42,72,.6) ${c/ARM[k].cd*360}deg,transparent 0)`:'transparent'})};
-const _lightBtnR=lightBtn;lightBtn=function(){_lightBtnR();const b=$('#bLight');if(b&&!LG.active)b.hidden=!(raidOK()&&RAID.ents.length>0)};
+const _lightBtnR=lightBtn;lightBtn=function(){_lightBtnR();const b=$('#bLight');if(b&&!LG.active)b.hidden=!raidOK()};
 const _dangerR=dangerNow;dangerNow=function(){return _dangerR()||(raidOK()&&(RAID.raid>0||RAID.ents.some(e=>!e.dead&&Math.hypot(e.g.position.x-ME.pos.x,e.g.position.z-ME.pos.z)<8)))?1:0};
 /* raids */
 function startRaid(){RAID.raid=1;RAID.left=60;RAID.hp=5;document.body.classList.add('raid');const n=Math.min(10,4+Math.floor(level()/2));for(let i=0;i<n;i++)setTimeout(()=>{if(!RAID.raid||!raidOK())return;spawnOne(true)},i*700);
   if(AU.on){[0,250,500].forEach(t=>setTimeout(()=>tone(392,.18,'square',.06),t))}toast('⚠️ פלישת צללים! מגינים על '+(ZNAME[ME.zone]||'המקום')+'!');say('Shadow raid! Defend your world!');burst('⚠️ Shadow Raid!')}
 function endRaid(win){if(!RAID.raid)return;RAID.raid=0;document.body.classList.remove('raid');payRaid();RAID.raidT=150+Math.random()*90;
-  if(win){addGems(10,'הדפת פלישת צללים','Raid defended');addXp(25);if(typeof kind==='function')kind(2,'הגנת על העולם');sfx.win();burst('🏆 '+en('Raid defeated!'));say('You defended your world!')}
+  if(win){addGems(10,'הדפת פלישת צללים','Raid defended');if(Math.random()<.4)setTimeout(()=>{if($('#sheet').hidden)armoryChest()},1800);addXp(25);if(typeof kind==='function')kind(2,'הגנת על העולם');sfx.win();burst('🏆 '+en('Raid defeated!'));say('You defended your world!')}
   else{toast('🌫️ הצללים נסוגו… הם יחזרו');RAID.ents.forEach(e=>rRemove(e));RAID.ents=[]}raidHud()}
 function spawnOne(raid){const sp=spawnSpot(raid?6:7,raid?12:14);if(!sp)return;const ownPieces=ME.zone==='island'&&[...OBJ.values()].some(m=>pieceData(m)&&!m.userData.item&&!m.userData.big);
   const r=Math.random();const e=r<.38?rShade(...sp):r<.68?rGrum(...sp):(ownPieces?rGoo(...sp):rShade(...sp));RAID.ents.push(e);fxBurst(sp[0],1,sp[1],'#4C1D95',12,1.8)}
@@ -74,7 +74,7 @@ function stepRaids(dt){const ok=raidOK();Object.keys(ARMCD).forEach(k=>{if(!LG.a
   RAID.t=(RAID.t||0)+dt;RAID.cd=Math.max(0,RAID.cd-dt);RAID.inv=Math.max(0,RAID.inv-dt);
   for(let i=RAID.shots.length-1;i>=0;i--){const s=RAID.shots[i];s.life-=dt;s.o.position.x+=s.vx*dt;s.o.position.y+=s.vy*dt;s.o.position.z+=s.vz*dt;let hit=null;
     for(const e of RAID.ents){if(e.dead)continue;if(Math.hypot(s.o.position.x-e.g.position.x,s.o.position.z-e.g.position.z)<(e.r||.8)&&Math.abs(s.o.position.y-(e.aimY||.8))<1.3){hit=e;break}}
-    if(hit){hit.hit();fxBurst(s.o.position.x,s.o.position.y,s.o.position.z,'#FDE047',8,1.4)}if(hit||s.life<=0){scene.remove(s.o);RAID.shots.splice(i,1)}}
+    if(hit){hit.hit();if((P.lightLv||1)>=3&&!hit.dead)hit.hit();fxBurst(s.o.position.x,s.o.position.y,s.o.position.z,'#FDE047',8,1.4)}if(hit||s.life<=0){scene.remove(s.o);RAID.shots.splice(i,1)}}
   RAID.ents.forEach(e=>{if(!e.dead)e.up(dt)});RAID.fx=RAID.fx.filter(f=>{const k=f.up(dt);if(!k&&f.o&&f.o.parent)scene.remove(f.o);return k});
   if(RAID.raid){RAID.left-=dt;if(RAID.ents.filter(e=>!e.dead).length===0&&RAID.left<57)endRaid(true);else if(RAID.left<=0)endRaid(false)}
   else{RAID.spawnT-=dt;const cap=Math.min(4,1+Math.floor(level()/2));if(RAID.spawnT<=0){RAID.spawnT=16+Math.random()*10;if(RAID.ents.length<cap)spawnOne(false)}
@@ -86,3 +86,5 @@ window.addEventListener('keydown',e=>{if(LG.active||!raidOK()||(e.target&&/INPUT
 const _raidOK0=raidOK;
 const _setR=openSettings;openSettings=function(){_setR();const h=$('#sheet h2');if(h)h.insertAdjacentHTML('afterend',`<div class="row"><button class="btn ghost mini" data-a="raidtog">${P.raidsOff?'👾 יצורי חושך: כבויים':'👾 יצורי חושך: פעילים'}</button></div>`)};
 ACTX.raidtog=()=>{P.raidsOff=!P.raidsOff;save();if(P.raidsOff){RAID.ents.forEach(e=>rRemove(e));RAID.ents=[];endRaid(false)}openSettings()};
+
+document.addEventListener('pointerdown',e=>{const o=e.target.closest&&e.target.closest('#armBar [data-open]');if(o){e.preventDefault();e.stopPropagation();openArmory()}},true);

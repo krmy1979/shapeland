@@ -336,3 +336,4 @@ body.lgnight::after{content:"";position:fixed;inset:0;pointer-events:none;z-inde
 #raidHud{position:fixed;top:calc(env(safe-area-inset-top,0px) + 118px);left:50%;transform:translateX(-50%);z-index:25;background:rgba(49,46,129,.88);color:#fff;border-radius:16px;padding:6px 12px;display:flex;gap:10px;align-items:center;font-weight:800;font-size:14px;direction:rtl;pointer-events:none;white-space:nowrap;max-width:94vw}
 body.raid::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:5;background:radial-gradient(circle at 50% 45%,rgba(76,29,149,.08),rgba(46,16,101,.45));animation:raidP 2s infinite}
 @keyframes raidP{50%{opacity:.75}}
+#armBar .arm.open{background:linear-gradient(#E0E7FF,#A5B4FC)}
