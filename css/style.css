@@ -228,7 +228,7 @@ details.more summary{cursor:pointer;color:var(--berry);font-weight:700;margin-bo
 .quest.jr{background:#EDE9FE;box-shadow:0 3px 0 #C4B5FD;color:var(--ink)}
 
 /* --- camera buttons, power button --- */
-#camBtns{right:max(10px,env(safe-area-inset-right,0px));top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px}
+#camBtns{right:max(10px,env(safe-area-inset-right,0px));top:38%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px}
 #camBtns .cb{width:44px;height:44px;border-radius:50%;border:2px solid #fff;background:#ffffffcc;font-size:22px;line-height:1;color:var(--ink);box-shadow:0 3px 0 #1D2A4833;touch-action:none;cursor:pointer}
 .act.pow{position:absolute;top:-74px;right:0;background:conic-gradient(#A855F7 var(--e,100%),#E9D5FF 0);color:#fff;text-shadow:0 1px 2px #0006}
 .act.pow[aria-pressed="true"]{box-shadow:0 0 0 4px #F0ABFC,0 0 18px #E879F9}
@@ -242,3 +242,5 @@ details.more summary{cursor:pointer;color:var(--berry);font-weight:700;margin-bo
 @keyframes bob{to{transform:translate(-50%,-4px)}}
 .floattxt{position:fixed;left:50%;top:38%;transform:translateX(-50%);z-index:30;pointer-events:none;font-family:var(--f-display);font-size:30px;font-weight:700;text-shadow:0 3px 0 #1D2A48;animation:floatup .9s ease-out forwards}
 @keyframes floatup{from{opacity:1;transform:translate(-50%,0)}to{opacity:0;transform:translate(-50%,-60px)}}
+
+.act.elem{position:absolute;top:-148px;right:0;background:radial-gradient(circle at 35% 30%,#fff,var(--c,#38BDF8));color:#1D2A48}

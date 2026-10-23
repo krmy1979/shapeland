@@ -57,7 +57,7 @@ let lastSaveStr='';
 function cloudSave(){if(!CLOUD.user)return;const s=JSON.stringify(P);if(s===lastSaveStr)return;lastSaveStr=s;CLOUD.db.ref('kids/'+CLOUD.user.uid+'/save').set(s).catch(()=>{})}
 function cloudProgress(){if(!CLOUD.user)return;const sk={};for(const k in P.sk)sk[k]=Math.round(P.sk[k]*10)/10;
   CLOUD.db.ref('kids/'+CLOUD.user.uid+'/progress').set({day:today(),min:CLOUD.min,lv:level(),xp:P.xp,words:Object.keys(P.learned).length,sk,adv:P.adv,shifts:P.shifts||0,
-    badges:P.badges||{},rank:(typeof rankInfo==='function'?rankInfo().name:''),keys:P.keys||0,gates:Object.keys(P.gates||{}).length,gems:Math.round(P.gems),sav:Math.round(P.savings),plots:(P.plots||[]).length,last:firebase.database.ServerValue.TIMESTAMP}).catch(()=>{})}
+    badges:P.badges||{},rank:(typeof rankInfo==='function'?rankInfo().name:''),keys:P.keys||0,hires:(P.hires||[]).slice(0,5),elem:P.elem||{},gates:Object.keys(P.gates||{}).length,gems:Math.round(P.gems),sav:Math.round(P.savings),plots:(P.plots||[]).length,last:firebase.database.ServerValue.TIMESTAMP}).catch(()=>{})}
 function checkLimit(){if(!CLOUD.user||!CLOUD.limit||!$('#title').hidden)return;if(CLOUD.min>=CLOUD.limit)showLimit()}
 function showLimit(){if($('#limitBox'))return;cloudSave();cloudProgress();const d=document.createElement('div');d.id='limitBox';d.className='sheet';d.dir='rtl';d.style.zIndex=90;
   d.innerHTML=`<div class="sheet-in" style="text-align:center;align-items:center"><div style="font-size:64px">🌙</div><h2>${en('See you tomorrow!')}</h2><p class="sub">זמן המשחק להיום נגמר. הכל נשמר, והעולם מחכה לך מחר.</p></div>`;document.body.appendChild(d);say('Great playing today! See you tomorrow!')}
