@@ -53,7 +53,7 @@ function syncMoved(m){const p=pieceData(m);if(!p)return;const z=m.userData.zone;
 tryMove=function(dx,dz){const zone=ME.zone;const y=ME.y;
   const ok=(x,z)=>{_np.set(x,0,z);const zz=zoneAt(x,z);if(!zz)return false;
     if(!OUTZ.includes(zone)&&zone!=='bridge'&&zz!==zone)return false;if(OUTZ.includes(zone)&&!OUTZ.includes(zz)&&zz!=='bridge')return false;
-    const f=floorAt(x,z);const up=f.h-ME.y;if(up>.55&&!(ME.swim&&up<1.6)&&!ME.flying)return false;if(!walkable(_np,zz))return false;
+    const f=floorAt(x,z);const up=f.h-ME.y;if(up>.55&&!(ME.swim&&up<1.6)&&!ME.flying&&!f.piece)return false;if(!walkable(_np,zz))return false;
     const h=hitTest(x,z,y);if(!h)return true;
     if(h.k==='piece'&&!ME.flying&&!ME.swim){const st=pieceStore(h.m.userData);if(st){let f2=0;try{f2=tryPush(h.m,dx,dz)}catch(e){f2=0};if(f2>0){PUSH.scale=f2;return'push'}}else bumpNote('piece',h.m)}
     if(h.k==='char')bump(h.tk||null,h.o||null);if(h.k==='solid'&&Math.hypot(dx,dz)>.04)bumpWall();return false};

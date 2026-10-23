@@ -30,4 +30,4 @@ function loop(){const dt=Math.min(clock.getDelta(),.05)*(window.HITSTOP>0?.15:1)
     if(dd>.15){tm.position.x+=dx*.06;tm.position.z+=dz*.06;tm.rotation.y=Math.atan2(dx,dz)}const a=ANCHORS[P.tour.dest];if(a&&Math.hypot(ME.pos.x-CX-a[0],ME.pos.z-CZ-a[1])<5.5)tourDone()}
   try{stepZones(dt,t);stepAdventure(dt,t);stepExplorer(dt,t)}catch(e){if(!window.__lerr2){window.__lerr2=1;console.warn('zones',e)}}
   water.position.y=-1.6+Math.sin(t*.8)*.05;
-  for(const f of[()=>stepPowers(dt,t),()=>stepAction(dt,t),()=>stepPhysics(dt,t),()=>stepElements(dt,t),()=>stepHeroes(dt,t),()=>stepAudio(dt,mv0),()=>stepCamera(dt)]){try{f()}catch(e){if(!window.__lerr){window.__lerr=1;console.warn('step',e)}}}renderer.render(scene,camera);requestAnimationFrame(loop)}
+  for(const f of[()=>stepPowers(dt,t),()=>stepAction(dt,t),()=>stepPhysics(dt,t),()=>stepElements(dt,t),()=>stepHeroes(dt,t),()=>stepBuilder(dt,t),()=>stepAudio(dt,mv0),()=>stepCamera(dt)]){try{f()}catch(e){if(!window.__lerr){window.__lerr=1;console.warn('step',e)}}}renderer.render(scene,camera);requestAnimationFrame(loop)}

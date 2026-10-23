@@ -244,3 +244,9 @@ details.more summary{cursor:pointer;color:var(--berry);font-weight:700;margin-bo
 @keyframes floatup{from{opacity:1;transform:translate(-50%,0)}to{opacity:0;transform:translate(-50%,-60px)}}
 
 .act.elem{position:absolute;top:-148px;right:0;background:radial-gradient(circle at 35% 30%,#fff,var(--c,#38BDF8));color:#1D2A48}
+
+/* --- builder's kit --- */
+.belt{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:6px}
+.belt .tool{min-width:58px}.belt .tool small{display:block;font-size:11px}.belt .tool.on{background:#FEF3C7}
+.act.hands{position:absolute;top:-148px;left:0;background:linear-gradient(#FDE68A,#F59E0B);color:#5E3B00}
+.act.hands.on{background:linear-gradient(#86EFAC,#16A34A);color:#fff}
