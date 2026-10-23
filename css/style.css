@@ -250,3 +250,9 @@ details.more summary{cursor:pointer;color:var(--berry);font-weight:700;margin-bo
 .belt .tool{min-width:58px}.belt .tool small{display:block;font-size:11px}.belt .tool.on{background:#FEF3C7}
 .act.hands{position:absolute;top:-148px;left:0;background:linear-gradient(#FDE68A,#F59E0B);color:#5E3B00}
 .act.hands.on{background:linear-gradient(#86EFAC,#16A34A);color:#fff}
+
+/* --- calmer building screen --- */
+#camBtns{left:max(10px,env(safe-area-inset-left,0px));right:auto;top:150px;transform:none}
+body.building #pad .act:not(.jump){display:none}
+.tray{padding:6px 8px;gap:5px}
+.belt{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap}.belt .sub{font-size:12px;margin:0}.belt .on{background:#FEF3C7}

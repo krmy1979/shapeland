@@ -80,34 +80,37 @@ function stepTalk(){const playing=!$('#hudBot').hidden;let best=null,bd=2.4;if(p
 /* ---------- ✋ move mode: pick up what you built and put it anywhere ---------- */
 const MV={sel:null,ring:null,drag:false,start:null};
 (()=>{const r=mesh(new THREE.TorusGeometry(.7,.06,8,32),mat('#EE4F7C',{emissive:'#EE4F7C',emissiveIntensity:.6}),false);r.rotation.x=Math.PI/2;r.visible=false;scene.add(r);MV.ring=r})();
-function mvSelect(m){MV.sel=m;MV.ring.visible=!!m;if(m){const c=pieceCol(m);MV.ring.scale.setScalar(Math.max(.6,c.r+.25));if(AU.on){SND.pop();tone(660,.08,'sine',.06)}say(m.userData.item?'Move it!':'Pick it up!')}renderTray()}
-function mvPlace(m,x,z){const p=pieceData(m);if(!p)return false;const[cx,cz]=ZC[m.userData.zone];const snap=v=>Math.round(v/.25)*.25;const lx=snap(x-cx),lz=snap(z-cz);const zn=m.userData.zone;
+function mvSelect(m){if(MV.sel&&MV.sel!==m&&MV.sel.userData.liftY!==undefined){if(m===null&&MV.sel.position.y>MV.sel.userData.liftY+.2)MV.sel.position.y=MV.sel.userData.liftY;delete MV.sel.userData.liftY}MV.sel=m;MV.ring.visible=!!m;if(m){const c=pieceCol(m);MV.ring.scale.setScalar(Math.max(.6,c.r+.25));if(AU.on){SND.pop();tone(660,.08,'sine',.06)}say(m.userData.item?'Move it!':'Pick it up!')}renderTray()}
+function mvPlace(m,x,z){const p=pieceData(m);if(!p)return false;const[cx,cz]=ZC[m.userData.zone];const lx=+(x-cx).toFixed(2),lz=+(z-cz).toFixed(2);const zn=m.userData.zone;
   const ok=zn==='island'?Math.hypot(lx,lz)<R-.4:zn==='home'?Math.hypot(lx,lz)<11.8:zn==='work'?Math.abs(lx)<1.4&&Math.abs(lz)<1.4:zn==='city'?(()=>{const pl=PLOTSC.find(q=>q.id===p.plot);return pl&&Math.abs(lx-pl.x)<pl.w/2-.2&&Math.abs(lz-pl.z)<pl.d/2-.2})():false;
   if(!ok){toast(zn==='city'?'מזיזים רק בתוך המגרש שלך':'זה כבר מחוץ לגבול');return false}
   m.position.x=cx+lx;m.position.z=cz+lz;p.x=lx;p.z=lz;m.userData.col=null;return true}
 function mvCommit(){const m=MV.sel;if(!m)return;syncMoved(m);if(AU.on){SND.thud()}fxBurst(m.position.x,.1,m.position.z,'#E7E5E4',8,2)}
 const _rnd=renderer.domElement,_ray=new THREE.Raycaster(),_ndc=new THREE.Vector2(),_gp=new THREE.Plane(new THREE.Vector3(0,1,0),0),_hit=new THREE.Vector3();
 function groundAt(e){const rc=_rnd.getBoundingClientRect();_ndc.set(((e.clientX-rc.left)/rc.width)*2-1,-((e.clientY-rc.top)/rc.height)*2+1);_ray.setFromCamera(_ndc,camera);_gp.constant=-(MV.sel?Math.max(0,MV.sel.position.y-pieceCol(MV.sel).top+ (pieceCol(MV.sel).top-pieceCol(MV.sel).bottom)/2):0);return _ray.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0,1,0),0),_hit)}
-_rnd.addEventListener('pointerdown',e=>{if(MODE!=='move'||!MV.sel)return;const rc=_rnd.getBoundingClientRect();_ndc.set(((e.clientX-rc.left)/rc.width)*2-1,-((e.clientY-rc.top)/rc.height)*2+1);_ray.setFromCamera(_ndc,camera);
-  const hits=_ray.intersectObject(MV.sel,true);if(hits.length){MV.drag=true;MV.start={x:MV.sel.position.x,z:MV.sel.position.z};_rnd.setPointerCapture(e.pointerId);if(AU.on)tone(520,.06,'triangle',.06)}});
-_rnd.addEventListener('pointermove',e=>{if(!MV.drag||!MV.sel)return;const g=groundAt(e);if(!g)return;const ox=MV.sel.position.x,oz=MV.sel.position.z;if(mvPlace(MV.sel,g.x,g.z)){if((Math.abs(ox-MV.sel.position.x)+Math.abs(oz-MV.sel.position.z))>0&&AU.on){PUSH.t-=.05;if(PUSH.t<=0){PUSH.t=.09;hiss(.1,'bandpass',MV.sel.userData.item?280:600,2.5,.1)}}}});
-_rnd.addEventListener('pointerup',e=>{if(!MV.drag)return;MV.drag=false;mvCommit()});
-function moveTap(root){if(root&&root.userData&&root.userData.piece){if(!pieceStore(root.userData)){toast('🧱 אפשר להזיז רק מה שבנית בעצמך');return}mvSelect(root===MV.sel?null:root);return}
-  toast(MV.sel?'גוררים את הדבר המסומן עם האצבע, או נוגעים בו שוב כדי לשחרר':'נוגעים בצורה או ברהיט שבנית כדי לבחור אותו')}
+function moveTap(root,h){if(MV.sel&&root===MV.sel){mvSelect(null);return}
+  if(!MV.sel){if(root&&root.userData&&root.userData.piece){if(!pieceStore(root.userData)){toast('🧱 אפשר להזיז רק מה שבנית בעצמך');return}mvSelect(root);toast('👆 עכשיו נוגעים איפה לשים: על הקרקע, על צורה או ליד צורה');return}
+    toast('👆 נוגעים במשהו שבנית כדי להרים אותו');return}
+  const m=MV.sel,p=pieceData(m);if(!p)return;const zn=m.userData.zone;const A=alignedSpot(h,root&&root.userData&&root.userData.piece?root:null,zn,p.s==='item'?'box':p.s,p.sz,m);
+  const[cx,cz]=ZC[zn];const prev={x:p.x,y:p.y,z:p.z,r:p.r};const ox=m.position.x,oz=m.position.z,oy=m.position.y;
+  m.position.y=-50;if(!mvPlace(m,cx+A.x,cz+A.z)){m.position.y=oy;return}delete m.userData.liftY;m.position.y=A.y;p.y=+A.y.toFixed(2);p.x=+A.x.toFixed(2);p.z=+A.z.toFixed(2);m.userData.col=null;
+  if(typeof BK!=='undefined'){BK.undo.push({t:'move',m,id:p.id,zone:zn,prev});if(BK.undo.length>30)BK.undo.shift()}mvCommit();mvSelect(null)}
 ACTX.mvrot=()=>{const m=MV.sel,p=m&&pieceData(m);if(!p)return;p.r=((p.r||0)+1)%8;m.rotation.y=p.r*Math.PI/4;m.userData.col=null;syncMoved(m);if(AU.on)SND.pop()};
 ACTX.mvup=d=>{const m=MV.sel,p=m&&pieceData(m);if(!p)return;const dy=d.v==='up'?.25:-.25;const c=pieceCol(m);const half=(c.top-c.bottom)/2;const minY=m.userData.item?0:half;
   p.y=+clamp(p.y+dy,minY,8).toFixed(2);m.position.y=p.y;m.userData.col=null;syncMoved(m);if(AU.on)tone(d.v==='up'?700:400,.07,'sine',.06)};
 ACTX.mvdone=()=>{mvSelect(null);setMode(ME.zone==='work'?'build':'walk')};
 const _setMode=setMode;setMode=function(m){if(m!=='move'&&MV.sel)mvSelect(null);_setMode(m);if(m==='move')toast('✋ נוגעים במשהו שבנית, ואז גוררים אותו. אפשר גם פשוט ללכת לתוכו ולדחוף!')};
 const _renderTray=renderTray;renderTray=function(){_renderTray();const t=$('#tray');if(MODE!=='move'||!t)return;t.hidden=false;
-  t.innerHTML=MV.sel?`<div class="row" style="justify-content:center"><button class="btn mini" data-a="mvrot">🔄 סיבוב</button><button class="btn mini ghost" data-a="mvup" data-v="up">⬆️ למעלה</button><button class="btn mini ghost" data-a="mvup" data-v="down">⬇️ למטה</button><button class="btn mini ok" data-a="mvdone">✔ סיימתי</button></div>`
-    :`<p class="sub" style="margin:0;text-align:center">✋ נוגעים בצורה או ברהיט שבנית כדי להזיז</p>`};
+  t.innerHTML=MV.sel?`<p class="sub" style="margin:0;text-align:center">👆 נוגעים איפה לשים אותה: על הקרקע, על צורה (מעליה) או בצד של צורה (לידה)</p><div class="row" style="justify-content:center"><button class="btn mini" data-a="mvrot">🔄 לסובב</button><button class="btn mini ghost" data-a="mvcancel">✖ לבטל</button></div>`
+    :`<p class="sub" style="margin:0;text-align:center">✋ נוגעים בצורה שבנית כדי להרים אותה</p><div class="row" style="justify-content:center"><button class="btn mini ghost" data-a="bkundo">↩️ ביטול פעולה</button></div>`};
+ACTX.mvcancel=()=>mvSelect(null);
 const _renderBar=renderBar;renderBar=function(){_renderBar();const bar=$('#bar');if(!bar||bar.querySelector('[data-v="move"]'))return;const b=bar.querySelector('[data-v="build"]');if(!b||ME.zone==='visit')return;
   b.insertAdjacentHTML('afterend',`<button class="tool" data-a="mode" data-v="move" aria-pressed="${MODE==='move'}"><span>✋</span>להזיז</button>`)};
 TOOLS.move=['✋','להזיז'];
 const _tap=tap;tap=function(e){if(MODE==='move'){const rc=_rnd.getBoundingClientRect();_ndc.set(((e.clientX-rc.left)/rc.width)*2-1,-((e.clientY-rc.top)/rc.height)*2+1);_ray.setFromCamera(_ndc,camera);
-  const hits=_ray.intersectObjects([...OBJ.values()],true);const root=hits.length?(hits[0].object.userData.root||hits[0].object):null;if(root&&root.userData&&root.userData.piece){moveTap(root);return}
-  if(MV.sel){const g=groundAt(e);if(g&&mvPlace(MV.sel,g.x,g.z))mvCommit();return}toast('נוגעים במשהו שבנית כדי לבחור אותו');return}_tap(e)};
+  const hits=_ray.intersectObjects(pickTargets(),true).filter(x=>!MV.sel||!(x.object.userData.root===MV.sel||x.object===MV.sel));const hh=hits[0];const root=hh?(hh.object.userData.root||hh.object):null;
+  if(!MV.sel&&!(root&&root.userData&&root.userData.piece)){const all=_ray.intersectObjects([...OBJ.values()],true);if(all.length){const r2=all[0].object.userData.root||all[0].object;moveTap(r2,all[0]);return}}
+  if(MV.sel&&!hh){toast('נוגעים על הקרקע או על צורה');return}moveTap(root,hh);return}_tap(e)};
 
 /* ---------- feel it: shake, particles, a tiny freeze on big hits ---------- */
 const FX=[];let SHAKE={t:0,a:0};window.HITSTOP=0;
@@ -125,7 +128,7 @@ function stepPhysics(dt,t){if(!phyInit){phyInit=true;buildColliders()}
   // big landings shake the ground
   if(ME.air){fallV=Math.min(fallV,ME.vy)}else{if(fallV<-10){shake(.35,.3);fxBurst(ME.pos.x,.1,ME.pos.z,'#E7E5E4',12,2.5);if(AU.on)tone(60,.25,'sine',.25)}fallV=0}
   if(PUSH.saveT>0){PUSH.saveT-=dt;if(PUSH.saveT<=0){PUSH.dirty.forEach(syncMoved);PUSH.dirty.clear()}}
-  if(MV.sel){const c=pieceCol(MV.sel);MV.ring.position.set(MV.sel.position.x+c.cx,Math.max(.05,c.bottom+.03),MV.sel.position.z+c.cz);MV.ring.rotation.z=t*2;if(!OBJ.has(MV.sel.userData.key))mvSelect(null)}
+  if(MV.sel){if(MV.sel.userData.liftY===undefined)MV.sel.userData.liftY=MV.sel.position.y;MV.sel.position.y=MV.sel.userData.liftY+.35+Math.sin(t*5)*.08;const c=pieceCol(MV.sel);MV.ring.position.set(MV.sel.position.x+c.cx,Math.max(.05,c.bottom+.03),MV.sel.position.z+c.cz);MV.ring.rotation.z=t*2;if(!OBJ.has(MV.sel.userData.key))mvSelect(null)}
   // characters turn to look at you after a bump
   TALKERS().forEach(tk=>{const g=tk.g;if(g.userData.faceT>0){g.userData.faceT-=dt;g.rotation.y+=(g.userData.faceA-g.rotation.y)*.2}});
   stepTalk()}

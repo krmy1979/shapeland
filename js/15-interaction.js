@@ -30,7 +30,8 @@ function place(h,root,zone){
   if(store&&store.length>=(zone==='work'?40:zone==='home'?250:300)){toast('הגעת למקסימום צורות כאן. אפשר למחוק כמה כדי לבנות עוד');return}
   const cost=SEL.sz==='big'?2:1;if(P.gems<cost){toast('אין מספיק 💎. אפשר להרוויח במשימות, בתיבות האוצר או בעבודה בעיירה');sfx.bad();return}
   const[cx,cz]=ZC[zone];const snapS=zone==='work'?.25:.5;const snap=v=>Math.round(v/snapS)*snapS;const ht=hOf(SEL.s,SEL.sz);const n=surfaceNormal(h);let x,y,z;
-  if(n.y>.6){x=snap(h.point.x-cx);z=snap(h.point.z-cz);y=h.point.y+ht/2}
+  if(zone!=='work'&&typeof alignedSpot==='function'){const A=alignedSpot(h,root,zone,SEL.s,SEL.sz,null);x=A.x;y=A.y;z=A.z}
+  else if(n.y>.6){x=snap(h.point.x-cx);z=snap(h.point.z-cz);y=h.point.y+ht/2}
   else{x=snap(h.point.x-cx+n.x*.5*SIZES[SEL.sz][0]);z=snap(h.point.z-cz+n.z*.5*SIZES[SEL.sz][0]);y=Math.max(ht/2,h.point.y)}
   if(zone==='city'&&(Math.abs(x-cplot.x)>cplot.w/2-.2||Math.abs(z-cplot.z)>cplot.d/2-.2)){toast('בונים בתוך הגבולות של המגרש');return}
   const lim=zone==='island'?R-.2:zone==='work'?1.4:zone==='city'?99:9;if(Math.hypot(x,z)>lim&&zone!=='work'||zone==='work'&&(Math.abs(x)>1.4||Math.abs(z)>1.4)){toast(zone==='work'?'בונים על השולחן של הסדנה':'זה כבר מחוץ לגבול');return}

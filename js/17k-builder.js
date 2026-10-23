@@ -71,14 +71,21 @@ const _setModeB=setMode;setMode=function(m){if(m!=='measure'){clearMeasure();BK.
 
 /* ---------- tool belt in the tray, and a 🤲 button by the joystick ---------- */
 const BUILDZ=['island','home','city','work'];
-const _renderTrayB=renderTray;renderTray=function(){_renderTrayB();const t=$('#tray');if(!t)return;const z=ME.zone;if(!BUILDZ.includes(z)||!['build','move','measure','walk','item'].includes(MODE))return;
-  if(z==='city'&&!P.plots.length)return;if(MODE==='walk'&&!BK.carry)return;t.hidden=false;
-  const belt=`<div class="belt"><button class="tool" data-a="bklift">${BK.carry?'⬇️<small>להניח</small>':'🤲<small>להרים</small>'}</button><button class="tool" data-a="bkrot">🔄<small>לסובב</small></button>
-    <button class="tool" data-a="bkgrid">📏<small>${BK.step?BK.step+' מ׳':'יישור אוטו׳'}</small></button><button class="tool ${MODE==='measure'?'on':''}" data-a="bkmeasure">📐<small>למדוד</small></button><button class="tool" data-a="bkundo">↩️<small>ביטול</small></button></div>`;
-  if(!t.querySelector('.belt'))t.insertAdjacentHTML('afterbegin',belt)};
+const _renderTrayB=renderTray;renderTray=function(){_renderTrayB();const t=$('#tray');if(!t||MODE!=='build'||!BUILDZ.includes(ME.zone))return;
+  if(!t.querySelector('.belt'))t.insertAdjacentHTML('beforeend',`<div class="belt"><button class="btn mini ghost" data-a="bkundo">↩️ ביטול פעולה</button><button class="btn mini ghost ${MODE==='measure'?'on':''}" data-a="bkmeasure">📐 למדוד</button><span class="sub">👆 נוגעים בקרקע, על צורה (לבנות מעליה) או בצד שלה (לבנות לידה)</span></div>`)};
+/* one rule for where a piece goes: on the ground on a grid of its own size, exactly on top of a piece, or exactly beside it */
+function alignedSpot(h,root,zone,s,sz,self){const[cx,cz]=ZC[zone];const w=SIZES[sz]?SIZES[sz][0]:1;let half=w/2,hh=hOf(s,sz)/2;const isItem=self&&self.userData.item;
+  if(self){const sc=pieceCol(self);half=Math.max(sc.hx,sc.hz);hh=(sc.top-sc.bottom)/2}const lift=v=>isItem?v:v+hh;
+  if(root&&root.userData&&root.userData.piece&&root!==self){const c=pieceCol(root);const bx=root.position.x+c.cx,bz=root.position.z+c.cz;const n=surfaceNormal(h);
+    if(n.y>.6)return{x:bx-cx,z:bz-cz,y:lift(c.top)};
+    if(Math.abs(n.x)>=Math.abs(n.z)){const sg=Math.sign(n.x)||1;return{x:bx-cx+sg*(c.hx+half),z:bz-cz,y:lift(c.bottom)}}
+    const sg=Math.sign(n.z)||1;return{x:bx-cx,z:bz-cz+sg*(c.hz+half),y:lift(c.bottom)}}
+  const g=BK.step||w;const x=Math.round((h.point.x-cx)/g)*g,z=Math.round((h.point.z-cz)/g)*g;let sup=0;
+  for(const o of OBJ.values()){if(o===self||o.userData.zone!==zone||o.userData.grow)continue;const oc=pieceCol(o);if(Math.abs(cx+x-(o.position.x+oc.cx))<oc.hx+half-.06&&Math.abs(cz+z-(o.position.z+oc.cz))<oc.hz+half-.06&&oc.top>sup)sup=oc.top}
+  return{x,z,y:lift(sup)}}
 function updateHands(){const acts=document.querySelector('#pad .acts');if(!acts)return;let b=$('#bHands');if(!b){b=document.createElement('button');b.id='bHands';b.className='act hands';acts.appendChild(b);
     b.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();liftPiece()})}
-  const show=!!BK.carry||(BUILDZ.includes(ME.zone)&&!!BK.near);b.hidden=!show;b.innerHTML=BK.carry?'⬇️<small>להניח</small>':'🤲<small>להרים</small>';b.classList.toggle('on',!!BK.carry)}
+  const show=!!BK.carry||(BUILDZ.includes(ME.zone)&&!!BK.near&&!['build','move','erase','item'].includes(MODE));b.hidden=!show;b.innerHTML=BK.carry?'⬇️<small>להניח</small>':'🤲<small>להרים</small>';b.classList.toggle('on',!!BK.carry)}
 window.addEventListener('keydown',e=>{if(e.code==='KeyE'&&!e.repeat&&!$('#hudBot').hidden&&!(e.target&&/INPUT|TEXTAREA/.test(e.target.tagName)))liftPiece()});
 /* grid on the ground while building */
 (()=>{const g=new THREE.GridHelper(12,24,'#FFFFFF','#FFFFFF');g.material.transparent=true;g.material.opacity=.35;g.visible=false;scene.add(g);BK.grid=g})();
@@ -89,3 +96,6 @@ function stepBuilder(dt,t){BK.hint-=dt;if(BK.hint<=0){BK.hint=.3;const n=BK.carr
   const show=(MODE==='build'||MODE==='move'||!!m)&&BUILDZ.includes(ME.zone);BK.grid.visible=show;if(show){const st=BK.step||(m?gridStep(m):1);const[cx,cz]=ZC[ME.zone];const sx=cx+Math.round((ME.pos.x-cx)/st)*st,sz=cz+Math.round((ME.pos.z-cz)/st)*st;BK.grid.position.set(sx,(ME.y||0)+.02,sz);BK.grid.scale.setScalar(st*2)}}
 /* leaving a build zone while carrying puts the piece back */
 const _teleportB=teleport;teleport=function(z,s){if(BK.carry){const m=BK.carry,p=pieceData(m),f=BK.from;if(p){const[cx,cz]=ZC[f.zone];p.x=f.x;p.y=f.y;p.z=f.z;m.position.set(cx+p.x,p.y,cz+p.z)}BK.carry=null;killGhost();updateHands()}_teleportB(z,s)};
+
+/* tidy screen while building: only the joystick and jump stay */
+setInterval(()=>{const b=['build','move','erase','item','room','door','measure'].includes(MODE)&&!$('#hudBot').hidden;document.body.classList.toggle('building',b)},300);
