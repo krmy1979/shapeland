@@ -302,3 +302,10 @@ body.building #pad .act:not(.jump){display:none}
 .mbig{display:flex;flex-direction:column;gap:6px;margin:8px 0}.mbig div,.mrow{display:grid;grid-template-columns:110px 1fr 56px;align-items:center;gap:8px}
 .mbar{height:14px;border-radius:7px;background:#F1F5F9;overflow:hidden;display:block}.mbar i{display:block;height:100%;border-radius:7px}.mbar i.in{background:#22C55E}.mbar i.out{background:#F87171}
 details summary{font-family:var(--f-display);font-size:16px;cursor:pointer;margin:6px 0}
+/* the legend */
+.sbook{display:flex;flex-direction:column;gap:10px}.sbart{font-size:84px;text-align:center;line-height:1.1;padding:10px;border-radius:22px;background:radial-gradient(circle,#FEF3C7,#E0E7FF)}
+.sbhe{font-size:19px;line-height:1.5;font-weight:700;text-align:center;margin:0}
+.chaps{display:flex;flex-direction:column;gap:5px}.chap{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:12px;background:#F8FAFC;font-size:14px;flex-wrap:wrap}
+.chap.cur{background:#FEF3C7;box-shadow:inset 0 0 0 2px #F59E0B}.chap.done{background:#F0FDF4}.chap .sh{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:14px}.chap small{opacity:.6;margin-inline-start:auto}
+.page{background:#FFFBEB;border-radius:14px;padding:10px;margin:6px 0}.page p{margin:6px 0}.page .wise{font-size:13px;color:#92400E;font-style:italic;opacity:.85}
+.quest.stq{background:#EDE9FE;box-shadow:0 3px 0 #C4B5FD;color:var(--ink)}
