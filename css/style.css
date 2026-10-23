@@ -266,3 +266,10 @@ body.building #pad .act:not(.jump){display:none}
 .pickchip .open{font-size:.85em;color:#2E6BE6}
 .tray.mini .sub{font-size:.75em;opacity:.75;text-align:center}
 .pickhead{display:flex;justify-content:space-between;align-items:center;gap:8px}
+/* big building: walls, pillars, floors */
+.kinds{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none}
+.kind{flex:0 0 auto;border:0;border-radius:12px;background:#EEF4FF;padding:6px 10px;font:inherit;font-weight:800;cursor:pointer;white-space:nowrap}
+.kind[aria-pressed="true"]{background:#2E6BE6;color:#fff;box-shadow:0 2px 0 rgba(29,42,72,.25)}
+.dimlbl{font-weight:800}.dimv{min-width:44px;text-align:center;font-size:1.1em}
+.pickchip .em{font-size:20px}
+#bigLabel{position:fixed;top:64px;left:50%;transform:translateX(-50%);z-index:30;background:rgba(29,42,72,.88);color:#FDE047;font-weight:900;padding:8px 14px;border-radius:14px;direction:rtl;pointer-events:none;font-size:15px}

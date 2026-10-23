@@ -10,7 +10,7 @@ const _pc=pieceCol;pieceCol=function(m){const c=_pc(m);if(c.hx===undefined){_bb.
 /* standing on blocks */
 const _floorAt2=floorAt;floorAt=function(x,z){const f=_floorAt2(x,z);if(f.swim)return f;let best=null;
   for(const m of OBJ.values()){if(m===BK.carry||m.userData.grow)continue;if(!STANDABLE.has(pkind(m)))continue;const c=pieceCol(m);const px=m.position.x+c.cx,pz=m.position.z+c.cz;
-    if(Math.abs(x-px)<c.hx-.05&&Math.abs(z-pz)<c.hz-.05&&c.top>f.h&&(!best||c.top>best.top))best={top:c.top,m}}
+    if(Math.abs(x-px)<c.hx-.05&&Math.abs(z-pz)<c.hz-.05&&c.top>f.h&&(!m.userData.big||c.top<=ME.y+.7)&&(!best||c.top>best.top))best={top:c.top,m}}
   if(best)return{h:best.top,swim:null,lava:false,piece:best.m};return f};
 /* small blocks are steps, not walls */
 
