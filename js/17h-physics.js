@@ -23,7 +23,8 @@ function pieceCol(m){const u=m.userData;if(u.col&&!u.grow)return u.col;_bb.setFr
   const c={r:Math.max(.2,Math.min(hx,hz)*.9+Math.abs(hx-hz)*.5),top:_bb.max.y,bottom:_bb.min.y,cx:(_bb.max.x+_bb.min.x)/2-m.position.x,cz:(_bb.max.z+_bb.min.z)/2-m.position.z};if(!u.grow)u.col=c;return c}
 function pieceMass(m){const p=pieceData(m)||{};if(m.userData.item){const big=['sofa','bed','closet','castle','tower','robot','statue'].includes(p.c);return big?3:1.6}return{small:.4,medium:1,big:2.6}[p.sz]||1}
 function strength(){return 1+((P.badges&&P.badges.strong)||0)*.18+(typeof powerStrength==='function'?powerStrength():0)}
-function hitTest(x,z,y){if(!SOL)buildColliders();const R0=ME_R;
+function hitTest(x,z,y){try{return hitTest0(x,z,y)}catch(e){if(!window.__herr){window.__herr=1;console.warn('hit',e)}return null}}
+function hitTest0(x,z,y){if(!SOL)buildColliders();const R0=ME_R;
   for(const s of SOL){if(y>=s.top-.05)continue;if(s.t==='cir'){if(Math.hypot(x-s.x,z-s.z)<s.r+R0)return{k:'solid',s}}else{const dx=x-s.x,dz=z-s.z;const lx=dx*s.c-dz*s.s,lz=dx*s.s+dz*s.c;if(Math.abs(lx)<s.hx+R0&&Math.abs(lz)<s.hz+R0)return{k:'solid',s}}}
   if(ME.zone==='inside'&&INROOM){for(const o of INPICK){if(!o.userData||o.userData.root!==o||o===INPICK[0])continue;const wp=o.getWorldPosition(new THREE.Vector3());if(o.userData.zact&&String(o.userData.zact).includes('leaveBuilding'))continue;
       if(Math.hypot(x-wp.x,z-wp.z)<(o.userData.talker?.45:.55)+R0)return o.userData.talker?{k:'char',o}:{k:'solid'}}}
@@ -54,7 +55,7 @@ tryMove=function(dx,dz){const zone=ME.zone;const y=ME.y;
     if(!OUTZ.includes(zone)&&zone!=='bridge'&&zz!==zone)return false;if(OUTZ.includes(zone)&&!OUTZ.includes(zz)&&zz!=='bridge')return false;
     const f=floorAt(x,z);const up=f.h-ME.y;if(up>.55&&!(ME.swim&&up<1.6)&&!ME.flying)return false;if(!walkable(_np,zz))return false;
     const h=hitTest(x,z,y);if(!h)return true;
-    if(h.k==='piece'&&!ME.flying&&!ME.swim){const st=pieceStore(h.m.userData);if(st){const f2=tryPush(h.m,dx,dz);if(f2>0){PUSH.scale=f2;return'push'}}else bumpNote('piece',h.m)}
+    if(h.k==='piece'&&!ME.flying&&!ME.swim){const st=pieceStore(h.m.userData);if(st){let f2=0;try{f2=tryPush(h.m,dx,dz)}catch(e){f2=0};if(f2>0){PUSH.scale=f2;return'push'}}else bumpNote('piece',h.m)}
     if(h.k==='char')bump(h.tk||null,h.o||null);if(h.k==='solid'&&Math.hypot(dx,dz)>.04)bumpWall();return false};
   let nx=ME.pos.x+dx,nz=ME.pos.z+dz;PUSH.scale=1;let r=ok(nx,nz);
   if(r==='push'){nx=ME.pos.x+dx*PUSH.scale;nz=ME.pos.z+dz*PUSH.scale;if(hitTest(nx,nz,y))return false}

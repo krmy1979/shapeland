@@ -28,6 +28,6 @@ function loop(){const dt=Math.min(clock.getDelta(),.05)*(window.HITSTOP>0?.15:1)
   BOATS.forEach((b,i)=>{b.position.y=Math.sin(t*1.5+i)*.06;b.rotation.z=Math.sin(t*1.2+i)*.05});
   if(P.tour&&ME.zone==='city'&&ME.obj){const tm=NPCOBJ.tom,ry=ME.obj.rotation.y;const bx=ME.pos.x-Math.sin(ry)*1.5,bz=ME.pos.z-Math.cos(ry)*1.5;const dx=bx-tm.position.x,dz=bz-tm.position.z,dd=Math.hypot(dx,dz);
     if(dd>.15){tm.position.x+=dx*.06;tm.position.z+=dz*.06;tm.rotation.y=Math.atan2(dx,dz)}const a=ANCHORS[P.tour.dest];if(a&&Math.hypot(ME.pos.x-CX-a[0],ME.pos.z-CZ-a[1])<5.5)tourDone()}
-  stepZones(dt,t);stepAdventure(dt,t);stepExplorer(dt,t);
+  try{stepZones(dt,t);stepAdventure(dt,t);stepExplorer(dt,t)}catch(e){if(!window.__lerr2){window.__lerr2=1;console.warn('zones',e)}}
   water.position.y=-1.6+Math.sin(t*.8)*.05;
-  stepPowers(dt,t);stepAction(dt,t);stepPhysics(dt,t);stepAudio(dt,mv0);stepCamera(dt);renderer.render(scene,camera);requestAnimationFrame(loop)}
+  for(const f of[()=>stepPowers(dt,t),()=>stepAction(dt,t),()=>stepPhysics(dt,t),()=>stepAudio(dt,mv0),()=>stepCamera(dt)]){try{f()}catch(e){if(!window.__lerr){window.__lerr=1;console.warn('step',e)}}}renderer.render(scene,camera);requestAnimationFrame(loop)}
