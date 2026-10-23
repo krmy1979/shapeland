@@ -34,8 +34,8 @@ function tree(x,z,s){const g=new THREE.Group();const t=mesh(new THREE.CylinderGe
 /* labels */
 function label(text,bg,fg,scale){const cv=document.createElement('canvas');const c=cv.getContext('2d');c.font='600 40px Fredoka, Arial, sans-serif';
   const w=Math.ceil(c.measureText(text).width)+44;cv.width=w;cv.height=64;c.font='600 40px Fredoka, Arial, sans-serif';
-  c.fillStyle=bg||'rgba(255,255,255,.92)';c.beginPath();if(c.roundRect)c.roundRect(0,0,w,64,32);else c.rect(0,0,w,64);c.fill();
-  c.fillStyle=fg||'#1D2A48';c.textAlign='center';c.textBaseline='middle';c.fillText(text,w/2,34);
+  c.fillStyle=bg||'rgba(255,246,227,.94)';c.beginPath();if(c.roundRect)c.roundRect(2,2,w-4,60,26);else c.rect(0,0,w,64);c.fill();if(!bg||bg==='#FFFFFF'){c.lineWidth=3;c.strokeStyle='rgba(150,110,60,.55)';c.stroke()}
+  c.fillStyle=fg||'#5B3A1E';c.textAlign='center';c.textBaseline='middle';c.fillText(text,w/2,34);
   const s=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(cv),depthTest:false}));const k=scale||.42;s.scale.set(w/64*k,k,1);s.renderOrder=10;return s}
 function marker(ch,bg){const cv=document.createElement('canvas');cv.width=cv.height=128;const c=cv.getContext('2d');c.fillStyle=bg;c.beginPath();c.arc(64,64,56,0,7);c.fill();
   c.lineWidth=8;c.strokeStyle='#fff';c.stroke();c.font='700 72px Fredoka, Arial';c.fillStyle='#fff';c.textAlign='center';c.textBaseline='middle';c.fillText(ch,64,70);

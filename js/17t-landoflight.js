@@ -103,3 +103,34 @@ function stepLand(dt){LOL.t+=dt;const out=OUTDOOR(ME.zone);LOL.target=worldLight
   (LOL.lamps||[]).forEach((l,i)=>{const f=.85+Math.sin(LOL.t*12+i*2)*.08+Math.sin(LOL.t*7.3+i)*.05;l.fl.scale.setScalar(f);l.gl.material.opacity=(.35+LOL.L*.55)*f})}
 const _stepStoryLand=stepStory;stepStory=function(dt,t){_stepStoryLand(dt,t);try{stepLand(dt)}catch(e){if(!window.__lerr){window.__lerr=1;console.warn('land',e)}}};
 setAtmos(ME.zone);
+
+/* ===================== ART STEP 2 · STONE TOWN: buildings, houses, chests, plaza, labels ===================== */
+const STONE_TEX=(()=>canvasTex(256,256,(c,w,h)=>{c.fillStyle='#E9DCC0';c.fillRect(0,0,w,h);const rows=8,bh=h/rows;for(let r=0;r<rows;r++){const off=r%2?16:0;for(let x=-off;x<w;x+=48){const t=['#EFE3C9','#E4D3B2','#F2E8D3','#DDCBA8'][Math.floor(rnd01()*4)];c.fillStyle=t;c.fillRect(x+2,r*bh+2,44,bh-4)}}
+  c.fillStyle='rgba(120,90,50,.08)';for(let i=0;i<600;i++)c.fillRect(rnd01()*w,rnd01()*h,2,2)},1))();
+STONE_TEX.wrapS=STONE_TEX.wrapT=THREE.RepeatWrapping;
+const stoneMat=rep=>{const t=STONE_TEX.clone();t.needsUpdate=true;t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(rep[0],rep[1]);return new THREE.MeshStandardMaterial({map:t,roughness:.92})};
+function archDoor(w,h,col){const g=new THREE.Group();const d=new THREE.Mesh(new THREE.BoxGeometry(w,h-w/2,.1),facet(col));d.position.y=(h-w/2)/2;g.add(d);const top=new THREE.Mesh(new THREE.CylinderGeometry(w/2,w/2,.1,12,1,false,0,Math.PI),facet(col));top.rotation.set(Math.PI/2,0,Math.PI/2);top.position.y=h-w/2;g.add(top);
+  const fr=new THREE.Mesh(new THREE.TorusGeometry(w/2+.08,.07,6,12,Math.PI),facet('#D9C6A2'));fr.position.y=h-w/2;fr.position.z=.03;g.add(fr);return g}
+function shutterWin(col){const g=new THREE.Group();const gl=new THREE.Mesh(new THREE.BoxGeometry(.7,.75,.06),new THREE.MeshStandardMaterial({color:'#2D3A4A',roughness:.3}));g.add(gl);
+  [-1,1].forEach(k=>{const s=new THREE.Mesh(new THREE.BoxGeometry(.36,.8,.05),facet(col));s.position.set(k*.55,0,.03);s.rotation.y=k*.35;g.add(s)});const sill=new THREE.Mesh(new THREE.BoxGeometry(.9,.08,.18),facet('#D9C6A2'));sill.position.set(0,-.43,.06);g.add(sill);return g}
+/* town buildings */
+BLDG.forEach((g,i)=>{const b=BUILDINGS[i];if(!b)return;const[body,roof,aw,door,w1,w2]=g.children;body.material=stoneMat([2.2,1.6]);roof.visible=false;door.visible=false;w1.visible=false;w2.visible=false;
+  const par=new THREE.Mesh(new THREE.BoxGeometry(4.6,.35,3.6),stoneMat([2,.3]));par.position.y=3.15;g.add(par);const dome=new THREE.Mesh(new THREE.SphereGeometry(1.05,14,8,0,Math.PI*2,0,Math.PI/2),facet(b.roof,{roughness:.5}));dome.position.set(.9,3.3,-.3);g.add(dome);
+  const tip=new THREE.Mesh(new THREE.ConeGeometry(.12,.45,6),facet('#FACC15',{metalness:.5}));tip.position.set(.9,4.55,-.3);g.add(tip);
+  const ad=archDoor(1.1,2.1,'#6B4423');ad.position.set(0,0,1.72);g.add(ad);[-1.45,1.45].forEach(x=>{const w=shutterWin(b.color);w.position.set(x,1.65,1.72);g.add(w)});
+  const lb=g.children.find(o=>o.isSprite);if(lb)lb.position.y=5.6;g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true}});rootify(g)});
+/* the town fountain and plaza */
+(()=>{const[cx,cz]=ZC.town;scene.children.forEach(o=>{if(o.isGroup&&Math.abs(o.position.x-cx)<.01&&Math.abs(o.position.z-cz)<.01&&o.children[0]&&o.children[0].geometry&&o.children[0].geometry.type==='CylinderGeometry'&&o.children.length===4){o.children[0].material=stoneMat([4,.4]);o.children[2].material=stoneMat([1,1]);o.children[1].material=new THREE.MeshStandardMaterial({color:'#4FC6D3',roughness:.1,metalness:.2})}});
+  const cob=canvasTex(512,512,(c,w,h)=>{c.fillStyle='#CDB892';c.fillRect(0,0,w,h);for(let i=0;i<900;i++){const x=rnd01()*w,y=rnd01()*h,r=7+rnd01()*9;c.fillStyle=['#E4D4B4','#D8C49E','#EADDBF','#CFBA92'][i%4];c.beginPath();c.ellipse(x,y,r,r*.8,rnd01()*3,0,7);c.fill()}},1);cob.repeat.set(3,3);
+  plaza.material=new THREE.MeshStandardMaterial({map:cob,roughness:.95});
+  const g2=canvasTex(512,512,(c,w,h)=>{c.fillStyle='#6FAA45';c.fillRect(0,0,w,h);for(let i=0;i<5000;i++){c.fillStyle=['rgba(60,100,35,.35)','rgba(170,205,100,.35)'][i%2];c.fillRect(rnd01()*w,rnd01()*h,2,4)}},1);townGround.material=new THREE.MeshStandardMaterial({map:g2,roughness:.95})})();
+/* chests: old wood with brass */
+CHESTS.forEach(g=>{const[base,lid,band]=g.children;if(base)base.material=facet('#7A4A26');if(lid)lid.material=facet('#8E5A2E');if(band)band.material=new THREE.MeshStandardMaterial({color:'#C9A227',metalness:.7,roughness:.3})});
+const _makeChestL=makeChest;makeChest=function(z){const g=_makeChestL(z);const[base,lid,band]=g.children;base.material=facet('#7A4A26');lid.material=facet('#8E5A2E');band.material=new THREE.MeshStandardMaterial({color:'#C9A227',metalness:.7,roughness:.3});return g};
+/* houses on the island: stone cottages with a colored door and shutters, a terracotta dome */
+houseExterior=function(color,name){const g=new THREE.Group();const body=new THREE.Mesh(new THREE.BoxGeometry(2.6,1.9,2.2),stoneMat([1.4,1]));body.position.y=.95;body.castShadow=body.receiveShadow=true;g.add(body);
+  const par=new THREE.Mesh(new THREE.BoxGeometry(2.75,.22,2.35),stoneMat([1.4,.2]));par.position.y=1.98;g.add(par);const dome=new THREE.Mesh(new THREE.SphereGeometry(.85,12,8,0,Math.PI*2,0,Math.PI/2),facet('#C4683F'));dome.position.y=2.05;dome.castShadow=true;g.add(dome);
+  const ad=archDoor(.62,1.25,color);ad.position.set(0,0,1.12);g.add(ad);[-.85,.85].forEach(x=>{const w=shutterWin(color);w.scale.setScalar(.7);w.position.set(x,1.2,1.12);g.add(w)});
+  const pot=new THREE.Mesh(new THREE.CylinderGeometry(.18,.13,.3,8),facet('#B45309'));pot.position.set(.75,.15,1.35);g.add(pot);const pl=new THREE.Mesh(new THREE.IcosahedronGeometry(.22,0),facet('#4D7C3A'));pl.position.set(.75,.42,1.35);g.add(pl);
+  const lb=label(name,'#FFF6E3','#5B3A1E',.38);lb.position.y=3.4;g.add(lb);return rootify(g)};
+EXT.forEach((v,k)=>{scene.remove(v.g)});EXT.clear();if(typeof renderExteriors==='function')renderExteriors();
