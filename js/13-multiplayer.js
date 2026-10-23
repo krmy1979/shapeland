@@ -60,7 +60,7 @@ let lastPres=0;
 function localPos(){const[cx,cz]=ZC[ME.zone]||[0,0];return[+(ME.pos.x-cx).toFixed(2),+(ME.pos.z-cz).toFixed(2)]}
 function pushPresence(force){if(!NET.room)return;const t=performance.now();if(!force&&t-lastPres<120)return;lastPres=t;const[x,z]=localPos();
   const zone=ME.zone==='home'?'house':ME.zone==='visit'?'house':ME.zone,host=ME.zone==='home'?P.key:ME.zone==='visit'&&VISIT?VISIT.host:ME.zone==='inside'&&INSIDE?INSIDE.id:null;
-  NET.room.presence({n:P.name||'שחקן/ית',k:P.key,lv:level(),pc:P.pieces.length+P.cpieces.length,ch:P.ch,hc:P.house.color,pet:P.pet,pl:P.plots,zone,host,x,z}).catch(()=>{})}
+  NET.room.presence({n:P.name||'שחקן/ית',k:P.key,lv:level(),pc:P.pieces.length+P.cpieces.length,ch:P.ch,hc:P.house.color,pet:P.pet,pl:P.plots,zone,host,x,z,y:ME.y>.3?Math.round(ME.y*10)/10:0}).catch(()=>{})}
 function emit(topic,data){if(NET.room&&NET.room.connected())NET.room.emit(topic,data).catch(()=>{})}
 let sendQ=Promise.resolve();
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
@@ -89,4 +89,4 @@ function syncAvatars(){NET.peers.forEach(p=>{if(p.sameTab)return;const pr=p.pres
   if(['island','town','bridge','city','road','girls','boys','adv'].includes(z))center=ZC[z==='bridge'?'island':z];
   else if(z==='inside'){if(INSIDE&&pr.host===INSIDE.id)center=ZC.inside}
   else if(z==='house'){if(pr.host===P.key)center=ZC.home;else if(VISIT&&pr.host===VISIT.host)center=ZC.visit}
-  a.obj.visible=!!center;if(center){a.tx=center[0]+clamp(+pr.x||0,-40,40);a.tz=center[1]+clamp(+pr.z||0,-40,40);if(a.first||a.lastCenter!==center){a.obj.position.set(a.tx,0,a.tz);a.first=false;a.lastCenter=center}}})}
+  a.obj.visible=!!center;a.ty=+pr.y||0;if(center){a.tx=center[0]+clamp(+pr.x||0,-40,40);a.tz=center[1]+clamp(+pr.z||0,-40,40);if(a.first||a.lastCenter!==center){a.obj.position.set(a.tx,0,a.tz);a.first=false;a.lastCenter=center}}})}

@@ -226,3 +226,13 @@ details.more summary{cursor:pointer;color:var(--berry);font-weight:700;margin-bo
 .parch{background:linear-gradient(#FEF3C7,#FDE68A);border:2px solid #E5C27A;border-radius:14px;padding:14px;font-family:var(--f-display);font-size:20px;line-height:1.35;color:#5E3B00;text-align:left}
 .bar.big{height:14px;border-radius:9px;background:#E5E7EB;overflow:hidden}.bar.big i{display:block;height:100%;background:linear-gradient(90deg,#A78BFA,#EC4899)}
 .quest.jr{background:#EDE9FE;box-shadow:0 3px 0 #C4B5FD;color:var(--ink)}
+
+/* --- camera buttons, power button --- */
+#camBtns{right:max(10px,env(safe-area-inset-right,0px));top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px}
+#camBtns .cb{width:44px;height:44px;border-radius:50%;border:2px solid #fff;background:#ffffffcc;font-size:22px;line-height:1;color:var(--ink);box-shadow:0 3px 0 #1D2A4833;touch-action:none;cursor:pointer}
+.act.pow{position:absolute;top:-74px;right:0;background:conic-gradient(#A855F7 var(--e,100%),#E9D5FF 0);color:#fff;text-shadow:0 1px 2px #0006}
+.act.pow[aria-pressed="true"]{box-shadow:0 0 0 4px #F0ABFC,0 0 18px #E879F9}
+.opt.pw{display:flex;align-items:center;gap:12px;justify-content:flex-start}.opt.pw .em{font-size:36px}.opt.pw.on{border-color:var(--berry);background:#FFE8EF}
+#actHud{position:fixed;top:calc(env(safe-area-inset-top,0px) + 110px);left:50%;transform:translateX(-50%);z-index:6;background:#1D2A48;color:#fff;border-radius:999px;padding:6px 16px;font-family:var(--f-display);font-size:18px;display:flex;gap:12px;align-items:center;box-shadow:0 4px 12px #0004}
+#actHud.hurry{background:#DC2626;animation:pulse .5s infinite alternate}@keyframes pulse{to{transform:translateX(-50%) scale(1.06)}}
+.count{position:fixed;inset:0;display:grid;place-items:center;z-index:40;pointer-events:none;font-family:var(--f-display);font-size:120px;color:#fff;text-shadow:0 6px 0 #EE4F7C,0 0 30px #0006}
