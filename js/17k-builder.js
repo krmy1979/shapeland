@@ -13,7 +13,7 @@ const _floorAt2=floorAt;floorAt=function(x,z){const f=_floorAt2(x,z);if(f.swim)r
     if(Math.abs(x-px)<c.hx-.05&&Math.abs(z-pz)<c.hz-.05&&c.top>f.h&&(!best||c.top>best.top))best={top:c.top,m}}
   if(best)return{h:best.top,swim:null,lava:false,piece:best.m};return f};
 /* small blocks are steps, not walls */
-const _hitTest0=hitTest0;hitTest0=function(x,z,y){const h=_hitTest0(x,z,y);if(h&&h.k==='piece'){if(h.m===BK.carry)return null;const c=pieceCol(h.m);if(STANDABLE.has(pkind(h.m))&&c.top-y<=.56)return null}return h};
+
 
 /* ---------- where would a piece land? (auto-align to the grid of its own size, on top of what is there) ---------- */
 function gridStep(m){if(BK.step)return BK.step;const p=pieceData(m)||{};if(m.userData.item)return .5;return({small:.6,medium:1,big:1.6})[p.sz]||1}
