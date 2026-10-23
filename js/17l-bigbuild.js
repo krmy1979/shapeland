@@ -10,7 +10,7 @@ function bigDims(k){const m=typeof k==='string'&&BIGRE.exec(k);if(!m)return null
   if('wdn'.includes(t)&&a>=(t==='w'?1:2)&&a<=12&&b>=(t==='w'?1:2)&&b<=6)return{t:'wall',v:t,L:a,H:b,area:a*b,h:b,sx:a+.3,sz:.3};
   if(t==='p'&&a>=1&&a<=8&&!m[3])return{t:'pillar',H:a,area:a,h:a,sx:.5,sz:.5};
   if(t==='f'&&a>=1&&a<=12&&b>=1&&b<=12)return{t:'floor',W:a,D:b,area:a*b,h:.25,sx:a+.3,sz:b+.3};return null}
-const T_=.3,DOORH=1.8,DOORW=1;
+const T_=.3,DOORH=1.8,DOORW=1.3;
 
 /* ---------- shapes: a few boxes merged into one piece ---------- */
 function mergeBoxes(parts){const pos=[],nor=[],uv=[],idx=[];let off=0;for(const[w,h,d,x,y,z]of parts){if(w<=.01||h<=.01||d<=.01)continue;const g=new THREE.BoxGeometry(w,h,d);g.translate(x,y,z);
