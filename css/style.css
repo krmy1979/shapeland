@@ -256,3 +256,13 @@ details.more summary{cursor:pointer;color:var(--berry);font-weight:700;margin-bo
 body.building #pad .act:not(.jump){display:none}
 .tray{padding:6px 8px;gap:5px}
 .belt{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap}.belt .sub{font-size:12px;margin:0}.belt .on{background:#FEF3C7}
+/* collapsible shape picker */
+.tray.mini{width:auto;max-width:min(560px,100%);padding:5px 8px;gap:3px;align-self:center}
+.pickbar{display:flex;gap:6px;align-items:center}
+.pickchip{display:flex;align-items:center;gap:6px;border:0;border-radius:14px;background:#EEF4FF;padding:6px 10px;font:inherit;font-weight:800;cursor:pointer;box-shadow:0 2px 0 rgba(29,42,72,.15)}
+.pickchip svg{width:24px;height:24px}
+.pickchip .dot{width:14px;height:14px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #A9B6CC}
+.pickchip .szl{font-size:.8em;background:#fff;border-radius:8px;padding:1px 6px}
+.pickchip .open{font-size:.85em;color:#2E6BE6}
+.tray.mini .sub{font-size:.75em;opacity:.75;text-align:center}
+.pickhead{display:flex;justify-content:space-between;align-items:center;gap:8px}

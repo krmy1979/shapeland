@@ -71,8 +71,19 @@ const _setModeB=setMode;setMode=function(m){if(m!=='measure'){clearMeasure();BK.
 
 /* ---------- tool belt in the tray, and a 🤲 button by the joystick ---------- */
 const BUILDZ=['island','home','city','work'];
-const _renderTrayB=renderTray;renderTray=function(){_renderTrayB();const t=$('#tray');if(!t||MODE!=='build'||!BUILDZ.includes(ME.zone))return;
-  if(!t.querySelector('.belt'))t.insertAdjacentHTML('beforeend',`<div class="belt"><button class="btn mini ghost" data-a="bkundo">↩️ ביטול פעולה</button><button class="btn mini ghost ${MODE==='measure'?'on':''}" data-a="bkmeasure">📐 למדוד</button><span class="sub">👆 נוגעים בקרקע, על צורה (לבנות מעליה) או בצד שלה (לבנות לידה)</span></div>`)};
+const _renderTrayB=renderTray;renderTray=function(){
+  if(MODE==='build'&&BK.trayOpen&&BK.lastS!==undefined&&SEL.s!==BK.lastS&&P.owned.includes(SEL.s))BK.trayOpen=false;BK.lastS=SEL.s;
+  _renderTrayB();const t=$('#tray');if(t&&MODE!=='build')t.classList.remove('mini');if(!t||MODE!=='build'||!BUILDZ.includes(ME.zone)||t.hidden)return;
+  const tools=`<button class="btn mini ghost" data-a="bkundo" aria-label="ביטול פעולה">↩️</button><button class="btn mini ghost ${MODE==='measure'?'on':''}" data-a="bkmeasure" aria-label="מדידה">📐</button>`;
+  if(!BK.trayOpen){const sz=SIZES[SEL.sz]?SEL.sz:'';
+    t.classList.add('mini');t.innerHTML=`<div class="pickbar"><button class="pickchip" data-a="bktray" aria-label="לבחור צורה">${shapeIcon(SEL.s,COLS[SEL.c][0])}<b>${en(SEL.s)}</b><span class="dot" style="background:${COLS[SEL.c][0]}"></span>${sz?`<span class="szl">${sz}</span>`:''}<span class="open">🧩 החלפה ▴</span></button>${tools}</div>
+      <span class="sub">👆 נוגעים בקרקע, על צורה (מעליה) או בצד שלה (לידה)</span>`;return}
+  t.classList.remove('mini');
+  t.insertAdjacentHTML('afterbegin',`<div class="pickhead"><b>🧩 בוחרים צורה</b><button class="btn mini" data-a="bktray" aria-label="סגירה">✓ סגור ▾</button></div>`);
+  if(!t.querySelector('.belt'))t.insertAdjacentHTML('beforeend',`<div class="belt">${tools}<span class="sub">בוחרים צורה, והחלון נסגר לבד</span></div>`)};
+ACTX.bktray=()=>{BK.trayOpen=!BK.trayOpen;BK.lastS=SEL.s;renderTray()};
+/* picking a shape closes the picker so the whole screen is free for building */
+const _setModeT=setMode;setMode=function(m){if(m==='build'&&MODE!=='build'){BK.trayOpen=true;BK.lastS=SEL.s}_setModeT(m)};
 /* one rule for where a piece goes: on the ground on a grid of its own size, exactly on top of a piece, or exactly beside it */
 function alignedSpot(h,root,zone,s,sz,self){const[cx,cz]=ZC[zone];const w=SIZES[sz]?SIZES[sz][0]:1;let half=w/2,hh=hOf(s,sz)/2;const isItem=self&&self.userData.item;
   if(self){const sc=pieceCol(self);half=Math.max(sc.hx,sc.hz);hh=(sc.top-sc.bottom)/2}const lift=v=>isItem?v:v+hh;
