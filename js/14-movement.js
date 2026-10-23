@@ -22,7 +22,8 @@ function walkTo(pt){const from=zoneAt(ME.pos.x,ME.pos.z),to=zoneAt(pt.x,pt.z);co
     const W=[[.25,0,-12.8],[.75,0,-31.8],[1.25,14,-52],[1.75,14,-104],[2.5,gx,-155.5]];
     const seq=a<b?W.filter(w=>w[0]>a&&w[0]<b):W.filter(w=>w[0]<a&&w[0]>b).reverse();seq.forEach(w=>path.push(new THREE.Vector3(w[1],0,w[2])))}
   path.push(new THREE.Vector3(pt.x,0,pt.z));ME.path=path}
-function walkable(pt,zone){if(zone==='island')return Math.hypot(pt.x,pt.z)<R-.3;if(zone==='town')return Math.hypot(pt.x-ZC.town[0],pt.z-ZC.town[1])<TR-.6||inRoad(pt.x,pt.z);if(zone==='bridge')return true;
+const onBridge=pt=>Math.abs(pt.x)<1.5&&pt.z<-11&&pt.z>-35;
+function walkable(pt,zone){if(zone==='island')return Math.hypot(pt.x,pt.z)<R-.3||onBridge(pt);if(zone==='town')return Math.hypot(pt.x-ZC.town[0],pt.z-ZC.town[1])<TR-.6||inRoad(pt.x,pt.z)||onBridge(pt);if(zone==='bridge')return true;
   if(zone==='road')return true;if(zone==='inside')return insideWalkable(pt);if(zone==='girls'||zone==='boys'||zone==='adv')return pt.x>-23.4&&pt.x<59.4&&pt.z<-155.4&&pt.z>-200.9;
   if(zone==='home'||zone==='visit'){const[cx,cz]=ZC[zone];return Math.hypot(pt.x-cx,pt.z-cz)<12.4}
   if(zone==='city'){const lx=pt.x-CX,lz=pt.z-CZ;return(lx>-45.6&&lx<31.6&&lz>-25.6&&lz<24.6)||inRoad(pt.x,pt.z)}return false}
