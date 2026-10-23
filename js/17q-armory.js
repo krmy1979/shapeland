@@ -78,11 +78,11 @@ function startGiant(){const[cx,cz]=ZC.legend;const gm=grabbMesh(3.1);gm.userData
       if(this.hp<=0){this.dead=true;LG.active=false;fxBurst(gm.position.x,4,gm.position.z,'#92400E',70,6);gm.rotation.x=-1.4;gm.position.y=1;setTimeout(()=>cut([['🎯','הענק נפל! לא בגלל כוח, אלא בגלל אומץ ודיוק.','The giant fell! Courage and aim, not size.']],()=>{LG.active=true;lgEnd(true)}),900)}},
     up(dt){const dx=ME.pos.x-gm.position.x,dz=ME.pos.z-gm.position.z,d=Math.hypot(dx,dz)||1;gm.rotation.y=Math.atan2(dx,dz);if(d>7){gm.position.x+=dx/d*.7*dt;gm.position.z+=dz/d*.7*dt}
       this.cyc-=dt;if(this.cyc<=0){this.open=HELP()?2.4:1.7;this.cyc=this.open+(HELP()?2.4:3)}if(this.open>0){this.open-=dt;helm.position.y=3.1;gm.userData.head.material=mat('#FDE047',{emissive:'#FACC15',emissiveIntensity:.8})}else{helm.position.y=2.5;gm.userData.head.material=mat('#A78BFA')}
-      this.wave-=dt;if(this.wave<=0){this.wave=HELP()?6:4.5;shockwave(gm.position.x,gm.position.z)}}};
+      this.wave-=dt;if(this.wave<=0){this.wave=HELP()?7:5.5;shockwave(gm.position.x,gm.position.z)}}};
   LG.ents.push(G);LG.d.stones=5;LG.d.brook=[];LG.d.giant=G;const bw=mesh(new THREE.BoxGeometry(14,.06,1.4),mat('#38BDF8',{emissive:'#0EA5E9',emissiveIntensity:.3}),false);bw.position.set(cx,.04,cz+15);lgAdd(bw);brookStones();LG.d.hud=`🎯 ${LG.d.stones} אבנים · 🗿 ${G.hp}`}
 function brookStones(){const[cx,cz]=ZC.legend;for(let i=0;i<5;i++){const o=mesh(new THREE.DodecahedronGeometry(.22),mat('#E7E5E4',{emissive:'#FDE68A',emissiveIntensity:.25}),false);o.position.set(cx-5+i*2.5,.25,cz+13.6);lgAdd(o);LG.d.brook.push(o)}}
 function shockwave(x,z){const o=mesh(new THREE.RingGeometry(.6,1,40),mat('#A16207',{transparent:true,opacity:.85,side:THREE.DoubleSide}),false);o.rotation.x=-Math.PI/2;o.position.set(x,.1,z);lgAdd(o);if(typeof shake==='function')shake(.2,.2);if(AU.on)tone(60,.3,'sine',.1);
-  LG.fx.push({o,t:0,r:0,up(dt){this.r+=dt*(HELP()?7:9);this.o.scale.setScalar(this.r);const d=Math.hypot(ME.pos.x-x,ME.pos.z-z);if(!this.done&&Math.abs(d-this.r*.8)<.7&&ME.y<.35){this.done=1;lgHurt('💥')}if(this.r>16){scene.remove(this.o);return false}return true}})}
+  LG.fx.push({o,t:0,r:0,wave:1,up(dt){this.r+=dt*(HELP()?7:9);this.o.scale.setScalar(this.r);const d=Math.hypot(ME.pos.x-x,ME.pos.z-z);if(!this.done&&Math.abs(d-this.r*.8)<.5&&ME.y<.3){this.done=1;lgHurt('💥')}if(this.r>16){scene.remove(this.o);return false}return true}})}
 const _useArmG=useArm;useArm=function(k){if(LG.active&&LG.ch==='giant'&&k==='sling'){if(LG.d.stones<=0){toast('🎯 נגמרו האבנים! אוספים עוד ליד הנחל');return}if((ARMCD.sling||0)>0)return;LG.d.stones--;}_useArmG(k);if(LG.active&&LG.ch==='giant'){const G=LG.d.giant;LG.d.hud=`🎯 ${LG.d.stones} אבנים · 🗿 ${G.hp}`;lgHud(LG.d.hud)}};
 const _fireG=fireLight;fireLight=function(){if(LG.active&&LG.ch==='giant'){if(LG.cd<=0){LG.cd=.8;toast('🎯 רק הקלע מגיע אליו! הכפתור 🎯 מימין')}return}_fireG()};
 function stepGiant(dt){const d=LG.d;d.brook=d.brook.filter(o=>{if(near(o,1.1)){scene.remove(o);d.stones++;sfx.coin();floatText('🎯 +1');return false}return true});if(!d.brook.length&&d.stones<2)brookStones();d.hud=`🎯 ${d.stones} אבנים · 🗿 ${d.giant.hp}`;lgHud(d.hud)}
@@ -105,7 +105,7 @@ function stepWind(dt){const d=LG.d;const[cx,cz]=ZC.legend;d.time-=dt;d.wT-=dt;if
   d.gust-=dt;if(d.gust<=0){d.gust=HELP()?4:3;for(let i=0;i<8;i++)tryMove(d.wind.x*.35,d.wind.z*.35);fxBurst(ME.pos.x,1,ME.pos.z,'#E0F2FE',8,1.5)}
   d.hud=`🪶 ${d.got}/${d.need} · ⏳ ${Math.max(0,Math.ceil(d.time))}`;lgHud(d.hud);
   if(d.got>=d.need){LG.active=false;cut([['💨','הרוח נרגעה ונכנסה אלייך. עכשיו היא עוזרת לך.','The east wind is yours!']],()=>{LG.active=true;lgEnd(true)});return}if(d.time<=0)lgFail()}
-Object.assign(LGCH,{giant:{start:startGiant,step2:stepGiant,at:[0,8],temp:['sling'],topic:/giant|stone|stones|sling|helmet/,reply:'Dear friend, the giant will open his helmet longer.'},
+Object.assign(LGCH,{giant:{start:startGiant,step2:stepGiant,at:[0,8],hp:5,temp:['sling'],topic:/giant|stone|stones|sling|helmet/,reply:'Dear friend, the giant will open his helmet longer.'},
   gideon:{start:startGideon,step2:stepGideon,at:[0,2],topic:/jar|jars|night|dark|shadow|fire/,reply:'Dear friend, fewer shadows will guard the jars.'},
   wind:{start:startWind,step2:stepWind,at:[0,0],topic:/wind|feather|feathers|time/,reply:'Dear friend, the wind will be gentler.'}});
 
