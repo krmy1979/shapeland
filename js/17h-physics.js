@@ -30,8 +30,8 @@ function hitTest0(x,z,y){if(!SOL)buildColliders();const R0=ME_R;
       if(Math.hypot(x-wp.x,z-wp.z)<(o.userData.talker?.45:.55)+R0)return o.userData.talker?{k:'char',o}:{k:'solid'}}}
   for(const tk of TALKERS()){const p=tk.g.position;if(tk.g.parent!==scene)continue;if(Math.hypot(x-p.x,z-p.z)<.45+R0&&y<1.6)return{k:'char',tk}}
   for(const m of OBJ.values()){if(m.userData.zone!==ME.zone&&!(m.userData.zone==='island'&&ME.zone==='island'))continue;const c=pieceCol(m);if(y>=c.top-.15||c.bottom>y+1.7)continue;if(typeof BK!=='undefined'&&m===BK.carry)continue;if(typeof STANDABLE!=='undefined'&&STANDABLE.has(pkind(m))&&c.top-y<=.56)continue;
-    if(m.userData.big&&typeof inDoor==='function'&&inDoor(m,x,z,y))continue;
-    if(m.userData.big?(Math.abs(x-(m.position.x+c.cx))<c.hx+R0&&Math.abs(z-(m.position.z+c.cz))<c.hz+R0):Math.hypot(x-(m.position.x+c.cx),z-(m.position.z+c.cz))<c.r+R0)return{k:'piece',m,c}}
+    if(m.userData.big&&typeof bigHit==='function'){if(bigHit(m,x,z,y,R0))return{k:'piece',m,c};continue}
+    if(Math.hypot(x-(m.position.x+c.cx),z-(m.position.z+c.cz))<c.r+R0)return{k:'piece',m,c}}
   return null}
 const PUSH={t:0,m:null,dirty:new Set(),saveT:0,warnT:0};
 function tryPush(m,dx,dz){const c=pieceCol(m);const p=pieceData(m);
