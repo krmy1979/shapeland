@@ -325,3 +325,10 @@ textarea.kp{width:100%;box-sizing:border-box;border-radius:14px;border:2px solid
 .btn.shofar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 150px);z-index:30;font-size:22px;padding:14px 22px;animation:pulseS 1s infinite}
 @keyframes pulseS{50%{transform:translateX(-50%) scale(1.08)}}
 body.lgnight::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:5;background:radial-gradient(circle at 50% 45%,rgba(11,16,38,.15),rgba(11,16,38,.7))}
+/* armory */
+#armBar{position:fixed;right:max(10px,env(safe-area-inset-right,0px));top:32%;display:flex;flex-direction:column;gap:7px;z-index:20}
+#armBar .arm{position:relative;width:50px;height:50px;border-radius:50%;border:2px solid #fff;background:linear-gradient(#FEF3C7,#FDE68A);font-size:24px;box-shadow:0 3px 0 rgba(29,42,72,.25);touch-action:none;padding:0;overflow:hidden}
+#armBar .arm i{position:absolute;inset:0;border-radius:50%;pointer-events:none}#armBar .arm span{position:relative;z-index:1}
+.arms{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.armc{background:#F8FAFC;border-radius:16px;padding:9px;display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center;border:2px solid #E5E7EB}
+.armc.on{background:#FFFBEB;border-color:#F59E0B}.armc .em{font-size:34px}.armc p{margin:2px 0;font-size:12.5px}.armc .ok{color:#15803D;font-weight:900}.armc .how{font-size:12px;opacity:.75}.armc .wise{font-size:11.5px;color:#92400E;font-style:italic}
