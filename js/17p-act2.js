@@ -57,19 +57,19 @@ function allyShoot(npc,targets,every){return{g:npc,kind:'ally',cd:every,up(dt){t
 const L=(x,z)=>LW(x,z);
 
 /* ---------- 8: The Promise — catch the falling stars ---------- */
-function startStars(){const need=HELP()?9:12;Object.assign(LG.d,{got:0,need,left:need+6,starT:1,time:HELP()?120:95,stars:[],hud:''});scene.background.set('#0B1026');scene.fog.color.set('#0B1026');
+function startStars(){const need=HELP()?7:10;Object.assign(LG.d,{got:0,need,left:need+12,starT:1,time:HELP()?120:95,stars:[],hud:''});scene.background.set('#0B1026');scene.fog.color.set('#0B1026');document.body.classList.add('lgnight');
   const av=npcAt('Avram ⭐',AVRAM,...L(0,-14),'#78350F');av.lookAt(ZC.legend[0],0,ZC.legend[1]);
   const tent=mesh(new THREE.ConeGeometry(1.6,2,4),mat('#D6B38A'));const[tx,tz]=L(2.6,-15);tent.position.set(tx,1,tz);tent.rotation.y=.8;lgAdd(tent);
-  for(let i=0;i<3;i++){const[x,z]=L(-14+i*14,-18);LG.ents.push(crow(x,z))}}
+  for(let i=0;i<(HELP()?1:2);i++){const[x,z]=L(-14+i*28,-18);LG.ents.push(crow(x,z))}}
 function crow(x,z){const g=new THREE.Group();const b=mesh(new THREE.SphereGeometry(.35,10,8),mat('#111827'));g.add(b);[-1,1].forEach(k=>{const w=mesh(new THREE.BoxGeometry(.7,.05,.3),mat('#1F2937'));w.position.x=k*.5;g.add(w)});
   const bk=mesh(new THREE.ConeGeometry(.08,.25,6),mat('#F59E0B'));bk.rotation.x=Math.PI/2;bk.position.z=.38;g.add(bk);g.position.set(x,3,z);lgAdd(g);
   return{g,kind:'crow',shootable:true,r:.9,aimY:3,hy:2.5,stun:0,hit(){this.stun=4;this.g.visible=false;floatText('🐦‍⬛💨')},up(dt){if(this.stun>0){this.stun-=dt;if(this.stun<=0)this.g.visible=true;return}
-    const tg=LG.d.stars.find(s=>s.landed&&!s.taken);const tx=tg?tg.o.position.x:ME.pos.x,tz=tg?tg.o.position.z:ME.pos.z;const dx=tx-this.g.position.x,dz=tz-this.g.position.z,d=Math.hypot(dx,dz)||1;const sp=HELP()?2:2.7;
+    const tg=LG.d.stars.find(s=>s.landed&&!s.taken&&s.life<7);const tx=tg?tg.o.position.x:ME.pos.x,tz=tg?tg.o.position.z:ME.pos.z;const dx=tx-this.g.position.x,dz=tz-this.g.position.z,d=Math.hypot(dx,dz)||1;const sp=HELP()?1.6:2.2;
     this.g.position.x+=dx/d*sp*dt;this.g.position.z+=dz/d*sp*dt;this.g.position.y=2.2+Math.sin(LG.t*4)*.4;this.aimY=this.g.position.y;this.g.rotation.y=Math.atan2(dx,dz);this.g.children[1].rotation.z=Math.sin(LG.t*14)*.5;this.g.children[2].rotation.z=-Math.sin(LG.t*14)*.5;
     if(tg&&d<.8){tg.taken=1;scene.remove(tg.o);floatText('🐦‍⬛ stole a star!','#FCA5A5');if(AU.on)tone(180,.15,'sawtooth',.05)}}}}
 function stepStars(dt){const d=LG.d;d.time-=dt;d.hud=`⭐ ${d.got}/${d.need} · ⏳ ${Math.max(0,Math.ceil(d.time))}`;lgHud(d.hud);if(d.time<=0){toast('⏳ הזמן נגמר…');lgFail();return}
-  d.starT-=dt;if(d.starT<=0&&d.left>0){d.starT=HELP()?3.4:2.6;d.left--;const a=Math.random()*Math.PI*2,r=4+Math.random()*15;const[cx,cz]=ZC.legend;
-    const o=mesh(new THREE.OctahedronGeometry(.35),mat('#FDE047',{emissive:'#FACC15',emissiveIntensity:1}),false);o.position.set(cx+Math.cos(a)*r,14,cz+Math.sin(a)*r);lgAdd(o);d.stars.push({o,landed:0,taken:0,life:9})}
+  d.starT-=dt;if(d.starT<=0&&d.left>0){d.starT=HELP()?2.6:2.2;d.left--;const a=Math.random()*Math.PI*2,r=3+Math.random()*8;const cx=clamp(ME.pos.x,ZC.legend[0]-12,ZC.legend[0]+12),cz=clamp(ME.pos.z,ZC.legend[1]-12,ZC.legend[1]+12);
+    const o=mesh(new THREE.OctahedronGeometry(.35),mat('#FDE047',{emissive:'#FACC15',emissiveIntensity:1}),false);o.position.set(cx+Math.cos(a)*r,14,cz+Math.sin(a)*r);lgAdd(o);d.stars.push({o,landed:0,taken:0,life:10})}
   d.stars.forEach(s=>{if(s.taken)return;s.o.rotation.y+=dt*3;if(!s.landed){s.o.position.y-=dt*7;if(s.o.position.y<=.6){s.o.position.y=.6;s.landed=1;fxBurst(s.o.position.x,.6,s.o.position.z,'#FDE047',10,1.5)}return}
     s.life-=dt;if(s.life<=0){s.taken=1;scene.remove(s.o);return}if(near(s.o,1.2)){s.taken=1;scene.remove(s.o);d.got++;sfx.coin();floatText('⭐ '+d.got);if(d.got>=d.need)starsWin()}});
   if(d.left<=0&&d.stars.every(s=>s.taken)&&d.got<d.need){toast('⭐ לא מספיק כוכבים…');lgFail()}}
@@ -114,11 +114,11 @@ function startRiver(){const[cx,cz]=ZC.legend;const rz=cz-1;const water=mesh(new 
 function stepIn(){const d=LG.d;if(d.phase!=='wait')return;if(Math.abs(ME.pos.z-d.rz)>5){toast('🏃 מתקרבים לשפת הנהר');return}d.phase='dry';d.dry=1;d.time=HELP()?55:42;hiddenHand('ברגע שנגעו במים… הנהר עצר!','The moment they stepped in, the river stopped!');
   const[cx]=ZC.legend;for(let i=0;i<12;i++){const x=cx-20+i*3.6+(Math.random()-.5),z=d.rz+(Math.random()-.5)*3.4;const o=mesh(new THREE.DodecahedronGeometry(.32),mat('#E7E5E4',{emissive:'#FDE68A',emissiveIntensity:.3}),false);o.position.set(x,.3,z);lgAdd(o);d.stones.push({o,got:0})}}
 function stepRiver(dt){const d=LG.d;if(d.phase==='wait')return;
-  if(d.phase==='dry'){d.water.scale.z=Math.max(.02,d.water.scale.z-dt*1.5);d.time-=dt;d.hud=`🪨 ${d.got}/12 אבנים · ⏳ ${Math.max(0,Math.ceil(d.time))}`;lgHud(d.hud);
-    d.stones.forEach(s=>{if(!s.got&&near(s.o,1.1)){s.got=1;scene.remove(s.o);d.got++;sfx.coin();floatText('🪨 '+d.got)}});
+  if(d.phase==='dry'){d.water.scale.z=Math.max(.02,d.water.scale.z-dt*1.5);d.time-=dt;d.hud=`🧱 ${d.got}/12 אבנים · ⏳ ${Math.max(0,Math.ceil(d.time))}`;lgHud(d.hud);
+    d.stones.forEach(s=>{if(!s.got&&near(s.o,1.1)){s.got=1;scene.remove(s.o);d.got++;sfx.coin();floatText('🧱 '+d.got)}});
     if(Math.random()<dt*(HELP()?.45:.8)){const g=mesh(new THREE.DodecahedronGeometry(.7),mat('#57534E'));const side=Math.random()<.5?-1:1;g.position.set(ZC.legend[0]-side*RL,.7,d.rz+(Math.random()-.5)*3.6);lgAdd(g);d.rocks.push({g,v:side*(HELP()?5:7)})}
-    d.rocks.forEach(r=>{r.g.position.x+=r.v*dt;r.g.rotation.z-=r.v*dt;if(Math.hypot(r.g.position.x-ME.pos.x,r.g.position.z-ME.pos.z)<1&&ME.y<.9)lgHurt('🪨')});
-    if(d.got>=12){d.phase='done';LG.active=false;cut([['🪨','שתים־עשרה אבנים, אחת לכל שבט. בניתם מהן מצבת זיכרון על הגדה.','Twelve stones for twelve tribes. Remember this day!'],['🌊','כשכולם עברו, המים חזרו לזרום.','When everyone crossed, the water came back.']],()=>{LG.active=true;lgEnd(true)});return}
+    d.rocks.forEach(r=>{r.g.position.x+=r.v*dt;r.g.rotation.z-=r.v*dt;if(Math.hypot(r.g.position.x-ME.pos.x,r.g.position.z-ME.pos.z)<1&&ME.y<.9)lgHurt('🧱')});
+    if(d.got>=12){d.phase='done';LG.active=false;cut([['🧱','שתים־עשרה אבנים, אחת לכל שבט. בניתם מהן מצבת זיכרון על הגדה.','Twelve stones for twelve tribes. Remember this day!'],['🌊','כשכולם עברו, המים חזרו לזרום.','When everyone crossed, the water came back.']],()=>{LG.active=true;lgEnd(true)});return}
     if(d.time<=0){d.phase='back';d.dry=0;toast('🌊 המים חוזרים!');if(Math.abs(ME.pos.z-d.rz)<3)lgHurt('🌊');setTimeout(()=>{if(LG.active&&LG.ch===11)lgFail()},900)}}
   if(d.phase==='back')d.water.scale.z=Math.min(1,d.water.scale.z+dt*2)}
 const _wkR=walkable;walkable=function(pt,zone){if(zone==='legend'&&LG.active&&LG.ch===11&&LG.d.river&&!LG.d.dry&&Math.abs(pt.z-LG.d.rz)<2.4)return false;return _wkR(pt,zone)};
@@ -190,7 +190,7 @@ Object.assign(INTROS,{
      ['🐦‍⬛','אבל עורבי הצל של Grabb הישן רוצים לחטוף את הכוכבים. אוספים כוכבים לפני שהם נעלמים, ויורים בעורבים.','Catch the falling stars before the shadow crows take them!']],
   9:[['🌙','הנכד של Avram, Kobi, נאבק לילה שלם עם שליח, ולא ויתר. בבוקר קיבל שם חדש: Isra-el.','Your name will be Isra-el, because you fought and you won.'],['🕯️','לו היו שנים־עשר בנים, שנים־עשר אורות. צללים נשלחו לכבות אותם.','Twelve sons, twelve lights. Light them all together!']],
   10:[['👴','Mosh, כבר זקן, שלח שנים־עשר מרגלים לראות את ארץ האור.','Go and see the Land of Light. Is it good? Are the people strong?'],['👣','הם חזרו. כל אחד אומר משהו אחר. מקשיבים לכולם ובוחרים אחרי מי ללכת.','Listen to all of them, and choose whom to follow.']],
-  11:[['🌊','Josh הוביל את כולם אל הנהר הגדול. המים עמוקים וזורמים.','The river is deep. But when we step in, something will happen.'],['🪨','צריך לקחת שתים־עשרה אבנים מקרקעית הנהר, אחת לכל שבט, לפני שהמים חוזרים.','Take twelve stones from the river, quickly!']],
+  11:[['🌊','Josh הוביל את כולם אל הנהר הגדול. המים עמוקים וזורמים.','The river is deep. But when we step in, something will happen.'],['🧱','צריך לקחת שתים־עשרה אבנים מקרקעית הנהר, אחת לכל שבט, לפני שהמים חוזרים.','Take twelve stones from the river, quickly!']],
   12:[['🏰','מעבר לנהר עומדת עיר הצל, מוקפת חומות גבוהות. קשתים עומדים עליהן.','The Walls of Shadow are too high to climb.','grabb'],['🤫','Josh: "מקיפים את החומות שבע פעמים, בשקט מוחלט. בלי לירות! אחרי זה תוקעים בשופר."','Go around the walls seven times. Quietly! Then blow the shofar.']],
   13:[['⛺','אחרי הניצחון הגדול, Josh שלח את הצבא לעיר קטנה. "זה יהיה קל," אמרו.','This one is easy. Attack!']],
   14:[['👑','חמישה מלכי צל התאחדו כדי לכבות את ארץ האור.','Five Shadow Kings! We will put out your light forever!','grabb'],['☀️','הקרב יהיה ארוך, והיום קצר. אם השמש תשקע לפני שתנצחו, הצללים יברחו בחושך.','Defeat them before the sun goes down!']]});
@@ -211,5 +211,5 @@ const _bookP=openBook;openBook=function(){_bookP();const s=ST();if(s.ch<8)return
     ${t?`<p class="sub">🦉 לחכמים: לשבט שלך, ${t.he}, קראו בספר העתיק… ${s.ch>9?t.wise:'(נחשף אחרי פרק שנים־עשר האורות)'}</p>`:''}`)};
 
 /* tidy up between trials: sky, fog, buttons */
-const _cleanP=lgCleanup;lgCleanup=function(){_cleanP();shofarBtn(false);if(ME.zone==='legend'){scene.fog.near=50;scene.fog.far=120;if(LGW)legendSky()}};
+const _cleanP=lgCleanup;lgCleanup=function(){_cleanP();shofarBtn(false);document.body.classList.remove('lgnight');if(ME.zone==='legend'){scene.fog.near=50;scene.fog.far=120;if(LGW)legendSky()}};
 const _wkW=walkable;walkable=function(pt,zone){if(zone==='legend'&&LG.active&&LG.ch===12&&LG.d.walls&&!LG.d.down&&Math.hypot(pt.x-LG.d.fx,pt.z-LG.d.fz)<6.6)return false;return _wkW(pt,zone)};

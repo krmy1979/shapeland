@@ -123,7 +123,7 @@ function stepMing(dt,t){for(let i=MING.length-1;i>=0;i--){const m=MING[i],g=m.g;
 const BEINGS=[
   {id:'lumin',en:'Lumin',he:'לוּמִין',world:'עולם האור',em:'🌟',c:'#FEF9C3',e:'#FDE047',line:'I come from the World of Light. Your island shines a little more every day!',he2:'אני בא מעולם האור. האי שלך זוהר קצת יותר בכל יום!'},
   {id:'coral',en:'Coralian',he:'קוֹרָלִי',world:'עולם הים',em:'🐚',c:'#67E8F9',e:'#06B6D4',line:'In the Sea World we swim together, like one big fish.',he2:'בעולם הים שוחים יחד, כמו דג אחד גדול.'},
-  {id:'stone',en:'Stonekin',he:'בן־אבן',world:'עולם האבן',em:'🪨',c:'#A8A29E',e:'#78716C',line:'In the Stone World, many small stones make one strong mountain.',he2:'בעולם האבן, הרבה אבנים קטנות עושות הר אחד חזק.'},
+  {id:'stone',en:'Stonekin',he:'בן־אבן',world:'עולם האבן',em:'⛰️',c:'#A8A29E',e:'#78716C',line:'In the Stone World, many small stones make one strong mountain.',he2:'בעולם האבן, הרבה אבנים קטנות עושות הר אחד חזק.'},
   {id:'wind',en:'Windling',he:'רוּחִי',world:'עולם הרוח',em:'🌬️',c:'#F1F5F9',e:'#BAE6FD',line:'The wind carries kind words to all the worlds.',he2:'הרוח נושאת מילים טובות לכל העולמות.'}];
 const VIS={o:null,b:null,t:0,next:60};
 function spawnBeing(){const b=pick(BEINGS);const g=new THREE.Group();let body;

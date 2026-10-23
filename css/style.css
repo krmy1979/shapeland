@@ -324,3 +324,4 @@ textarea.kp{width:100%;box-sizing:border-box;border-radius:14px;border:2px solid
 .trb .em{font-size:30px}.trb b{font-size:13px}.trb small{font-size:10.5px;opacity:.75}.trb.on{border-color:var(--tc);background:#FFFBEB}
 .btn.shofar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 150px);z-index:30;font-size:22px;padding:14px 22px;animation:pulseS 1s infinite}
 @keyframes pulseS{50%{transform:translateX(-50%) scale(1.08)}}
+body.lgnight::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:5;background:radial-gradient(circle at 50% 45%,rgba(11,16,38,.15),rgba(11,16,38,.7))}
