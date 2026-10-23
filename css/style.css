@@ -337,3 +337,8 @@ body.lgnight::after{content:"";position:fixed;inset:0;pointer-events:none;z-inde
 body.raid::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:5;background:radial-gradient(circle at 50% 45%,rgba(76,29,149,.08),rgba(46,16,101,.45));animation:raidP 2s infinite}
 @keyframes raidP{50%{opacity:.75}}
 #armBar .arm.open{background:linear-gradient(#E0E7FF,#A5B4FC)}
+/* wardrobe */
+.coss{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:7px}
+.cosc{background:#F8FAFC;border:2px solid #E5E7EB;border-radius:16px;padding:8px;display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center;font-size:13px}
+.cosc.on{border-color:#F59E0B;background:#FFFBEB}.cosc.locked{opacity:.8}.cosc small{font-size:11px;opacity:.75}.cosc .ok{color:#15803D;font-weight:900}
+.cosc .sw{width:46px;height:56px;border-radius:12px 12px 22px 22px;display:grid;place-items:center;font-size:22px;border:2px solid #fff;box-shadow:0 2px 0 rgba(0,0,0,.12)}

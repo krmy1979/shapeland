@@ -86,7 +86,7 @@ function syncAvatars(){NET.peers.forEach(p=>{if(p.sameTab)return;const pr=p.pres
   let a=NET.avatars.get(p.peer);if(!a||a.sig!==sig){if(a)scene.remove(a.obj);const o=avatar3D(ch);const lb=label(nameOf(p)+(p.isMe?' (גם את/ה)':''),'#1D2A48','#FFFFFF');lb.position.y=o.userData.h+.35;o.add(lb);
     if(pet){const pm=partsModel(PETS[pet].parts);pm.position.set(-.9,0,-.3);o.add(pm)}scene.add(o);a={obj:o,sig};NET.avatars.set(p.peer,a);a.first=true}
   let center=null;const z=pr.zone;
-  if(['island','town','bridge','city','road','girls','boys','adv'].includes(z))center=ZC[z==='bridge'?'island':z];
+  if(['island','town','bridge','city','road','girls','boys','adv','legend'].includes(z))center=ZC[z==='bridge'?'island':z];
   else if(z==='inside'){if(INSIDE&&pr.host===INSIDE.id)center=ZC.inside}
   else if(z==='house'){if(pr.host===P.key)center=ZC.home;else if(VISIT&&pr.host===VISIT.host)center=ZC.visit}
   a.obj.visible=!!center;a.ty=+pr.y||0;if(center){a.tx=center[0]+clamp(+pr.x||0,-40,40);a.tz=center[1]+clamp(+pr.z||0,-40,40);if(a.first||a.lastCenter!==center){a.obj.position.set(a.tx,0,a.tz);a.first=false;a.lastCenter=center}}})}
