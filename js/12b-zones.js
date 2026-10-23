@@ -104,7 +104,7 @@ function kickBall(){const b=ZFX.balls[0];const dx=b.m.position.x-ME.pos.x,dz=b.m
   const sp=9+Math.random()*3;b.vx=dx/d*sp;b.vz=dz/d*sp;b.vy=3;blip(180,.12,'square',.06);say(pick(['Kick!','Nice kick!','Pass!','Shoot!']))}
 function stepBalls(dt,t){ZFX.balls.forEach(b=>{const m=b.m;if(!b.vx&&!b.vz&&!b.vy)return;m.position.x+=b.vx*dt;m.position.z+=b.vz*dt;b.vy=(b.vy||0)-14*dt;m.position.y=Math.max(.28,m.position.y+b.vy*dt);if(m.position.y<=.28)b.vy=0;
   b.vx*=.985;b.vz*=.985;m.rotation.x+=b.vz*dt*2;m.rotation.z-=b.vx*dt*2;
-  const lx=m.position.x-b.cx,lz=m.position.z-b.cz;if(Math.abs(lx)>6.3&&Math.abs(lz)<1.3&&performance.now()-lastGoal>2500){lastGoal=performance.now();burst('⚽ GOAL!');sfx.win();say('Goal! Great shot!');addGems(2,'גול בפארק הספורט','Goal');b.vx=b.vz=0;setTimeout(()=>m.position.set(b.cx,.28,b.cz),900);return}
+  const lx=m.position.x-b.cx,lz=m.position.z-b.cz;if(Math.abs(lx)>6.3&&Math.abs(lz)<1.3&&performance.now()-lastGoal>2500){lastGoal=performance.now();burst('⚽ GOAL!');shake(.25,.3);fxBurst(m.position.x,1,m.position.z,'#FDE047',24,4);sfx.win();say('Goal! Great shot!');addGems(2,'גול בפארק הספורט','Goal');b.vx=b.vz=0;setTimeout(()=>m.position.set(b.cx,.28,b.cz),900);return}
   if(Math.abs(lx)>6.4){b.vx*=-.6;m.position.x=b.cx+Math.sign(lx)*6.4}if(Math.abs(lz)>4.1){b.vz*=-.6;m.position.z=b.cz+Math.sign(lz)*4.1}
   if(Math.abs(b.vx)+Math.abs(b.vz)<.15){b.vx=b.vz=0}})}
 let DANCE=0;

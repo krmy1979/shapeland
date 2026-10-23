@@ -3,10 +3,10 @@
 function resize(){const w=stage.clientWidth,h=stage.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
 window.addEventListener('resize',resize);resize();
 const clock=new THREE.Clock();const tmpV=new THREE.Vector3();
-function loop(){const dt=Math.min(clock.getDelta(),.05),t=clock.elapsedTime;
+function loop(){const dt=Math.min(clock.getDelta(),.05)*(window.HITSTOP>0?.15:1),t=clock.elapsedTime;
   let mv0=null;if(ME.obj){const mv=controlStep(dt);mv0=mv;let moving=mv.moving;const tgt=mv.moving?null:ME.path[0];if(tgt){const dx=tgt.x-ME.pos.x,dz=tgt.z-ME.pos.z,dist=Math.hypot(dx,dz);
       if(dist<.08){ME.path.shift();const z=zoneAt(ME.pos.x,ME.pos.z);if(z&&z!==ME.zone&&OUTZ.includes(z)){ME.zone=z;renderLoc();renderBar();renderTray()}}
-      else{moving=true;const st=Math.min(dist,4.6*dt);ME.pos.x+=dx/dist*st;ME.pos.z+=dz/dist*st;ME.obj.rotation.y=Math.atan2(dx,dz);pushPresence();
+      else{moving=true;const st=Math.min(dist,4.6*dt);const sb=typeof hitTest==='function'?hitTest(ME.pos.x+dx/dist*st,ME.pos.z+dz/dist*st,ME.y):null;if(sb&&sb.k!=='piece'){if(sb.k==='char')bump(sb.tk||null,sb.o||null);ME.path=[]}else if(sb&&sb.k==='piece'){if(!tryMove(dx/dist*st,dz/dist*st))ME.path=[]}else{ME.pos.x+=dx/dist*st;ME.pos.z+=dz/dist*st}ME.obj.rotation.y=Math.atan2(dx,dz);pushPresence();
         const z=zoneAt(ME.pos.x,ME.pos.z);if(OUTZ.includes(z)&&z!==ME.zone){ME.zone=z;renderLoc();renderBar();renderTray()}if(!ME.path.length||dist<.3)checkDoors()}
       controls.target.lerp(tmpV.set(ME.pos.x,0,ME.pos.z),.05)}
     const human=!!ME.obj.userData.limbs;ME.obj.position.y=ME.y+(moving&&!ME.air&&!ME.swim&&!mv.roll?Math.abs(Math.sin(t*(mv.run?15:11)))*(human?.05:.12):0);
@@ -30,4 +30,4 @@ function loop(){const dt=Math.min(clock.getDelta(),.05),t=clock.elapsedTime;
     if(dd>.15){tm.position.x+=dx*.06;tm.position.z+=dz*.06;tm.rotation.y=Math.atan2(dx,dz)}const a=ANCHORS[P.tour.dest];if(a&&Math.hypot(ME.pos.x-CX-a[0],ME.pos.z-CZ-a[1])<5.5)tourDone()}
   stepZones(dt,t);stepAdventure(dt,t);stepExplorer(dt,t);
   water.position.y=-1.6+Math.sin(t*.8)*.05;
-  stepPowers(dt,t);stepAction(dt,t);stepAudio(dt,mv0);stepCamera(dt);renderer.render(scene,camera);requestAnimationFrame(loop)}
+  stepPowers(dt,t);stepAction(dt,t);stepPhysics(dt,t);stepAudio(dt,mv0);stepCamera(dt);renderer.render(scene,camera);requestAnimationFrame(loop)}

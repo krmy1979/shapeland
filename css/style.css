@@ -236,3 +236,9 @@ details.more summary{cursor:pointer;color:var(--berry);font-weight:700;margin-bo
 #actHud{position:fixed;top:calc(env(safe-area-inset-top,0px) + 110px);left:50%;transform:translateX(-50%);z-index:6;background:#1D2A48;color:#fff;border-radius:999px;padding:6px 16px;font-family:var(--f-display);font-size:18px;display:flex;gap:12px;align-items:center;box-shadow:0 4px 12px #0004}
 #actHud.hurry{background:#DC2626;animation:pulse .5s infinite alternate}@keyframes pulse{to{transform:translateX(-50%) scale(1.06)}}
 .count{position:fixed;inset:0;display:grid;place-items:center;z-index:40;pointer-events:none;font-family:var(--f-display);font-size:120px;color:#fff;text-shadow:0 6px 0 #EE4F7C,0 0 30px #0006}
+
+/* --- talk button, floating text --- */
+.talkbtn{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + var(--padb,96px) + 150px);z-index:6;border:3px solid #fff;border-radius:999px;background:linear-gradient(#60A5FA,#2563EB);color:#fff;font-family:var(--f-display);font-size:18px;padding:8px 18px;box-shadow:0 4px 0 #1E3A8A;cursor:pointer;animation:bob 1s infinite alternate}
+@keyframes bob{to{transform:translate(-50%,-4px)}}
+.floattxt{position:fixed;left:50%;top:38%;transform:translateX(-50%);z-index:30;pointer-events:none;font-family:var(--f-display);font-size:30px;font-weight:700;text-shadow:0 3px 0 #1D2A48;animation:floatup .9s ease-out forwards}
+@keyframes floatup{from{opacity:1;transform:translate(-50%,0)}to{opacity:0;transform:translate(-50%,-60px)}}

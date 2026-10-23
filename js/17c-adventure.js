@@ -79,7 +79,7 @@ function buyPool(){if(P.pool)return;if(P.gems<60){toast(`בריכה עולה 60 
 /* ---------- Detective Dan: math mysteries in the city ---------- */
 const DAN={g:'boy',hair:'side',hc:'#4A2E1F',skin:'#E3A97F',top:'#92400E',bot:'pants',bc:'#1D2A48'};
 (()=>{const d=human3D(Object.assign({kind:'human',eyes:'big'},DAN));const hd=d.userData.head;const h=mesh(new THREE.CylinderGeometry(.42,.42,.04,18),mat('#78350F'));h.position.y=.24;hd.add(h);const c=mesh(new THREE.CylinderGeometry(.27,.31,.26,16),mat('#78350F'));c.position.y=.36;hd.add(c);
-  const lb=label('Detective Dan 🕵️','#78350F','#FFFFFF',.45);lb.position.y=2.5;d.add(lb);const mk=marker('?','#78350F');mk.position.y=3.1;d.add(mk);d.position.set(CX+9,0,CZ+11);d.lookAt(CX+9,0,CZ+16);scene.add(d);rootify(d);d.userData.zact=()=>openMystery();EXTRA_PICK.push(d)})();
+  const lb=label('Detective Dan 🕵️','#78350F','#FFFFFF',.45);lb.position.y=2.5;d.add(lb);const mk=marker('?','#78350F');mk.position.y=3.1;d.add(mk);d.position.set(CX+9,0,CZ+11);d.lookAt(CX+9,0,CZ+16);scene.add(d);rootify(d);d.userData.zact=()=>openMystery();d.userData.talker='Detective Dan';EXTRA_PICK.push(d)})();
 let MY=null;
 const SUS=[['Lily','girl','#F472B6','ponytail','#E8C268'],['Ben','boy','#60A5FA','short','#1F1B1A'],['Max','boy','#34D399','spiky','#C8562A'],['Noa','girl','#A78BFA','bob','#4A2E1F'],['Tom','boy','#F59E0B','curlyshort','#8A5530'],['Mia','girl','#FB7185','braids','#1F1B1A']];
 function mysteryCase(){const L=P.sk.math;const sus=shuffle(SUS).slice(0,3);const thing=pick([['cookies','עוגיות'],['stickers','מדבקות'],['marbles','גולות'],['coins','מטבעות'],['candies','סוכריות']]);
@@ -131,14 +131,14 @@ function stepAdventure(dt,t){
     else if(c.kind==='bunny'){const a=t*c.sp;g.position.set(c.cx+Math.cos(a)*c.r,Math.abs(Math.sin(t*6))*.3,c.cz+Math.sin(a)*c.r);g.rotation.y=-a}
     else if(c.kind==='slime'){const a=Math.sin(t*c.sp+c.ph);g.position.x=c.cx+a*c.r;g.position.z=c.cz;g.position.y=Math.abs(Math.sin(t*5+c.ph))*.5;c.body.scale.y=.75-Math.abs(Math.sin(t*5+c.ph))*.15;
       if(ME.zone==='adv'&&c.hitT<=0){const d=Math.hypot(ME.pos.x-g.position.x,ME.pos.z-g.position.z);
-        if(d<.8&&ME.y<.6){c.hitT=1.2;const dx=(ME.pos.x-g.position.x)/(d||1),dz=(ME.pos.z-g.position.z)/(d||1);tryMove(dx*1.8,dz*1.8);ME.vy=5;blip(160,.15,'square',.06);say(pick(['Boing! Run away!','Oops! A slime!','Jump over the slime!']))}
+        if(d<.8&&ME.y<.6){c.hitT=1.2;const dx=(ME.pos.x-g.position.x)/(d||1),dz=(ME.pos.z-g.position.z)/(d||1);tryMove(dx*1.8,dz*1.8);ME.vy=5;shake(.3,.25);hitStop(140);fxBurst(ME.pos.x,.6,ME.pos.z,'#A3E635',12,3);blip(160,.15,'square',.06);say(pick(['Boing! Run away!','Oops! A slime!','Jump over the slime!']))}
         else if(d<1&&ME.y>.7&&!c.jumped){c.jumped=1;c.hitT=1.5;addGems(1,'קפיצה מעל סליים','Slime jump');blip(880,.08,'sine',.05);toast('🟢 קפיצה מעל הסליים! +1 💎')}}
       if(c.hitT>0){c.hitT-=dt;if(c.hitT<=0)c.jumped=0}}
     else if(c.kind==='crab'){if(c.hitT>0)c.hitT-=dt;const inBeach=ME.zone==='city'&&ME.pos.x<CX-14&&ME.pos.x>CX-24.5&&Math.abs(ME.pos.z-CZ)<14;
       let tx,tz;if(inBeach&&c.hitT<=0){tx=ME.pos.x;tz=ME.pos.z}else{tx=c.cx+Math.cos(t*.4)*2;tz=c.cz+Math.sin(t*.3)*c.r}
       const dx=tx-g.position.x,dz=tz-g.position.z,d=Math.hypot(dx,dz);if(d>.05){const st=Math.min(d,(inBeach?1.9:1)*dt);g.position.x+=dx/d*st;g.position.z+=dz/d*st;g.rotation.y=Math.atan2(dx,dz)+Math.PI/2}
       g.position.x=Math.max(CX-24,Math.min(CX-14.5,g.position.x));
-      if(inBeach&&c.hitT<=0&&Math.hypot(ME.pos.x-g.position.x,ME.pos.z-g.position.z)<.7&&ME.y<.5){c.hitT=3;ME.vy=4.5;const dd=Math.hypot(dx,dz)||1;tryMove(-dx/dd*2,-dz/dd*2);blip(220,.2,'sawtooth',.05);say('Ouch! The crab pinched you! Run!');toast('🦀 הסרטן צבט! לברוח ממנו')}}});
+      if(inBeach&&c.hitT<=0&&Math.hypot(ME.pos.x-g.position.x,ME.pos.z-g.position.z)<.7&&ME.y<.5){c.hitT=3;ME.vy=4.5;const dd=Math.hypot(dx,dz)||1;tryMove(-dx/dd*2,-dz/dd*2);blip(220,.2,'sawtooth',.05);shake(.3,.25);hitStop(140);fxBurst(ME.pos.x,.6,ME.pos.z,'#EF4444',10,2.5);say('Ouch! The crab pinched you! Run!');toast('🦀 הסרטן צבט! לברוח ממנו')}}});
   if(ZFX.sea)ZFX.sea.position.y=-.3+Math.sin(t*.9)*.04;
   if(ZFX.lake)ZFX.lake.material.emissiveIntensity=.3+Math.sin(t*3)*.08;
   // underwater treasure

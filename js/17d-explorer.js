@@ -18,7 +18,7 @@ function owl(){const g=new THREE.Group();const st=mesh(new THREE.CylinderGeometr
   [-1,1].forEach(s=>{const e=mesh(new THREE.SphereGeometry(.13,12,10),mat('#FDE047',{emissive:'#FACC15',emissiveIntensity:.6}));e.position.set(s*.15,1.25,.33);g.add(e);const p=mesh(new THREE.SphereGeometry(.06,8,6),mat('#111827'));p.position.set(s*.15,1.25,.44);g.add(p);
     const ear=mesh(new THREE.ConeGeometry(.08,.22,4),mat('#78716C'));ear.position.set(s*.22,1.58,0);g.add(ear)});
   const bk=mesh(new THREE.ConeGeometry(.06,.14,4),mat('#F59E0B'));bk.rotation.x=Math.PI/2;bk.position.set(0,1.12,.42);g.add(bk);return g}
-function gateOwl(id,x,z,lx,lz){const o=owl();o.position.set(x,0,z);o.lookAt(lx,0,lz);const lb=label('🦉 '+GATES[id].en+(P.gates[id]?'':' 🔒'),'#1D2A48','#FFFFFF',.42);lb.position.y=2.2;o.add(lb);o.userData.lb=lb;scene.add(o);rootify(o);o.userData.zact=()=>openGate(id);EXTRA_PICK.push(o);return o}
+function gateOwl(id,x,z,lx,lz){const o=owl();o.position.set(x,0,z);o.lookAt(lx,0,lz);const lb=label('🦉 '+GATES[id].en+(P.gates[id]?'':' 🔒'),'#1D2A48','#FFFFFF',.42);lb.position.y=2.2;o.add(lb);o.userData.lb=lb;scene.add(o);rootify(o);o.userData.zact=()=>openGate(id);o.userData.talker='Wise Owl';EXTRA_PICK.push(o);return o}
 
 /* ---------- Sky Island: rainbow stairs above Shirel's Island ---------- */
 const SKY={c:[6.5,6.5],steps:[],top:7.6};
@@ -127,7 +127,7 @@ let SCROLL=null;
   [-1,1].forEach(k=>{const e=mesh(new THREE.CylinderGeometry(.22,.22,.08,12),mat('#B45309'));e.rotation.z=Math.PI/2;e.position.x=k*.48;s.add(e)});
   const glow=mesh(new THREE.SphereGeometry(.7,14,10),mat('#FDE68A',{transparent:true,opacity:.25,emissive:'#FDE68A',emissiveIntensity:.6}),false);s.add(glow);const lb=label('📜','#FFFFFF','#1D2A48',.4);lb.position.y=1.1;s.add(lb);s.visible=false;scene.add(s);SCROLL=s;rootify(s);s.userData.zact=()=>huntArrive(true);EXTRA_PICK.push(s)})();
 (()=>{const d=human3D(Object.assign({kind:'human',eyes:'happy'},SHELL));const hd=d.userData.head;const h=mesh(new THREE.ConeGeometry(.5,.35,3),mat('#111827'));h.rotation.x=-.15;h.position.y=.38;hd.add(h);
-  const lb=label('Captain Shell 🏴‍☠️','#111827','#FFFFFF',.45);lb.position.y=2.5;d.add(lb);const mk=marker('📜','#B45309');mk.position.y=3.1;d.add(mk);d.position.set(CX-15.2,0,CZ-14.5);d.lookAt(CX-8,0,CZ-14.5);scene.add(d);rootify(d);d.userData.zact=()=>openShell();EXTRA_PICK.push(d)})();
+  const lb=label('Captain Shell 🏴‍☠️','#111827','#FFFFFF',.45);lb.position.y=2.5;d.add(lb);const mk=marker('📜','#B45309');mk.position.y=3.1;d.add(mk);d.position.set(CX-15.2,0,CZ-14.5);d.lookAt(CX-8,0,CZ-14.5);scene.add(d);rootify(d);d.userData.zact=()=>openShell();d.userData.talker='Captain Shell';EXTRA_PICK.push(d)})();
 function riddleTier(){const r=rankInfo().i;return r<2?0:r<4?1:2}
 function newHunt(){const t=riddleTier();const n=3+t;const keys=shuffle(Object.keys(HUNT_LOCS)).slice(0,n);
   return{t,steps:keys.map(k=>({k,txt:HUNT_LOCS[k].r[t][0]})),i:0,code:null}}

@@ -58,12 +58,12 @@ function stepAction(dt,t){if(!ACT||!ACT.started)return;if(!$('#sheet').hidden&&P
   ACT.hudT=(ACT.hudT||0)-dt;if(ACT.hudT<=0){ACT.hudT=.25;hudSet();if(ACT.left<10&&AU.on)tone(880,.05,'square',.03)}
   const near=(i,r)=>ME.zone===i.zone&&Math.hypot(ME.pos.x-i.g.position.x,ME.pos.z-i.g.position.z)<r;
   ACT.items.forEach(i=>{if(i.done)return;
-    if(i.kind==='coin'){if(i.fall){i.g.position.y=Math.max(.8,i.g.position.y-dt*5);if(i.g.position.y<=.8)i.fall=false}i.g.rotation.y=t*4;if(near(i,1.1)&&ME.y<2.5){i.done=true;scene.remove(i.g);ACT.score++;if(AU.on){tone(1320,.06,'square',.05);tone(1760,.08,'square',.04,null,auNow()+.05)}
+    if(i.kind==='coin'){if(i.fall){i.g.position.y=Math.max(.8,i.g.position.y-dt*5);if(i.g.position.y<=.8)i.fall=false}i.g.rotation.y=t*4;if(near(i,1.1)&&ME.y<2.5){i.done=true;scene.remove(i.g);ACT.score++;{const n=performance.now();ACT.combo=(n-(ACT.lastC||0)<1300)?(ACT.combo||1)+1:1;ACT.lastC=n;if(ACT.combo>=3){ACT.score+=1;floatText('x'+ACT.combo+' COMBO!','#F472B6');if(ACT.combo%5===0)shake(.15,.2)}fxBurst(i.g.position.x,.9,i.g.position.z,'#FACC15',8,2)}if(AU.on){tone(1320,.06,'square',.05);tone(1760,.08,'square',.04,null,auNow()+.05)}
       if(ACT.items.filter(x=>!x.done).length<6){for(let k=0;k<5;k++){const p=zoneRandPoint(ACT.zone);ACT.items.push(spawn('coin',p.x,p.z,ACT.zone,{fall:true}))}}}}
     else if(i.kind==='pizza'){i.g.rotation.y=t*2;if(near(i,1.4)){i.done=true;scene.remove(i.g);ACT.carry=true;ACT.items[1].g.visible=true;SND.pop();toast('🍕 '+ACT.order);say('Got it! '+ACT.order)}}
     else if(i.kind==='house'){if(i.g.visible){i.g.children[1].position.y=2.4+Math.sin(t*5)*.25}if(ACT.carry&&near(i,1.6)){ACT.score++;sfx.coin();burst('🍕 +5');say(pick(['Thank you! Yummy!','Hot pizza! Thanks!','Wow, so fast!']));nextPizza()}}
     else if(i.kind==='fire'){i.g.children.forEach((f,k)=>{f.scale.y=1+Math.sin(t*12+k*2)*.18;f.rotation.y=t*3*(k%2?1:-1)});if(near(i,2.2)){i.hold+=dt;if(AU.on&&Math.random()<.3)hiss(.12,'highpass',3000,.5,.06);
-        const s=1-i.hold/1.6;i.g.scale.setScalar(Math.max(.05,s));if(i.hold>=1.6){i.done=true;scene.remove(i.g);ACT.score++;sfx.coin();burst('🚒 +6');say('The fire at '+i.name+' is out!');const left=ACT.items.filter(x=>!x.done);ACT.order=left.length?'Fire at '+left.map(x=>x.name).join(', ')+'!':'';if(!left.length)endAction('all')}}
+        const s=1-i.hold/1.6;i.g.scale.setScalar(Math.max(.05,s));if(i.hold>=1.6){i.done=true;fxBurst(i.g.position.x,1,i.g.position.z,'#E5E7EB',20,2.5);shake(.2,.25);hitStop(120);scene.remove(i.g);ACT.score++;sfx.coin();burst('🚒 +6');say('The fire at '+i.name+' is out!');const left=ACT.items.filter(x=>!x.done);ACT.order=left.length?'Fire at '+left.map(x=>x.name).join(', ')+'!':'';if(!left.length)endAction('all')}}
       else i.hold=Math.max(0,i.hold-dt*.5)}
     else if(i.kind==='swimmer'){i.g.position.y=-.45+Math.sin(t*3+i.n)*.1;i.g.children[2].rotation.z=-.4+Math.sin(t*8)*.5;if(!i.saved&&near(i,1.3)&&ME.swim){i.saved=true;i.done=true;scene.remove(i.g);ACT.score++;sfx.coin();burst('🛟 +8');
         const left=ACT.items.filter(x=>!x.done);say('You saved swimmer number '+NUMW20[i.n]+'!');ACT.order=left.length?`Swimmer number ${NUMW20[left[0].n]} needs help!`:'';if(!left.length)endAction('all')}}
@@ -71,7 +71,7 @@ function stepAction(dt,t){if(!ACT||!ACT.started)return;if(!$('#sheet').hidden&&P
       let vx=i.vx,vz=i.vz;if(d<7){vx=dx/d;vz=dz/d}else if(i.turn<=0){i.turn=1.5;const a=Math.random()*Math.PI*2;vx=Math.cos(a);vz=Math.sin(a)}
       if(i.turn<=0&&d<7){i.turn=.6;const a=Math.atan2(vz,vx)+(Math.random()-.5)*1.4;vx=Math.cos(a);vz=Math.sin(a)}i.vx=vx;i.vz=vz;const sp=d<7?6.2:2.5;
       const nx=g.position.x+vx*sp*dt,nz=g.position.z+vz*sp*dt;const np=new THREE.Vector3(nx,0,nz);if(zoneAt(nx,nz)===ACT.zone&&walkable(np,ACT.zone)){g.position.x=nx;g.position.z=nz}else{i.vx=-vx;i.vz=-vz;i.turn=.3}
-      g.rotation.y=Math.atan2(vx,vz);g.position.y=Math.abs(Math.sin(t*14))*.12;if(d<1.1&&ME.y<1.5){i.done=true;endAction('caught')}}});
+      g.rotation.y=Math.atan2(vx,vz);g.position.y=Math.abs(Math.sin(t*14))*.12;if(d<1.1&&ME.y<1.5){i.done=true;shake(.35,.3);hitStop(200);fxBurst(g.position.x,.6,g.position.z,'#A5F3FC',20,3);endAction('caught')}}});
   if(ACT&&ACT.kind==='coins'&&ACT.items.every(x=>x.done)){}}
 const _dangerNow=dangerNow;dangerNow=function(){return ACT&&ACT.started?1:_dangerNow()};
 ACTX.actstop=()=>{if(ACT)endAction('time')};

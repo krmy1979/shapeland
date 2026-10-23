@@ -107,7 +107,7 @@ function buildRoom(id){if(INROOM){scene.remove(INROOM);INROOM=null}INPICK=[];con
     const bb=new THREE.Box3().setFromObject(p);lb.position.y=Math.max(1.2,bb.max.y+.35);p.add(lb);rootify(p);p.userData.zact=()=>sayWord(nm,(typeof CAVE_HE!=='undefined'&&CAVE_HE[nm])||HE[k]||'');g.add(p);INPICK.push(p)});
   const hz=R0.host;let hostObj;if(hz.bear){hostObj=NPCOBJ.bear.clone();hostObj.position.set(0,0,0);hostObj.rotation.set(0,0,0)}else hostObj=human3D(Object.assign({kind:'human',eyes:'big'},hz.ch));
   if(!hz.bear){const hl=label(hz.name,'#EE4F7C','#FFFFFF',.42);hl.position.y=2.4;hostObj.add(hl);const mk=marker('!','#EE4F7C');mk.position.y=3;hostObj.add(mk)}hostObj.position.set(3.5,0,-1);hostObj.lookAt(3.5,0,4);
-  pb(g,2.4,1,.7,'#FFFFFF',3.5,.5,.2);rootify(hostObj);hostObj.userData.zact=()=>{say(hz.line);hz.act()};g.add(hostObj);INPICK.push(hostObj);
+  pb(g,2.4,1,.7,'#FFFFFF',3.5,.5,.2);rootify(hostObj);hostObj.userData.zact=()=>{say(hz.line);hz.act()};hostObj.userData.talker=hz.name;g.add(hostObj);INPICK.push(hostObj);
   const ex=new THREE.Group();const mt=mesh(new THREE.BoxGeometry(2.2,.05,1.1),mat('#16A34A'));mt.position.y=.03;ex.add(mt);const el=label('EXIT 🚪','#16A34A','#FFFFFF',.45);el.position.y=1.2;ex.add(el);
   ex.position.set(0,0,D/2-.7);rootify(ex);ex.userData.zact=()=>leaveBuilding();g.add(ex);INPICK.push(ex);scene.add(g);INROOM=g;INROOM.userData.D=D;INROOM.userData.W=W}
 function sayWord(w,he){say(w);toast(`🔊 ${w}${he?' · '+he:''}`);if(!P.learned[w])addXp(1);P.learned[w]=(P.learned[w]||0)+1;save()}
