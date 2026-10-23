@@ -45,7 +45,7 @@ function confirmLeave(){lgEnd(false,true);return true}
 const LG={active:false,ch:0,hp:3,inv:0,ents:[],shots:[],fx:[],objs:[],d:{},t:0,cd:0,paused:false};
 const HELP=()=>!!LGS().help[LG.ch];
 function lgHud(txt){let h=$('#lgHud');if(!h){h=document.createElement('div');h.id='lgHud';document.body.appendChild(h)}h.hidden=!LG.active;if(!LG.active)return;
-  h.innerHTML=`<span class="hp">${'❤️'.repeat(Math.max(0,LG.hp))}${'🖤'.repeat(Math.max(0,3-LG.hp))}</span><b>${CHAPTERS[LG.ch].em} ${CHAPTERS[LG.ch].he}</b><span>${txt||''}</span>${HELP()?'<span class="kp">📨✓</span>':''}`}
+  h.innerHTML=`<span class="hp">${'❤️'.repeat(Math.max(0,LG.hp))}${'🖤'.repeat(Math.max(0,(LG.max||3)-LG.hp))}</span><b>${CHAPTERS[LG.ch].em} ${CHAPTERS[LG.ch].he}</b><span>${txt||''}</span>${HELP()?'<span class="kp">📨✓</span>':''}`}
 function lgAdd(o){scene.add(o);LG.objs.push(o);return o}
 function lgCleanup(){LG.objs.forEach(o=>scene.remove(o));LG.objs=[];LG.ents=[];LG.shots=[];LG.fx=[];LG.d={};LG.active=false;const h=$('#lgHud');if(h)h.hidden=true;lightBtn()}
 function lgHurt(why){if(LG.inv>0||!LG.active)return;LG.hp--;LG.inv=1.6;if(typeof shake==='function')shake(.35,.35);sfx.bad();if(AU.on)tone(110,.25,'sawtooth',.08);
@@ -104,7 +104,7 @@ function lgReady(){const s=LGS(),ch=s.ch;PANEL='lgready';const tips={4:'🪣 ע�
 ACTX.lggo=()=>{closeSheet();lgStart(LGS().ch)};
 
 /* ---------- starting and ending a trial ---------- */
-function lgStart(ch){lgCleanup();Object.assign(LG,{active:true,ch,hp:3,inv:1,t:0,cd:0,d:{}});const[cx,cz]=ZC.legend;const st={4:[0,-5],5:[6,4],6:[-5,5],7:[0,10]}[ch];ME.pos.set(cx+st[0],0,cz+st[1]);ME.y=0;lightBtn();
+function lgStart(ch){lgCleanup();Object.assign(LG,{active:true,ch,hp:ch===7?5:3,max:ch===7?5:3,inv:1,t:0,cd:0,d:{}});const[cx,cz]=ZC.legend;const st={4:[0,-5],5:[6,4],6:[-5,5],7:[0,10]}[ch];ME.pos.set(cx+st[0],0,cz+st[1]);ME.y=0;lightBtn();
   ({4:startWell,5:startMountain,6:startGold,7:startBoss})[ch]();lgHud(LG.d.hud);say('Go!');if(AU.on)tone(523,.15,'square',.05)}
 function lgFail(){if(!LG.active)return;const ch=LG.ch;const s=LGS();s.fails[ch]=(s.fails[ch]||0)+1;save();lgCleanup();PANEL='lgfail';const n=s.fails[ch];
   if(AU.on){tone(196,.3,'triangle',.06);setTimeout(()=>tone(147,.5,'triangle',.06),250)}
@@ -189,11 +189,11 @@ ACTX.wakeans=dd=>{const k=LG.d.wk;if(!k)return;closeSheet();if(dd.v!==k.w[1]){le
 const ALLY=[['Bella',{g:'girl',hair:'ponytail',hc:'#E8C268',top:'#F472B6',bot:'skirt',bc:'#1D2A48'}],['Leo',{g:'boy',hair:'short',hc:'#1F1B1A',top:'#3B82F6',bot:'pants',bc:'#334155'}],
   ['Mia',{g:'girl',hair:'long',hc:'#8A5530',top:'#22C55E',bot:'dress',bc:'#22C55E'}],['Captain Shell',SHELL],['Mosh',MOSH_CH]];
 function startBoss(){const[bx,bz]=LW(0,-1);const gb=grabbMesh(1.7);gb.position.set(bx,2.4,bz);lgAdd(gb);const shield=mesh(new THREE.SphereGeometry(3,20,14),mat('#7C3AED',{transparent:true,opacity:.28,emissive:'#7C3AED',emissiveIntensity:.5}),false);shield.position.set(bx,4.2,bz);shield.visible=false;lgAdd(shield);
-  const max=HELP()?22:32;const friends=NET.peers.filter(p=>!p.sameTab&&p.presence&&p.presence.zone==='legend').length;
+  const max=HELP()?26:40;const friends=NET.peers.filter(p=>!p.sameTab&&p.presence&&p.presence.zone==='legend').length;
   const boss={g:gb,kind:'boss',shootable:true,r:1.6,hy:3,aimY:4,hp:max,max,shield:false,orbs:0,bombT:2,phase:1,
     hit(){if(this.shield){floatText('🛡️ Mine!');return}this.hp-=1+(friends?1:0);this.g.userData.head.material=mat('#FFFFFF');setTimeout(()=>this.g.userData.head.material=mat('#A78BFA'),90);if(AU.on)tone(220,.06,'square',.04);bossHud()},
     up(dt){if(LG.d.won)return;this.g.position.y=2.4+Math.sin(LG.t*1.5)*.5;this.g.rotation.y=Math.atan2(ME.pos.x-this.g.position.x,ME.pos.z-this.g.position.z);this.bombT-=dt;
-      if(this.bombT<=0){this.bombT=(HELP()?3:2.1)-(this.phase>=2?.4:0);fogBomb()}
+      if(this.bombT<=0){this.bombT=(HELP()?3.4:2.6)-(this.phase>=2?.4:0);fogBomb()}
       if(this.phase===1&&this.hp<this.max*.66){this.phase=2;say('Grumblers! Get her!');for(let i=0;i<2;i++)LG.ents.push(grumbler(this.g.position.x+(i?4:-4),this.g.position.z+3))}
       if(this.phase===2&&this.hp<this.max*.33){this.phase=3;this.shield=true;shield.visible=true;say('My shield of MINE! You can not touch me!');toast('🛡️ מגן של "שלי"! אוספים 3 כדורי אור ביחד');spawnOrbs()}
       if(this.hp<=0){LG.d.won=1;bossDown()}}};
@@ -206,7 +206,7 @@ function allyBeam(from,boss){const a=new THREE.Vector3(from.position.x,1.5,from.
   const beam=mesh(new THREE.CylinderGeometry(.07,.07,len,6),mat('#FDE047',{emissive:'#FDE047',emissiveIntensity:1,transparent:true,opacity:.8}),false);beam.position.copy(a).add(b).multiplyScalar(.5);beam.lookAt(b);beam.rotateX(Math.PI/2);lgAdd(beam);setTimeout(()=>scene.remove(beam),180);
   if(!boss.shield){boss.hp-=1;bossHud()}}
 function fogBomb(){const x=ME.pos.x+(Math.random()-.5)*1.5,z=ME.pos.z+(Math.random()-.5)*1.5;const ring=mesh(new THREE.RingGeometry(1.3,1.6,24),mat('#EF4444',{transparent:true,opacity:.75,side:THREE.DoubleSide,emissive:'#EF4444',emissiveIntensity:.6}),false);ring.rotation.x=-Math.PI/2;ring.position.set(x,.06,z);lgAdd(ring);
-  LG.fx.push({o:ring,t:HELP()?1.6:1.25,up(dt){this.t-=dt;this.o.scale.setScalar(1+Math.sin(LG.t*20)*.05);if(this.t<=0){scene.remove(this.o);fxBurst(x,.6,z,'#6B7280',22,2.4);if(AU.on)hiss&&hiss(.3,'lowpass',500,1,.08);if(Math.hypot(ME.pos.x-x,ME.pos.z-z)<1.6&&ME.y<1.2)lgHurt('🌫️');return false}return true}})}
+  LG.fx.push({o:ring,t:HELP()?2:1.5,up(dt){this.t-=dt;this.o.scale.setScalar(1+Math.sin(LG.t*20)*.05);if(this.t<=0){scene.remove(this.o);fxBurst(x,.6,z,'#6B7280',22,2.4);if(AU.on)hiss&&hiss(.3,'lowpass',500,1,.08);if(Math.hypot(ME.pos.x-x,ME.pos.z-z)<1.6&&ME.y<1.2)lgHurt('🌫️');return false}return true}})}
 function spawnOrbs(){const[cx,cz]=ZC.legend;for(let i=0;i<3;i++){const a=i/3*Math.PI*2+Math.random();const o=mesh(new THREE.SphereGeometry(.4,14,10),mat('#FEF9C3',{emissive:'#FDE047',emissiveIntensity:1}),false);o.position.set(cx+Math.cos(a)*12,1,cz-1+Math.sin(a)*12);lgAdd(o);
   LG.fx.push({o,up(dt){this.o.position.y=1+Math.sin(LG.t*3+i)*.3;if(near(this.o,1.3)){scene.remove(this.o);const b=LG.d.boss;b.orbs++;sfx.coin();floatText('✨ '+b.orbs+'/3');bossHud();if(b.orbs>=3){b.shield=false;LG.d.shield.visible=false;fxBurst(b.g.position.x,4,b.g.position.z,'#FDE047',60,5);say('Together we are stronger!');hiddenHand('ציפורים עפו פתאום ופיזרו את הערפל…','Birds came and blew the fog away!');bossHud()}return false}return true}})}}
 function bossDown(){const b=LG.d.boss;LG.ents.filter(e=>e.kind==='grum').forEach(e=>{e.dead=true;scene.remove(e.g)});LG.fx.forEach(f=>scene.remove(f.o));LG.fx=[];b.g.position.y=0;
