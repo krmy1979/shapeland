@@ -171,3 +171,43 @@ const _leaveLegendX=leaveLegend;leaveLegend=function(){_leaveLegendX();water.vis
 const _paintLegendX=paintLegend;paintLegend=function(){_paintLegendX();if(!LGW)return;const k=clamp(ST().shards-3,0,4)/4;if(!LOL.grassL){LOL.grassL=ground.material.map.clone();LOL.grassL.needsUpdate=true}
   LGW.ground.material=new THREE.MeshStandardMaterial({map:LOL.grassL,color:lerpC('#8C7AB8','#FFFFFF',k),roughness:.95});LGW.g.children.forEach(o=>{if(o.geometry&&o.geometry.type==='TorusGeometry')o.material=new THREE.MeshStandardMaterial({color:lerpC('#7C3AED','#E9D8A6',k),emissive:lerpC('#5B21B6','#000000',k),emissiveIntensity:.5})})};
 const _buildLegendY=buildLegend;buildLegend=function(){_buildLegendY();paintLegend()};
+
+/* ===================== ART STEP 5 · GARDENS, SPORTS PARK, ADVENTURE PARK, BOULEVARD AND ASHKELON ===================== */
+(()=>{const meadow=(base,dots)=>canvasTex(512,512,(c,w,h)=>{c.fillStyle=base;c.fillRect(0,0,w,h);for(let i=0;i<4500;i++){c.fillStyle=['rgba(60,100,35,.3)','rgba(170,205,100,.3)'][i%2];c.fillRect(rnd01()*w,rnd01()*h,2,4)}
+    for(let i=0;i<(dots?dots.length*45:0);i++){c.fillStyle=dots[i%dots.length];c.beginPath();c.arc(rnd01()*w,rnd01()*h,2.4,0,7);c.fill()}},4);
+  const cobble=(a,b)=>canvasTex(256,256,(c,w,h)=>{c.fillStyle=b;c.fillRect(0,0,w,h);for(let i=0;i<420;i++){const x=rnd01()*w,y=rnd01()*h,r=6+rnd01()*7;c.fillStyle=lerpC(a,'#FFFFFF',rnd01()*.35);c.beginPath();c.ellipse(x,y,r,r*.8,rnd01()*3,0,7);c.fill()}},2);
+  const strata=canvasTex(512,128,(c,w,h)=>{const cols=['#E7C79A','#D9B07C','#EBD3AA','#C99A66','#E2BD8C'];let y=0;while(y<h){const bh=8+rnd01()*22;c.fillStyle=cols[Math.floor(rnd01()*cols.length)];c.fillRect(0,y,w,bh);y+=bh}},1);strata.wrapS=THREE.RepeatWrapping;strata.repeat.set(10,1);
+  const SW={ee92c2:new THREE.MeshStandardMaterial({map:meadow('#78B04A',['#F9A8D4','#FBCFE8','#FFFFFF','#C084FC']),roughness:.95}),'76a9ec':new THREE.MeshStandardMaterial({map:meadow('#5E9E3C',['#FDE047','#FFFFFF']),roughness:.95}),
+    e9a8c6:new THREE.MeshStandardMaterial({map:strata,roughness:.9}),'93c5fd':new THREE.MeshStandardMaterial({map:strata,roughness:.9}),b98a5e:new THREE.MeshStandardMaterial({map:strata,roughness:.9}),
+    fad1e6:new THREE.MeshStandardMaterial({map:cobble('#F3D9C8','#E2C4B0'),roughness:.95}),c9defb:new THREE.MeshStandardMaterial({map:cobble('#E6DCC8','#D3C6AE'),roughness:.95}),d6d3d1:new THREE.MeshStandardMaterial({map:cobble('#E9DCC0','#D8C8A8'),roughness:.95})};
+  /* zone grounds, sides and paths */
+  scene.traverse(o=>{if(!o.isMesh||!o.material||!o.material.color||o.geometry.type!=='BoxGeometry')return;const h=o.material.color.getHexString(),p=o.geometry.parameters;if(SW[h]&&(p.width>=3||p.depth>=3)&&p.height<=4.1)o.material=SW[h]});
+  /* zone buildings: tinted Jerusalem stone, a dome or a stone parapet */
+  scene.traverse(o=>{if(!o.isGroup||!o.children[0]||!o.children[0].isMesh)return;const b=o.children[0],p=b.geometry.parameters||{};if(b.geometry.type!=='BoxGeometry'||p.width!==5||p.height!==3.4||p.depth!==3.8)return;
+    const col=b.material.color.getHexString();b.material=new THREE.MeshStandardMaterial({map:STONE_TEX,color:lerpC('#'+col,'#FFFFFF',.55),roughness:.92});const r=o.children[1];
+    if(r&&r.geometry.type==='ConeGeometry'){r.visible=false;const dome=new THREE.Mesh(new THREE.SphereGeometry(1.2,14,8,0,Math.PI*2,0,Math.PI/2),facet('#'+r.material.color.getHexString(),{roughness:.5}));dome.position.set(0,3.4,0);dome.castShadow=true;o.add(dome);
+      const par=new THREE.Mesh(new THREE.BoxGeometry(5.2,.3,4),stoneMat([2,.3]));par.position.y=3.5;o.add(par);dome.position.y=3.6}
+    else if(r&&r.geometry.type==='BoxGeometry'){r.material=stoneMat([2,.3])}});
+  /* round trees in the zones become olive trees and palms */
+  const old=[];scene.children.forEach(o=>{if(o.isGroup&&o.children.length===4&&o.children[0].geometry&&o.children[0].geometry.type==='CylinderGeometry'&&o.children.slice(1).every(c=>c.geometry&&c.geometry.type==='SphereGeometry'))old.push(o)});
+  old.forEach((o,i)=>{o.visible=false;const p=o.position;(i%3?oliveTree:datePalm)(p.x,p.z,1.15)});
+  /* Ashkelon: big boxes become warm stone buildings (colors kept as a tint) */
+  const[CXc,CZc]=ZC.city;scene.traverse(o=>{if(!o.isMesh||o.geometry.type!=='BoxGeometry'||!o.material||!o.material.color||Array.isArray(o.material))return;const p=o.geometry.parameters;if(p.height<2.4||p.width<2.4||p.depth<2.4)return;
+    const w=new THREE.Vector3();o.getWorldPosition(w);if(!(w.x-CXc>-47&&w.x-CXc<33&&w.z-CZc>-26&&w.z-CZc<26))return;if(o.material.map)return;
+    const t=STONE_TEX.clone();t.needsUpdate=true;t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(Math.max(1,p.width/2.5),Math.max(1,p.height/2.5));o.material=new THREE.MeshStandardMaterial({map:t,color:lerpC('#'+o.material.color.getHexString(),'#FFFFFF',.5),roughness:.9})});
+  /* the big zone arches become stone gates */
+  scene.traverse(o=>{if(o.isMesh&&o.geometry.type==='TorusGeometry'&&o.geometry.parameters.radius>=2.5&&o.geometry.parameters.radius<6){const col=o.material.color.getHexString();o.material=new THREE.MeshStandardMaterial({map:STONE_TEX,color:lerpC('#'+col,'#FFFFFF',.6),roughness:.9})}})})();
+
+/* ===================== ART STEP 6 · PROPS: the owl statues, chest markers and the race banner ===================== */
+(()=>{/* markers ("?" and "!") become glowing golden seals */
+  const seal=(ch,bg)=>{const cv=document.createElement('canvas');cv.width=cv.height=128;const c=cv.getContext('2d');const g=c.createRadialGradient(64,60,6,64,64,60);g.addColorStop(0,'#FFF7D6');g.addColorStop(.7,'#F5C451');g.addColorStop(1,'#B7791F');
+    c.fillStyle=g;c.beginPath();c.arc(64,64,54,0,7);c.fill();c.lineWidth=6;c.strokeStyle='#FFF3C4';c.stroke();c.font='700 66px Fredoka, Arial';c.fillStyle='#6B3F12';c.textAlign='center';c.textBaseline='middle';c.fillText(ch,64,70);
+    const s=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(cv),depthTest:false}));s.scale.set(.7,.7,1);s.renderOrder=11;return s};
+  marker=function(ch,bg){return seal(ch,bg)};
+  const swap=g=>{const mk=g.userData.mk;if(!mk||!mk.isSprite||mk.userData.sealed)return;const ch=g.userData.chest?'?':'!';const n=seal(ch);n.position.copy(mk.position);n.visible=mk.visible;n.userData.sealed=1;mk.parent.add(n);mk.parent.remove(mk);g.userData.mk=n};
+  CHESTS.forEach(swap);Object.values(NPCOBJ).forEach(swap);
+  /* the race flag becomes a woven banner on a wooden pole */
+  if(FLAG&&FLAG.userData.flag){const cv=document.createElement('canvas');cv.width=128;cv.height=80;const c=cv.getContext('2d');c.fillStyle='#B91C1C';c.fillRect(0,0,128,80);c.fillStyle='#FACC15';c.fillRect(0,8,128,6);c.fillRect(0,66,128,6);c.font='42px serif';c.textAlign='center';c.textBaseline='middle';c.fillText('⚡',64,42);
+    FLAG.userData.flag.material=new THREE.MeshStandardMaterial({map:new THREE.CanvasTexture(cv),side:THREE.DoubleSide,roughness:.8});FLAG.children[0].material=facet('#7C5A3A')}
+  /* owl statues at the gates: carved sandstone owls */
+  scene.traverse(o=>{if(o.isMesh&&o.material&&o.material.color&&['a8a29e','9ca3af','78716c'].includes(o.material.color.getHexString())&&o.parent&&o.parent.userData&&/Owl|Wise/.test(String(o.parent.userData.talker||'')))o.material=o.geometry.type==='CylinderGeometry'?stoneMat([1,.4]):facet(o.material.color.getHexString()==='78716c'?'#A07A4E':'#D9B98A')})})();
