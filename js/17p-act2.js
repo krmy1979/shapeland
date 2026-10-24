@@ -40,7 +40,7 @@ const _hurtP=lgHurt;lgHurt=function(w){const before=LG.inv;_hurtP(w);const t=myT
 const _endP=lgEnd;lgEnd=function(win,quiet){const ch=LG.ch;_endP(win,quiet);const t=myTribe();if(win&&!quiet&&t&&t.perk==='rich')addGems(5,'כוח השבט '+t.he,'Tribe bonus');if(win&&!quiet&&ch===14)setTimeout(finale2,600)};
 
 /* ---------- helpers for Act II ---------- */
-function shade(x,z,hp,col){const g=new THREE.Group();const body=mesh(new THREE.ConeGeometry(.5,1.5,8),mat(col||'#1E1B4B'));body.position.y=.75;g.add(body);const hd=mesh(new THREE.SphereGeometry(.3,10,8),mat('#312E81'));hd.position.y=1.65;g.add(hd);
+function shadeFoe(x,z,hp,col){const g=new THREE.Group();const body=mesh(new THREE.ConeGeometry(.5,1.5,8),mat(col||'#1E1B4B'));body.position.y=.75;g.add(body);const hd=mesh(new THREE.SphereGeometry(.3,10,8),mat('#312E81'));hd.position.y=1.65;g.add(hd);
   [-1,1].forEach(k=>{const e=mesh(new THREE.SphereGeometry(.06,6,4),mat('#F87171',{emissive:'#EF4444',emissiveIntensity:1}));e.position.set(k*.11,1.7,.26);g.add(e)});const sp=mesh(new THREE.CylinderGeometry(.03,.03,1.6,5),mat('#94A3B8'));sp.position.set(.4,1,.1);g.add(sp);
   g.position.set(x,0,z);lgAdd(g);return{g,body,kind:'shade',shootable:true,r:.8,aimY:1,hp:hp||2,stun:0,
     hit(){this.hp--;this.body.material=mat('#A5B4FC');setTimeout(()=>{if(!this.dead)this.body.material=mat(col||'#1E1B4B')},100);if(this.hp<=0){this.dead=true;scene.remove(this.g);fxBurst(this.g.position.x,1,this.g.position.z,'#312E81',14,1.8);sfx.pop();LG.d.killed=(LG.d.killed||0)+1}},
@@ -80,7 +80,7 @@ function starsWin(){LG.d.won=1;const d=LG.d;LG.active=false;cut([['🌌',`אספ
 function startLights(){const d=LG.d;d.lit=0;d.stones=[];const go=()=>{TRIBES.forEach((t,i)=>{const a=i/12*Math.PI*2;const[x,z]=L(Math.cos(a)*11,-2+Math.sin(a)*11);const g=new THREE.Group();
     const st=mesh(new THREE.CylinderGeometry(.55,.7,1.4,6),mat('#78716C'));st.position.y=.7;g.add(st);const fl=mesh(new THREE.BoxGeometry(.9,.6,.04),mat('#57534E'));fl.position.set(0,2.2,0);g.add(fl);const pole=mesh(new THREE.CylinderGeometry(.04,.04,1.6,5),mat('#78350F'));pole.position.set(-.45,1.9,0);g.add(pole);
     const lb=label(t.em,'#1F2937','#FFFFFF',.38);lb.position.y=3;g.add(lb);g.position.set(x,0,z);g.lookAt(ZC.legend[0],0,ZC.legend[1]-2);lgAdd(g);rootify(g);const S={t,g,st,fl,lit:0,guard:null};d.stones.push(S);
-    g.userData.zact=()=>touchStone(S);g.userData.talker='Stone';EXTRA_PICK.push(g);if(i%(HELP()?3:2)===0){const gd=shade(x*0+ZC.legend[0]+Math.cos(a)*9,ZC.legend[1]-2+Math.sin(a)*9,2);S.guard=gd;LG.ents.push(gd)}});
+    g.userData.zact=()=>touchStone(S);g.userData.talker='Stone';EXTRA_PICK.push(g);if(i%(HELP()?3:2)===0){const gd=shadeFoe(x*0+ZC.legend[0]+Math.cos(a)*9,ZC.legend[1]-2+Math.sin(a)*9,2);S.guard=gd;LG.ents.push(gd)}});
     d.hud=`🕯️ 0/12 אורות · ${myTribe()?myTribe().em:''}`;lgHud(d.hud)};
   if(!ST().tribe){LG.d.afterTribe=go;setTimeout(()=>{openTribes();toast('קודם בוחרים שבט 🕯️')},200)}else go()}
 function touchStone(S){if(S.lit||!LG.active)return;if(!near(S.g,3.2)){toast('🏃 מתקרבים לאבן');return}if(S.guard&&!S.guard.dead){toast('🗡️ צל שומר על האבן. יורים בו אור קודם!');return}
@@ -102,7 +102,7 @@ function hearScout(s){if(LG.d.wander)return;PANEL='scout';sheet(`<h2>👣 ${esc(
 ACTX.follow=dd=>{closeSheet();const s=ST();s.followed=s.followed||[];s.followed.push(dd.n);save();
   if(dd.v==='1'){LG.active=false;learnResult('listen',true);cut([['💪',`בחרת ללכת אחרי ${dd.n}! מי שהולך אחרי האומץ, מגיע.`,'You chose courage! Josh and Kal will lead the way.'],['👣','Josh, התלמיד של Mosh, הפך למנהיג החדש של שנים־עשר האורות.','Josh the Brave is the new leader of the Twelve Lights!']],()=>{LG.active=true;lgEnd(true)});return}
   learnResult('listen',false);const d=LG.d;d.wander=40;scene.fog.near=4;scene.fog.far=16;toast('🌫️ הלכת אחרי הפחד… עכשיו נודדים בערפל 40 שניות');say('You followed fear. Now you must wander in the fog.');
-  for(let i=0;i<(HELP()?2:4);i++){const a=Math.random()*Math.PI*2;LG.ents.push(shade(ME.pos.x+Math.cos(a)*9,ME.pos.z+Math.sin(a)*9,2))}};
+  for(let i=0;i<(HELP()?2:4);i++){const a=Math.random()*Math.PI*2;LG.ents.push(shadeFoe(ME.pos.x+Math.cos(a)*9,ME.pos.z+Math.sin(a)*9,2))}};
 function stepScouts(dt){const d=LG.d;if(!d.wander)return;d.wander-=dt;d.hud=`🌫️ נודדים בערפל… ${Math.max(0,Math.ceil(d.wander))}`;lgHud(d.hud);
   if(d.wander<=0){d.wander=0;scene.fog.near=50;scene.fog.far=120;LG.ents.filter(e=>e.kind==='shade').forEach(e=>{e.dead=true;scene.remove(e.g)});toast('🌤️ הערפל התפזר. מקשיבים שוב, ובוחרים טוב יותר');d.hud='👣 בוחרים שוב אחרי מי ללכת';lgHud(d.hud)}}
 
@@ -144,7 +144,7 @@ function blowShofar(){const d=LG.d;shofarBtn(false);if(!LG.active||LG.ch!==12)re
 /* ---------- 13: The Hidden Treasure — lose, search the tents, return it, win ---------- */
 const TENTC=[['red','#DC2626'],['blue','#2563EB'],['green','#16A34A'],['yellow','#EAB308'],['purple','#7C3AED'],['orange','#EA580C'],['white','#F1F5F9'],['brown','#92400E']];
 function startHidden(){const[cx,cz]=ZC.legend;const d=LG.d;Object.assign(d,{phase:'attack',t0:7,tents:[],hud:'⚔️ Josh: Attack!'});const j=npcAt('Josh 👣',JOSH,cx+2,cz+9,'#1D4ED8');d.josh=j;j.userData.zact=()=>talkJosh13();j.userData.talker='Josh';EXTRA_PICK.push(j);
-  for(let i=0;i<7;i++){const a=i/7*Math.PI*2;LG.ents.push(shade(cx+Math.cos(a)*14,cz-4+Math.sin(a)*14,3))}}
+  for(let i=0;i<7;i++){const a=i/7*Math.PI*2;LG.ents.push(shadeFoe(cx+Math.cos(a)*14,cz-4+Math.sin(a)*14,3))}}
 function stepHidden(dt){const d=LG.d;if(d.phase==='attack'){d.t0-=dt;if(d.t0<=0){d.phase='lost';LG.ents.filter(e=>e.kind==='shade').forEach(e=>{e.dead=true;scene.remove(e.g)});LG.hp=Math.max(LG.hp,2);
     cut([['😞','הצללים היו חזקים מדי. מה קרה? אנחנו אף פעם לא מפסידים כשאנחנו מאוחדים…','We lost! Why? When we are united, we never lose…'],['⛺','Josh הבין: מישהו לקח לעצמו אוצר אסור והסתיר אותו באוהל. כשאחד לוקח לעצמו, כולם מפסידים.','Someone took the forbidden treasure and hid it in a tent. Find it!']],()=>placeTents())}}
   if(d.phase==='battle'&&LG.ents.filter(e=>e.kind==='shade').length===0){if(d.wave<3){d.wave++;spawnWave13()}else{d.phase='done';LG.active=false;cut([['🏆','הפעם, מאוחדים ונקיים, ניצחתם!','This time, united and honest, you won!']],()=>{LG.active=true;lgEnd(true)})}}}
@@ -158,7 +158,7 @@ function searchTent(i){const d=LG.d;if(d.phase!=='search')return;if(!near(d.tent
   sheet(`<h2>⛺ ${en(d.chain[i][0]+' tent')}</h2><div class="bubble">${en(line)}</div><div class="row"><button class="spk" data-a="sayt" data-t="${esc(line)}">🔊</button><button class="btn ghost" data-a="close">${en('OK!')}</button></div>`);say(line)}
 function talkJosh13(){const d=LG.d;if(d.phase==='found'){d.phase='battle';d.wave=1;sfx.win();say('Thank you! Now we are united again. Attack!');hiddenHand('ברגע שהאוצר חזר, האור חזר למחנה','The light came back to the camp!');
     LG.ents.push(allyShoot(d.josh,()=>LG.ents.filter(e=>e.kind==='shade'),HELP()?1.6:2.4));spawnWave13()}else if(d.phase==='search')toast('⛺ מחפשים באוהלים. מתחילים מכל אוהל וקוראים את הרמז')}
-function spawnWave13(){const d=LG.d;const n=(HELP()?2:3)+d.wave;const[cx,cz]=ZC.legend;for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2;LG.ents.push(shade(cx+Math.cos(a)*16,cz-2+Math.sin(a)*16,2))}d.hud=`⚔️ גל ${d.wave}/3`;lgHud(d.hud);toast(`⚔️ גל ${d.wave}!`)}
+function spawnWave13(){const d=LG.d;const n=(HELP()?2:3)+d.wave;const[cx,cz]=ZC.legend;for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2;LG.ents.push(shadeFoe(cx+Math.cos(a)*16,cz-2+Math.sin(a)*16,2))}d.hud=`⚔️ גל ${d.wave}/3`;lgHud(d.hud);toast(`⚔️ גל ${d.wave}!`)}
 
 /* ---------- 14: The Sun Stands Still — five Shadow Kings ---------- */
 function startSun(){const[cx,cz]=ZC.legend;const d=LG.d;Object.assign(d,{time:HELP()?110:85,stopped:0,asked:0,kings:[]});scene.background.set('#FDBA74');
