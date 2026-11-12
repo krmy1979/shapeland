@@ -89,7 +89,7 @@ ftCinematic=function(){FT.step='cine';FT.cine=1;FT.t=0;const tok=FT.ctok=(FT.cto
     ()=>ftCine('רק את/ה יכול/ה להחזיר את האור! ✨','Only you can bring the light back!'),
     ()=>{FT.cine=0;ftCineOff();if(CRYS)CRYS.core.material.emissiveIntensity=.15;ftSparksStep()}];
   const gaps=[2300,2400,1900];let i=0;
-  const next=()=>{if(!FT.on||FT.ctok!==tok||i>=beats.length)return;clearTimeout(FT.ctm);beats[i++]();if(i<beats.length)FT.ctm=setTimeout(next,gaps[i-1])};
+  const next=()=>{if(!FT.on||FT.ctok!==tok||i>=beats.length)return;clearTimeout(FT.ctm);beats[i++]();if(i<beats.length)FT.ctm=setTimeout(next,gaps[i-1]*(FT.gapMul||1))};
   FT.cineNext=next;next();
   let h=$('#ftTap');if(!h){h=document.createElement('div');h.id='ftTap';h.style.cssText='position:fixed;bottom:calc(env(safe-area-inset-bottom) + 14px);left:50%;transform:translateX(-50%);z-index:61;color:#fff;font:600 14px system-ui;opacity:.8;pointer-events:none';h.textContent='👆 נוגעים במסך כדי להמשיך';document.body.appendChild(h)}h.hidden=false};
 /* while the opening plays, a tap only moves it along and never reaches the world behind it */
