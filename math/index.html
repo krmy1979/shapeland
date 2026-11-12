@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>המורה הקולית – שברים וסדרות</title>
+<style>
+:root{--bg:#fff8ef;--ink:#3b2a1e;--muted:#8a7565;--pri:#ff6f91;--pri2:#ff9671;--ok:#06a77d;--bad:#e63946;--hint:#ffe8a3;--card:#fff;--line:#f0dcc8;--pz:#ff8fab}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI","Arial Hebrew",Arial,sans-serif;font-size:19px;line-height:1.5}
+button{font:inherit;cursor:pointer;border:0;border-radius:14px;background:#fff;color:var(--ink);padding:.5em .9em;box-shadow:0 2px 0 var(--line)}
+button:disabled{opacity:.55;cursor:default}
+input{font:inherit;border:2px solid var(--line);border-radius:12px;padding:.4em .6em;background:#fff;color:var(--ink)}
+.hidden{display:none!important}
+.top{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:10px;padding:8px 12px;background:#fff3e0;border-bottom:2px solid var(--line)}
+.owlbtn{padding:0;background:none;box-shadow:none;width:58px;height:58px;flex:none}
+.owl{width:58px;height:58px}
+.bubble{flex:1;background:#fff;border:2px solid var(--line);border-radius:18px;padding:6px 12px;min-height:42px;font-size:.95em;position:relative}
+.bubble::before{content:"";position:absolute;right:-9px;top:14px;border:8px solid transparent;border-left-color:var(--line)}
+.bubble.pop{animation:pop .35s ease}
+@keyframes pop{0%{transform:scale(.96)}60%{transform:scale(1.02)}100%{transform:scale(1)}}
+.meta{display:flex;flex-direction:column;align-items:flex-end;font-size:.85em;color:var(--muted);flex:none}
+.starbox{font-size:1.15em;color:var(--ink)}
+main{max-width:860px;margin:0 auto;padding:14px}
+.card{background:var(--card);border-radius:22px;padding:18px;box-shadow:0 4px 0 var(--line);margin-bottom:14px}
+.center{text-align:center}
+h1{margin:.2em 0;font-size:1.6em}h2.topic{margin:.8em .2em .4em}h3{margin:1em 0 .4em}
+.lead{color:var(--muted);margin:.3em 0 .8em}
+.note{color:var(--muted);font-size:.85em}
+.field{display:flex;flex-direction:column;gap:6px;max-width:320px;margin:10px auto}
+.big{font-size:1.1em;padding:.7em 1.3em;border-radius:18px}
+.primary{background:linear-gradient(135deg,var(--pri),var(--pri2));color:#fff;box-shadow:0 4px 0 #d94f73}
+.glow{animation:glow 1.6s ease-in-out infinite}
+@keyframes glow{50%{box-shadow:0 0 0 8px rgba(255,111,145,.25),0 4px 0 #d94f73}}
+.link{background:none;box-shadow:none;color:var(--muted);padding:.3em .5em}
+.danger{background:#ffe3e3;color:var(--bad)}
+.row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:10px 0}
+.row.left{justify-content:flex-start;align-items:center}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.unit{display:flex;flex-direction:column;align-items:center;gap:2px;padding:16px 10px;border-radius:20px;box-shadow:0 4px 0 var(--line)}
+.unit .ic{font-size:2em}.unit .tt{font-weight:700}.unit .sb{font-size:.8em;color:var(--muted)}
+.unit .lv{font-size:.8em;color:var(--muted)}.unit .crown{font-size:.85em;color:#b8860b;font-weight:700}
+.dots{display:flex;gap:5px;margin:4px 0}.dots b{width:12px;height:12px;border-radius:50%;background:#eee}
+.dots b.f{background:var(--ok)}.dots b.c{background:#ffd166}
+.bigic{font-size:3.2em}
+.hdr{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}
+.badge{background:#fff3e0;border-radius:12px;padding:2px 10px;font-size:.85em}
+.progress{display:flex;gap:6px;justify-content:center;margin:4px 0 10px}
+.progress i{width:26px;height:8px;border-radius:5px;background:#eee}.progress i.d{background:var(--ok)}.progress i.c{background:#ffd166}
+.qtext{display:flex;align-items:center;gap:10px;font-size:1.25em;font-weight:600;margin:6px 0 10px}
+.spk{flex:none;font-size:1.1em;padding:.3em .55em}
+.vizbox{display:flex;justify-content:center;align-items:center;min-height:40px;margin:8px 0}
+.vizbox:empty{display:none}
+.viz{width:100%;max-width:520px;height:auto;max-height:300px}
+.slice{fill:#fff4e6;transition:fill .35s}
+.slice.on{fill:var(--pz)}
+.paint .slice{cursor:pointer}.paint .slice:hover{fill:#ffd1dc}.paint .slice.on:hover{fill:#ff7097}
+.lbl{font-size:24px;font-weight:700;fill:var(--ink);text-anchor:middle}
+.lbl.small{font-size:20px}
+.box{fill:#fff;stroke:#c9a98a;stroke-width:2}.box.on{fill:#ffe0e8;stroke:var(--pri)}
+.dot{fill:#ff9671}
+.tile{fill:#e8f4ff;stroke:#118ab2;stroke-width:3}.tile.blank{fill:#fff7d6;stroke:#ffb703;stroke-dasharray:6 4}
+.num{text-anchor:middle;font-weight:700;fill:var(--ink)}
+.arc{fill:none;stroke:#e76f51;stroke-width:3}
+.jl{font-size:22px;font-weight:700;fill:#e76f51;text-anchor:middle}
+.ball-red{fill:#ef476f}.ball-blue{fill:#118ab2}
+.match{stroke:#e9c46a;stroke-width:7;stroke-linecap:round}.match-head{fill:#e63946}
+.step{fill:#e8f4ff;stroke:#118ab2;stroke-width:2}
+.sub{background:#fff8ef;border-radius:14px;padding:10px 14px;font-size:1.15em;min-height:3em}
+.ctl button{font-size:1.2em}
+.choices{display:grid;grid-template-columns:repeat(2,minmax(120px,1fr));gap:12px;max-width:460px;margin:8px auto}
+.choices.cmp{grid-template-columns:repeat(3,1fr);max-width:360px}
+.ch{font-size:1.5em;padding:.5em;border:3px solid var(--line);box-shadow:0 4px 0 var(--line)}
+.ch.right{border-color:var(--ok);background:#e3fbf2}.ch.wrong{border-color:var(--bad);background:#ffe9eb}
+.numin,.fracin{display:flex;flex-direction:column;align-items:center;gap:12px}
+.numin input{width:140px;font-size:1.8em;text-align:center}
+.fx{display:flex;align-items:center;gap:10px}
+.fx .w{width:80px;font-size:1.8em;text-align:center}
+.fbox{display:flex;flex-direction:column;align-items:center;gap:4px}
+.fbox input{width:80px;font-size:1.5em;text-align:center}
+.fbox .ln{width:90px;height:4px;background:var(--ink);border-radius:2px}
+.fb{margin:10px auto;max-width:620px;border-radius:14px;padding:0;font-size:1.1em;text-align:center}
+.fb.good{background:#e3fbf2;color:#05785a;padding:10px;font-weight:700}
+.fb.hint{background:var(--hint);padding:10px}
+.fb.warn{color:var(--muted)}
+.lvup{font-size:1.3em;margin-top:6px}
+.sol{max-width:620px;margin:8px auto}
+.sstep{background:#f1f8ff;border-radius:12px;padding:8px 12px;margin:6px 0;animation:pop .35s}
+.tip{text-align:center;color:var(--muted);margin-top:6px}
+.math{display:inline-flex;align-items:center;gap:.25em;unicode-bidi:isolate}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.05;margin:0 .1em;font-weight:700}
+.fr .fn{border-bottom:2px solid currentColor;padding:0 .15em}.fr .fd{padding:0 .15em}
+.mx{font-weight:700;margin-left:.1em}
+.blank{display:inline-block;min-width:1.6em;border:2px dashed #ffb703;border-radius:8px;padding:0 .2em;background:#fff7d6;text-align:center}
+.tbl{width:100%;border-collapse:collapse;font-size:.9em}.tbl th,.tbl td{border-bottom:1px solid var(--line);padding:6px;text-align:right}
+.errs{padding-right:1.2em}
+.tog{display:flex;align-items:center;gap:6px}
+#confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:20}
+#confetti i{position:absolute;top:-20px;width:10px;height:16px;border-radius:3px;animation:fall 2.3s ease-in forwards}
+@keyframes fall{to{top:105%;transform:rotate(540deg)}}
+@media (max-width:520px){html,body{font-size:17px}.choices{grid-template-columns:1fr 1fr}.top{gap:6px}.owlbtn,.owl{width:46px;height:46px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+</style>
+</head>
+<body>
+<header class="top">
+  <button id="homebtn" class="owlbtn" aria-label="לנושאים">
+    <svg viewBox="0 0 100 100" class="owl" aria-hidden="true">
+      <ellipse cx="50" cy="58" rx="34" ry="36" fill="#8d6e63"/>
+      <ellipse cx="50" cy="66" rx="22" ry="24" fill="#d7ccc8"/>
+      <polygon points="22,26 30,8 38,26" fill="#8d6e63"/><polygon points="62,26 70,8 78,26" fill="#8d6e63"/>
+      <circle cx="36" cy="42" r="14" fill="#fff"/><circle cx="64" cy="42" r="14" fill="#fff"/>
+      <circle cx="38" cy="43" r="6" fill="#3e2723"/><circle cx="62" cy="43" r="6" fill="#3e2723"/>
+      <circle cx="40" cy="41" r="2" fill="#fff"/><circle cx="64" cy="41" r="2" fill="#fff"/>
+      <polygon points="45,54 55,54 50,62" fill="#ffb300"/>
+      <rect x="28" y="20" width="44" height="6" rx="3" fill="#ff8fab"/>
+    </svg>
+  </button>
+  <div class="bubble" id="bubble">שלום!</div>
+  <div class="meta"><span id="hello"></span><span class="starbox">⭐ <b id="stars">0</b></span></div>
+</header>
+<main id="main"></main>
+<div id="confetti" aria-hidden="true"></div>
+<script>
+/* כלים משותפים */
+(function (G) {
+  const U = {};
+  U.rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+  U.pick = arr => arr[Math.floor(Math.random() * arr.length)];
+  U.shuffle = arr => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  U.gcd = (a, b) => (b ? U.gcd(b, a % b) : Math.abs(a));
+  U.cmp = (a, b, c, d) => Math.sign(a * d - c * b); /* a/b מול c/d */
+  U.sym = s => (s > 0 ? '>' : s < 0 ? '<' : '=');
+  /* בחירה עם הגנה מכפילויות */
+  U.choices = (correctLabel, wrongs) => {
+    const out = [{ label: correctLabel, value: 'ok' }];
+    for (const w of wrongs) if (w && !out.some(o => o.label === w.label)) out.push({ label: w.label, value: 'x' + out.length, err: w.err });
+    return U.shuffle(out.slice(0, 4));
+  };
+  G.U = U;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* עברית: הקראת שברים ומספרים, ועיצוב תצוגה של שברים */
+(function (G) {
+  const masc = ['אפס','אחד','שניים','שלושה','ארבעה','חמישה','שישה','שבעה','שמונה','תשעה','עשרה','אחד עשר','שנים עשר'];
+  const fem  = ['אפס','אחת','שתיים','שלוש','ארבע','חמש','שש','שבע','שמונה','תשע','עשר','אחת עשרה','שתים עשרה'];
+  const DEN = {2:['חצי','חצאים','m'],3:['שליש','שלישים','m'],4:['רבע','רבעים','m'],5:['חמישית','חמישיות','f'],
+    6:['שישית','שישיות','f'],7:['שביעית','שביעיות','f'],8:['שמינית','שמיניות','f'],9:['תשיעית','תשיעיות','f'],
+    10:['עשירית','עשיריות','f'],12:['חלק שנים עשר','חלקי שנים עשר','m']};
+
+  function frac(n, d) {
+    n = +n; d = +d;
+    if (d === 1) return String(n);
+    const e = DEN[d];
+    if (!e) return n + ' חלקי ' + d;
+    if (n === 0) return 'אפס';
+    if (n === 1) return e[0];
+    let w;
+    if (n === 2) w = e[2] === 'm' ? 'שני' : 'שתי';
+    else w = (e[2] === 'm' ? masc : fem)[n] || String(n);
+    return w + ' ' + e[1];
+  }
+  function wholes(w) {
+    w = +w;
+    if (w === 1) return 'שלם אחד';
+    if (w === 2) return 'שני שלמים';
+    return (masc[w] || w) + ' שלמים';
+  }
+  function mixed(w, n, d) { return +n === 0 ? String(w) : wholes(w) + ' ו' + frac(n, d); }
+
+  /* טקסט תצוגה ← טקסט להקראה */
+  function speakable(s) {
+    return String(s)
+      .replace(/\[\[|\]\]/g, ' ')
+      .replace(/(\d+)\s*ו[־-]\s*(\d+)\/(\d+)/g, (m, w, n, d) => ' ' + mixed(w, n, d) + ' ')
+      .replace(/(\d+)\/(\d+)/g, (m, n, d) => ' ' + frac(n, d) + ' ')
+      .replace(/×/g, ' כפול ').replace(/÷/g, ' חלקי ')
+      .replace(/\s\+\s/g, ' ועוד ').replace(/\s[−-]\s/g, ' פחות ')
+      .replace(/=\s*⬜/g, ' שווה כמה? ').replace(/=\s*\?/g, ' שווה כמה? ')
+      .replace(/\s=\s/g, ' שווה ').replace(/\s>\s/g, ' גדול מ ').replace(/\s<\s/g, ' קטן מ ')
+      .replace(/⬜/g, ' משהו ').replace(/₪/g, ' שקלים ').replace(/%/g, ' אחוז ')
+      .replace(/[🍕⭐🎉👑🦉✨💪🔥]/gu, '')
+      .replace(/\s+/g, ' ').trim();
+  }
+
+  function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function fracHTML(n, d) { return `<span class="fr"><span class="fn">${n}</span><span class="fd">${d}</span></span>`; }
+  function fmtMath(s) {
+    return esc(s)
+      .replace(/(\d+)\s*ו[־-]\s*(\d+)\/(\d+)/g, (m, w, n, d) => `<span class="mx">${w}</span>${fracHTML(n, d)}`)
+      .replace(/(\d+)\/(\d+)/g, (m, n, d) => fracHTML(n, d))
+      .replace(/⬜/g, '<span class="blank">?</span>');
+  }
+  /* [[...]] = ביטוי מתמטי משמאל לימין */
+  function fmt(s) {
+    return String(s).split(/(\[\[.*?\]\])/).map(p =>
+      p.startsWith('[[') ? `<span class="math" dir="ltr">${fmtMath(p.slice(2, -2))}</span>` : fmtMath(p)
+    ).join('');
+  }
+
+  G.HE = { frac, mixed, wholes, speakable, fmt, esc, masc, fem };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* הקול: Web Speech API עם קול עברי מובנה (iPhone: כרמית, Windows: אסף/הילה) */
+(function (G) {
+  const V = { on: true, rate: 0.95, voice: null, hasHebrew: false, supported: false, token: 0, onSubtitle: null };
+
+  V.init = function () {
+    V.supported = typeof speechSynthesis !== 'undefined';
+    if (!V.supported) return;
+    const pick = () => {
+      const vs = speechSynthesis.getVoices() || [];
+      V.voice = vs.find(v => /^he/i.test(v.lang)) || vs.find(v => /hebrew|carmit|asaf|hila/i.test(v.name)) || null;
+      V.hasHebrew = !!V.voice;
+    };
+    pick();
+    try { speechSynthesis.addEventListener('voiceschanged', pick); } catch (e) { speechSynthesis.onvoiceschanged = pick; }
+  };
+
+  /* מחזיר Promise שמסתיים כשהמשפט נגמר (עם גיבוי של טיימר) */
+  V.speak = function (text) {
+    const my = ++V.token;
+    if (V.onSubtitle) V.onSubtitle(text);
+    return new Promise(res => {
+      const est = 900 + String(text).length * 75;
+      if (!V.on || !V.supported || !V.hasHebrew) { setTimeout(res, Math.min(est, 7000)); return; }
+      try { speechSynthesis.cancel(); } catch (e) {}
+      const u = new SpeechSynthesisUtterance(G.HE.speakable(text));
+      u.lang = 'he-IL'; u.voice = V.voice; u.rate = V.rate;
+      let done = false;
+      const fin = () => { if (done) return; done = true; clearTimeout(t); res(my === V.token); };
+      u.onend = fin; u.onerror = fin;
+      const t = setTimeout(fin, 3000 + String(text).length * 140);
+      speechSynthesis.speak(u);
+    });
+  };
+
+  V.stop = function () { V.token++; try { speechSynthesis.cancel(); } catch (e) {} };
+
+  G.Voice = V;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* ציורים: פיצות, רצועות, קופסאות, סדרות עם קפיצות, גפרורים. מחזירים מחרוזת SVG. */
+(function (G) {
+  const D = {};
+  const COL = { stroke: '#7a4a2a', crust: '#f4b860' };
+
+  D.svg = (w, h, inner, cls = '') =>
+    `<svg viewBox="0 0 ${w} ${h}" class="viz ${cls}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">${inner}</svg>`;
+
+  const isOn = (colored, i) => (typeof colored === 'number' ? i < colored : colored.has(i));
+
+  D.pizzaG = (cx, cy, r, n, colored) => {
+    let s = `<circle cx="${cx}" cy="${cy}" r="${r + 7}" fill="${COL.crust}"/>`;
+    if (n === 1) {
+      return s + `<circle class="slice ${isOn(colored, 0) ? 'on' : ''}" data-i="0" cx="${cx}" cy="${cy}" r="${r}" stroke="${COL.stroke}" stroke-width="2"/>`;
+    }
+    for (let i = 0; i < n; i++) {
+      const a0 = -Math.PI / 2 + (i * 2 * Math.PI) / n, a1 = a0 + (2 * Math.PI) / n;
+      const x0 = cx + r * Math.cos(a0), y0 = cy + r * Math.sin(a0);
+      const x1 = cx + r * Math.cos(a1), y1 = cy + r * Math.sin(a1);
+      s += `<path class="slice ${isOn(colored, i) ? 'on' : ''}" data-i="${i}" d="M${cx},${cy} L${x0.toFixed(1)},${y0.toFixed(1)} A${r},${r} 0 0 1 ${x1.toFixed(1)},${y1.toFixed(1)} Z" stroke="${COL.stroke}" stroke-width="2"/>`;
+    }
+    return s;
+  };
+  D.pizza = (n, colored) => D.svg(220, 220, D.pizzaG(110, 110, 92, n, colored));
+
+  /* כמה פיצות בשורה: [[n, colored, label], ...] */
+  D.pizzas = list => {
+    const w = list.length * 190 + 10;
+    let s = '';
+    list.forEach((p, i) => {
+      const cx = 100 + i * 190;
+      s += D.pizzaG(cx, 95, 78, p[0], p[1]);
+      if (p[2]) s += `<text x="${cx}" y="210" class="lbl" direction="ltr">${p[2]}</text>`;
+    });
+    return D.svg(w, 225, s);
+  };
+
+  /* רצועה אחת: מתמלאת מימין לשמאל */
+  D.barG = (x, y, w, h, n, colored) => {
+    let s = '';
+    const cw = w / n;
+    for (let i = 0; i < n; i++) {
+      s += `<rect class="slice ${isOn(colored, i) ? 'on' : ''}" data-i="${i}" x="${(x + w - (i + 1) * cw).toFixed(1)}" y="${y}" width="${cw.toFixed(1)}" height="${h}" stroke="${COL.stroke}" stroke-width="2" rx="4"/>`;
+    }
+    return s;
+  };
+  D.bar = (n, colored) => D.svg(420, 90, D.barG(10, 15, 400, 60, n, colored));
+
+  /* כמה רצועות זו מתחת לזו, עם תווית משמאל: [[n, colored, label], ...] */
+  D.bars = list => {
+    let s = '';
+    list.forEach((b, i) => {
+      const y = 12 + i * 72;
+      s += D.barG(110, y, 380, 52, b[0], b[1]);
+      if (b[2]) s += `<text x="52" y="${y + 36}" class="lbl" direction="ltr">${b[2]}</text>`;
+    });
+    return D.svg(500, list.length * 72 + 14, s);
+  };
+
+  /* חלוקה לקופסאות: total פריטים, d קופסאות, take קופסאות מסומנות */
+  D.boxes = (total, d, take = 0) => {
+    const per = total / d;
+    const bw = Math.max(58, Math.min(110, 640 / d - 12));
+    const W = d * (bw + 12) + 12, H = bw + 50;
+    let s = '';
+    for (let i = 0; i < d; i++) {
+      const x = 12 + (d - 1 - i) * (bw + 12);
+      s += `<rect x="${x}" y="10" width="${bw}" height="${bw}" rx="12" class="box ${i < take ? 'on' : ''}"/>`;
+      if (per <= 25 && Number.isInteger(per)) {
+        const cols = Math.ceil(Math.sqrt(per));
+        const cell = (bw - 14) / cols;
+        for (let k = 0; k < per; k++) {
+          const cx = x + 7 + cell * (k % cols) + cell / 2, cy = 17 + cell * Math.floor(k / cols) + cell / 2;
+          s += `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${Math.min(8, cell / 2.6).toFixed(1)}" class="dot"/>`;
+        }
+      }
+      s += `<text x="${x + bw / 2}" y="${bw + 40}" class="lbl small">${Number.isInteger(per) ? per : '?'}</text>`;
+    }
+    return D.svg(W, H, s);
+  };
+
+  /* סדרה: items (null = חסר), labels = תוויות קפיצה בין איברים (null = מוסתר) */
+  D.seq = (items, labels) => {
+    const n = items.length;
+    const gap = Math.min(118, 660 / n);
+    const W = gap * n + 20;
+    const r = Math.min(44, gap / 2 - 3);
+    let s = `<defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1,1 L9,5 L1,9" fill="none" stroke="#e76f51" stroke-width="2"/></marker></defs>`;
+    items.forEach((v, i) => {
+      const x = 10 + gap * i + gap / 2;
+      s += `<circle cx="${x}" cy="118" r="${r}" class="tile ${v === null ? 'blank' : ''}"/>`;
+      const fs = String(v).length > 3 ? 24 : 32;
+      s += `<text x="${x}" y="129" class="num" style="font-size:${fs}px">${v === null ? '?' : v}</text>`;
+      if (i < n - 1 && labels && labels[i] != null) {
+        const x2 = x + gap;
+        s += `<path d="M${x + 10},${118 - r - 4} Q${x + gap / 2},22 ${x2 - 10},${118 - r - 4}" class="arc" marker-end="url(#ah)"/>`;
+        s += `<text x="${x + gap / 2}" y="42" class="jl" direction="ltr">${labels[i]}</text>`;
+      }
+    });
+    return D.svg(W, 170, s);
+  };
+
+  /* כדורים: total, red = כמה אדומים */
+  D.balls = (total, red) => {
+    let s = '';
+    const W = total * 56 + 20;
+    for (let i = 0; i < total; i++) {
+      s += `<circle cx="${W - 38 - i * 56}" cy="40" r="22" class="${i < red ? 'ball-red' : 'ball-blue'}"/>`;
+    }
+    return D.svg(W, 80, s);
+  };
+
+  /* שורת ריבועים מגפרורים */
+  D.matches = k => {
+    const a = 60, W = k * a + 40;
+    let s = '';
+    const line = (x1, y1, x2, y2) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" class="match"/><circle cx="${x2}" cy="${y2}" r="4" class="match-head"/>`;
+    for (let i = 0; i < k; i++) {
+      const x = 20 + i * a;
+      s += line(x, 20, x + a, 20) + line(x, 20 + a, x + a, 20 + a);
+      if (i === 0) s += line(x, 20 + a, x, 20);
+      s += line(x + a, 20 + a, x + a, 20);
+    }
+    return D.svg(W, a + 40, s);
+  };
+
+  /* מדרגות: מהמדרגה הראשונה עד n */
+  D.stairs = n => {
+    const st = 52, W = n * st + 40, H = n * 34 + 40;
+    let s = '';
+    for (let i = 0; i < n; i++) {
+      const x = 20 + i * st, y = H - 20 - (i + 1) * 34;
+      s += `<rect x="${x}" y="${y}" width="${st}" height="${(i + 1) * 34}" class="step"/>`;
+      s += `<text x="${x + st / 2}" y="${y + 24}" class="lbl small">${i + 1}</text>`;
+    }
+    return D.svg(W, H, s);
+  };
+
+  G.D = D;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* שברים – 5 יחידות. כל יחידה: שיעור (צעדים עם קול וציור) + מחולל תרגילים ב־3 רמות.
+   סוגי שאלות: choice | num | frac (mode: frac/mixed/any) | paint */
+(function (G) {
+  const { rnd, pick, shuffle, gcd, cmp, sym, choices } = G.U;
+  const D = G.D;
+  const F = (n, d) => `${n}/${d}`;
+  const MX = (w, n, d) => `${w} ו־${n}/${d}`;
+
+  const units = [];
+
+  /* ---------- 1. מה זה שבר ---------- */
+  units.push({
+    id: 'f1', topic: 'fractions', icon: '🍕', title: 'מה זה שבר?', sub: 'למעלה ולמטה',
+    lesson: [
+      { say: 'זאת פיצה שלמה.', viz: () => D.pizza(1, 0) },
+      { say: 'עכשיו חותכים אותה ל־4 חלקים שווים.', viz: () => D.pizza(4, 0) },
+      { say: 'המספר למטה בשבר אומר לכמה חלקים שווים חתכנו. הוא השם של הפרוסה. כאן זה רבע.', viz: () => D.pizzas([[4, 0, '?/4']]) },
+      { say: 'לקחנו 3 פרוסות. המספר למעלה אומר כמה פרוסות לקחנו.', viz: () => D.pizzas([[4, 3, '3/4']]) },
+      { say: 'אז זה [[3/4]]. שלושה רבעים. בדיוק כמו שלושה תפוחים.', viz: () => D.pizzas([[4, 3, '3/4']]) },
+      { say: 'וזה חשוב: החלקים חייבים להיות שווים! אם הפרוסות בגדלים שונים, זה לא רבע.', viz: () => D.pizzas([[8, 2, '2/8'], [3, 1, '1/3']]) },
+    ],
+    gen(level) {
+      if (level === 1) {
+        const d = pick([2, 3, 4, 5, 6, 8]), k = rnd(1, d - 1);
+        const wr = [{ label: F(d - k, d), err: 'uncolored' }];
+        if (k > 1) wr.push({ label: F(d, k), err: 'swapped' });
+        wr.push({ label: F(k, d + 2), err: 'den' }, { label: F(k, d + 1), err: 'den' }, { label: F(k + 1, d + 3), err: 'den' });
+        return {
+          type: 'choice', text: 'איזה חלק מהפיצה צבוע?', viz: D.pizza(d, k), answer: 'ok', choices: choices(F(k, d), wr),
+          hints: {
+            uncolored: 'שימי לב, ספרת את הפרוסות הלבנות. אנחנו סופרים את הפרוסות הצבועות.',
+            swapped: 'הפוך! המספר למטה הוא כמה פרוסות יש בכל הפיצה. המספר למעלה הוא כמה צבועות.',
+            den: 'בואי נספור את כל הפרוסות בפיצה. זה המספר למטה.',
+          },
+          solve: [`הפיצה חתוכה ל־${d} פרוסות שוות. אז המספר למטה הוא ${d}.`, `צבועות ${k} פרוסות. אז המספר למעלה הוא ${k}.`, `התשובה: [[${F(k, d)}]].`],
+        };
+      }
+      if (level === 2) {
+        const d = pick([3, 4, 5, 6, 8]), k = rnd(1, d - 1), shape = pick(['pizza', 'bar']);
+        return {
+          type: 'paint', shape, n: d, target: k,
+          text: `צבעי [[${F(k, d)}]] ${shape === 'pizza' ? 'מהפיצה' : 'מהרצועה'}. לחצי על החלקים.`,
+          check(c) {
+            if (c === k) return { ok: true };
+            if (c === d - k) return { ok: false, err: 'uncolored', msg: `צבעת ${c} חלקים. המספר למעלה הוא ${k} – כמה חלקים לצבוע.` };
+            return { ok: false, err: 'count', msg: `המספר למעלה הוא ${k}, אז צריך לצבוע ${k} חלקים. כרגע צבועים ${c}.` };
+          },
+          solve: [`המספר למטה, ${d}, אומר שיש ${d} חלקים.`, `המספר למעלה, ${k}, אומר לצבוע ${k} חלקים.`],
+        };
+      }
+      const v = pick(['left', 'balls', 'howmany']);
+      if (v === 'left') {
+        const d = pick([4, 5, 6, 8, 10]), k = rnd(1, d - 1);
+        return {
+          type: 'frac', mode: 'frac', text: `פיצה חתוכה ל־${d} פרוסות שוות. אכלו ${k} פרוסות. איזה חלק מהפיצה נשאר?`,
+          viz: D.pizza(d, d - k), answer: { n: d - k, d },
+          diagnose: a => (a.n === k && a.d === d ? { err: 'remaining', msg: 'זה החלק שאכלו! השאלה היא כמה נשאר.' } : null),
+          solve: [`בכל הפיצה ${d} פרוסות.`, `אכלו ${k}, אז נשארו ${d} פחות ${k}, כלומר ${d - k}.`, `נשאר [[${F(d - k, d)}]].`],
+        };
+      }
+      if (v === 'balls') {
+        const t = rnd(4, 9), r = rnd(1, t - 1);
+        return {
+          type: 'frac', mode: 'frac', text: `בקופסה ${t} כדורים, ו־${r} מהם אדומים. איזה חלק מהכדורים אדום?`,
+          viz: D.balls(t, r), answer: { n: r, d: t },
+          diagnose: a => (a.n === t - r && a.d === t ? { err: 'uncolored', msg: 'ספרת את הכחולים. שאלו על האדומים.' } :
+            a.n === r && a.d === t - r ? { err: 'den', msg: 'המספר למטה הוא כל הכדורים ביחד, לא רק הכחולים.' } : null),
+          solve: [`כל הכדורים: ${t}. זה המספר למטה.`, `אדומים: ${r}. זה המספר למעלה.`, `התשובה: [[${F(r, t)}]].`],
+        };
+      }
+      const d = pick([3, 4, 5, 6, 8, 10]);
+      return {
+        type: 'num', text: `כמה [[${F(1, d)}]] יש בפיצה שלמה אחת?`, viz: D.pizza(d, 0), answer: d,
+        solve: [`פיצה שלמה חתוכה ל־${d} חלקים שווים.`, `אז יש בה ${d} חלקים כאלה: [[${F(d, d)} = 1]].`],
+      };
+    },
+  });
+
+  /* ---------- 2. השוואת שברים ---------- */
+  units.push({
+    id: 'f2', topic: 'fractions', icon: '⚖️', title: 'מי גדול יותר?', sub: 'השוואת שברים',
+    lesson: [
+      { say: 'כשהמספר למטה שווה, הפרוסות באותו גודל.', viz: () => D.pizzas([[5, 2, '2/5'], [5, 4, '4/5']]) },
+      { say: 'אז מי שלקח יותר פרוסות, לקח יותר. [[4/5]] גדול מ־[[2/5]].', viz: () => D.pizzas([[5, 2, '2/5'], [5, 4, '4/5']]) },
+      { say: 'ועכשיו טריק. כשהמספר למעלה שווה, למשל פרוסה אחת: פיצה של 2 חברים מול פיצה של 4 חברים.', viz: () => D.pizzas([[2, 1, '1/2'], [4, 1, '1/4']]) },
+      { say: 'יותר חברים על אותה פיצה, פרוסה קטנה יותר! לכן חצי גדול מרבע, למרות ש־4 גדול מ־2.', viz: () => D.pizzas([[2, 1, '1/2'], [4, 1, '1/4']]) },
+      { say: 'טריק החצי: חצי של 8 זה 4. אז [[3/8]] קצת פחות מחצי, ו־[[5/9]] קצת יותר מחצי.', viz: () => D.bars([[8, 3, '3/8'], [2, 1, '1/2'], [9, 5, '5/9']]) },
+      { say: 'טריק החלק החסר: ל־[[7/8]] חסרה שמינית אחת עד שלם, ול־[[6/7]] חסרה שביעית אחת. שמינית קטנה יותר, אז ל־[[7/8]] חסר פחות. הוא הגדול.', viz: () => D.bars([[8, 7, '7/8'], [7, 6, '6/7']]) },
+    ],
+    gen(level) {
+      let a, b, c, d, kind;
+      if (level === 1) {
+        kind = 'sameDen'; b = d = rnd(4, 10); a = rnd(1, b - 1); c = rnd(1, b - 1);
+        if (Math.random() < 0.15) c = a;
+      } else if (level === 2) {
+        if (Math.random() < 0.7) {
+          kind = 'sameNum'; a = c = rnd(1, 3);
+          b = rnd(a + 1, 10); do { d = rnd(a + 1, 10); } while (d === b);
+        } else {
+          kind = 'equal'; const k = rnd(2, 4), base = pick([[1, 2], [1, 3], [2, 3], [1, 4], [3, 4]]);
+          [a, b, c, d] = Math.random() < 0.5 ? [base[0] * k, base[1] * k, base[0], base[1]] : [base[0], base[1], base[0] * k, base[1] * k];
+        }
+      } else {
+        if (Math.random() < 0.5) {
+          kind = 'half';
+          const b1 = pick([6, 8, 10, 12]), a1 = rnd(1, b1 / 2 - 1);
+          const b2 = pick([5, 7, 9, 11]), a2 = rnd(Math.ceil(b2 / 2), b2 - 1);
+          [a, b, c, d] = Math.random() < 0.5 ? [a1, b1, a2, b2] : [a2, b2, a1, b1];
+        } else {
+          kind = 'missing'; const n = rnd(4, 10); let m; do { m = rnd(4, 10); } while (m === n);
+          [a, b, c, d] = [n - 1, n, m - 1, m];
+        }
+      }
+      const s = cmp(a, b, c, d), right = sym(s);
+      const hintText = {
+        sameDen: 'המספר למטה שווה, אז הפרוסות באותו גודל. מי שיש לו יותר פרוסות – גדול יותר.',
+        sameNum: 'המספר למעלה שווה. יותר חברים על אותה פיצה – פרוסה קטנה יותר! מספר גדול למטה זה פרוסה קטנה.',
+        equal: 'שימי לב: אם חותכים כל פרוסה לעוד חתיכות, כמות הפיצה לא משתנה. בואי נסתכל על הציור.',
+        half: 'נסי את טריק החצי: מי מהם פחות מחצי, ומי יותר מחצי?',
+        missing: 'נסי את טריק החלק החסר: כמה חסר לכל אחד עד פיצה שלמה? למי שחסר פחות – הוא הגדול.',
+      }[kind];
+      const solve = {
+        sameDen: [`המספר למטה זהה: ${b}. משווים רק את המספר למעלה: ${a} מול ${c}.`],
+        sameNum: [`המספר למעלה זהה. המספר למטה גדול יותר אומר פרוסות קטנות יותר.`, `[[${F(1, Math.min(b, d))}]] גדול מ־[[${F(1, Math.max(b, d))}]].`],
+        equal: [`שני השברים מראים בדיוק אותה כמות – רק חתוכה אחרת.`],
+        half: [`בודקים כל שבר מול חצי. אחד קטן מחצי, והשני גדול מחצי.`],
+        missing: [`ל־[[${F(a, b)}]] חסר [[${F(1, b)}]], ול־[[${F(c, d)}]] חסר [[${F(1, d)}]].`, `למי שחסרה פרוסה קטנה יותר – הוא הגדול.`],
+      }[kind].concat([`התשובה: [[${F(a, b)} ${right} ${F(c, d)}]].`]);
+      return {
+        type: 'choice', kind, text: `מה הסימן הנכון? [[${F(a, b)} ⬜ ${F(c, d)}]]`, viz: null,
+        say: `מה הסימן הנכון: גדול, קטן, או שווה? ${F(a, b)} מול ${F(c, d)}`,
+        hintViz: D.bars([[b, a, F(a, b)], [d, c, F(c, d)]]),
+        choices: ['>', '<', '='].map(x => ({ label: x, value: x, err: kind })), answer: right, compare: true,
+        hints: { [kind]: hintText }, solve, solveViz: D.bars([[b, a, F(a, b)], [d, c, F(c, d)]]),
+      };
+    },
+  });
+
+  /* ---------- 3. יותר מפיצה אחת ---------- */
+  units.push({
+    id: 'f3', topic: 'fractions', icon: '🍕🍕', title: 'יותר מפיצה אחת', sub: 'מספרים מעורבים',
+    lesson: [
+      { say: 'יש לי 7 פרוסות של רבע. כמה פיצות זה?', viz: () => D.pizzas([[4, 4], [4, 3]]) },
+      { say: 'כל 4 רבעים בונים פיצה שלמה אחת. בנינו פיצה אחת, ונשארו 3 רבעים.', viz: () => D.pizzas([[4, 4, '1'], [4, 3, '3/4']]) },
+      { say: 'אז [[7/4]] זה [[1 ו־3/4]]. קוראים לזה מספר מעורב: שלמים ועוד שבר.', viz: () => D.pizzas([[4, 4, '1'], [4, 3, '3/4']]) },
+      { say: 'הדרך המהירה: מחלקים. 7 חלקי 4 זה 1, ונשאר 3. האחד הוא השלמים, ה־3 הן הפרוסות.', viz: () => D.pizzas([[4, 4, '1'], [4, 3, '3/4']]) },
+      { say: 'ולהפך: [[2 ו־3/5]]. כל פיצה שלמה היא 5 חמישיות. 2 פיצות זה 10 חמישיות, ועוד 3, זה [[13/5]].', viz: () => D.pizzas([[5, 5], [5, 5], [5, 3]]) },
+      { say: 'כלל קל לזכור: כפול ועוד. 2 כפול 5, ועוד 3.', viz: () => D.pizzas([[5, 5], [5, 5], [5, 3]]) },
+    ],
+    gen(level) {
+      if (level === 1) {
+        const d = pick([2, 3, 4, 5, 6]), k = rnd(1, 4);
+        return {
+          type: 'num', text: `כמה פיצות שלמות יש ב־[[${F(k * d, d)}]]?`, answer: k,
+          hint: `כל ${d} פרוסות של [[${F(1, d)}]] בונות פיצה שלמה אחת. כמה פעמים ${d} נכנס ב־${k * d}?`,
+          hintViz: D.pizzas(Array.from({ length: k }, () => [d, d])),
+          solve: [`${k * d} חלקי ${d} זה ${k}.`, `אז יש ${k} פיצות שלמות.`],
+        };
+      }
+      const d = pick([2, 3, 4, 5, 6]), w = rnd(1, 3), r = rnd(1, d - 1), n = w * d + r;
+      const pics = () => D.pizzas([...Array.from({ length: w }, () => [d, d]), [d, r]]);
+      if (level === 2) {
+        return {
+          type: 'frac', mode: 'mixed', text: `כתבי כמספר מעורב: [[${F(n, d)}]]`, answer: { n, d },
+          hint: `כמה פיצות שלמות אפשר לבנות מ־${n} פרוסות, כשכל פיצה צריכה ${d}? ומה נשאר?`, hintViz: pics(),
+          diagnose: a => (a.w !== w ? { err: 'wholeConvert', msg: `כמה פעמים ${d} נכנס ב־${n}? זה מספר הפיצות השלמות.` } : null),
+          solve: [`${n} חלקי ${d} זה ${w}, ונשאר ${r}.`, `אז [[${F(n, d)} = ${MX(w, r, d)}]].`], solveViz: pics(),
+        };
+      }
+      if (Math.random() < 0.6) {
+        return {
+          type: 'frac', mode: 'frac', text: `כתבי כשבר: [[${MX(w, r, d)}]]`, answer: { n, d },
+          hint: `כל פיצה שלמה היא ${d} פרוסות. כפול ועוד!`, hintViz: pics(),
+          diagnose: a => (a.n === w + r ? { err: 'addWholes', msg: `חיברת את השלמים לפרוסות. כל שלם הוא ${d} פרוסות: ${w} כפול ${d}, ועוד ${r}.` } : null),
+          solve: [`${w} פיצות כפול ${d} פרוסות זה ${w * d}.`, `ועוד ${r}: ${w * d} ועוד ${r} זה ${n}.`, `אז [[${MX(w, r, d)} = ${F(n, d)}]].`], solveViz: pics(),
+        };
+      }
+      const delta = pick([-1, 0, 1]), n2 = n + delta, right = sym(Math.sign(n - n2));
+      return {
+        type: 'choice', compare: true, text: `מה הסימן הנכון? [[${MX(w, r, d)} ⬜ ${F(n2, d)}]]`,
+        say: `מה הסימן הנכון: גדול, קטן, או שווה? ${MX(w, r, d)} מול ${F(n2, d)}`,
+        choices: ['>', '<', '='].map(x => ({ label: x, value: x, err: 'wholeConvert' })), answer: right,
+        hints: { wholeConvert: `נהפוך את המספר המעורב לשבר: ${w} כפול ${d}, ועוד ${r}. ואז משווים.` },
+        solve: [`[[${MX(w, r, d)} = ${F(n, d)}]].`, `עכשיו משווים [[${F(n, d)}]] מול [[${F(n2, d)}]]: [[${F(n, d)} ${right} ${F(n2, d)}]].`],
+      };
+    },
+  });
+
+  /* ---------- 4. חיבור וחיסור ---------- */
+  const related = [[2, 4], [2, 6], [2, 8], [3, 6], [4, 8], [5, 10], [2, 10]];
+  units.push({
+    id: 'f4', topic: 'fractions', icon: '➕', title: 'חיבור וחיסור', sub: 'רבע ועוד רבע',
+    lesson: [
+      { say: 'רבע ועוד רבע זה כמה? שני רבעים! בדיוק כמו תפוח ועוד תפוח, שני תפוחים.', viz: () => D.pizzas([[4, 1, '1/4'], [4, 1, '1/4'], [4, 2, '2/4']]) },
+      { say: 'המספר למטה הוא השם של הפרוסה. לא מחברים אותו! מחברים רק את המספרים למעלה. [[1/5 + 2/5 = 3/5]].', viz: () => D.bars([[5, 1, '1/5'], [5, 2, '2/5'], [5, 3, '3/5']]) },
+      { say: 'אם נחבר גם למטה, יצא [[3/10]], ואלה פרוסות קטנות יותר. אבל כשמוסיפים פיצה, הפרוסות לא נהיות קטנות!', viz: () => D.bars([[5, 3, '3/5'], [10, 3, '3/10']]) },
+      { say: 'ואם השמות שונים, כמו [[1/3 + 1/6]]? מתרגמים לאותה שפה: חותכים כל שליש לשתי פרוסות, ושליש הופך לשתי שישיות.', viz: () => D.bars([[3, 1, '1/3'], [6, 2, '2/6']]) },
+      { say: 'עכשיו קל: [[2/6 + 1/6 = 3/6]]. וזה בדיוק חצי.', viz: () => D.bars([[6, 3, '3/6'], [2, 1, '1/2']]) },
+      { say: 'חיסור משלם: [[3 − 1/4]]. פורטים פיצה אחת לארבעה רבעים, ולוקחים רבע אחד. נשארו [[2 ו־3/4]].', viz: () => D.pizzas([[4, 4], [4, 4], [4, 3]]) },
+      { say: 'וכפל זה חיבור חוזר: [[3 × 2/5]] זה שתי חמישיות, שלוש פעמים. כלומר שש חמישיות.', viz: () => D.bars([[5, 2, '2/5'], [5, 2, '2/5'], [5, 2, '2/5']]) },
+    ],
+    gen(level) {
+      const addDen = (a, b, d, op) => ans => {
+        if (op === '+' && ans.d === 2 * d && ans.n === a + b) return { err: 'addDen', msg: 'חיברת גם את המספרים למטה! המספר למטה הוא רק השם של הפרוסה. רבע ועוד רבע זה שני רבעים, לא שמיניות. מחברים רק למעלה.' };
+        if (op === '−' && ans.d === 0) return { err: 'addDen', msg: 'חיסרת גם את המספרים למטה. המספר למטה הוא רק השם של הפרוסה – הוא נשאר אותו דבר.' };
+        return null;
+      };
+      if (level === 1) {
+        const d = rnd(4, 10);
+        if (Math.random() < 0.6) {
+          const a = rnd(1, d - 2), b = rnd(1, d - 1 - a);
+          return { type: 'frac', mode: 'frac', text: `[[${F(a, d)} + ${F(b, d)} = ⬜]]`, answer: { n: a + b, d }, diagnose: addDen(a, b, d, '+'),
+            hint: 'מחברים רק את המספרים למעלה. המספר למטה נשאר.', hintViz: D.bars([[d, a, F(a, d)], [d, b, F(b, d)]]),
+            solve: [`המספר למטה נשאר ${d}.`, `למעלה: ${a} ועוד ${b} זה ${a + b}.`, `[[${F(a, d)} + ${F(b, d)} = ${F(a + b, d)}]].`] };
+        }
+        const a = rnd(2, d - 1), b = rnd(1, a - 1);
+        return { type: 'frac', mode: 'frac', text: `[[${F(a, d)} − ${F(b, d)} = ⬜]]`, answer: { n: a - b, d }, diagnose: addDen(a, b, d, '−'),
+          hint: 'מחסרים רק את המספרים למעלה. המספר למטה נשאר.', hintViz: D.bar(d, a),
+          solve: [`המספר למטה נשאר ${d}.`, `למעלה: ${a} פחות ${b} זה ${a - b}.`, `[[${F(a, d)} − ${F(b, d)} = ${F(a - b, d)}]].`] };
+      }
+      if (level === 2) {
+        const v = pick(['over', 'related', 'related', 'oneMinus', 'times']);
+        if (v === 'over') {
+          const d = rnd(3, 8), a = rnd(Math.ceil(d / 2), d - 1), b = rnd(d - a + 1, d - 1);
+          const s = a + b;
+          return { type: 'frac', mode: 'any', text: `[[${F(a, d)} + ${F(b, d)} = ⬜]]`, answer: { n: s, d }, diagnose: addDen(a, b, d, '+'),
+            hint: 'מחברים למעלה. אם יוצא יותר פרוסות מפיצה שלמה, אפשר לכתוב כשבר או כמספר מעורב.',
+            solve: [`${a} ועוד ${b} זה ${s}: [[${F(s, d)}]].`, `וזה גם [[${MX(Math.floor(s / d), s % d || 0, d)}]].`].filter(x => !/ו־0\//.test(x)) };
+        }
+        if (v === 'related') {
+          const [d1, d2] = pick(related), m = d2 / d1, a = rnd(1, d1 - 1), b = rnd(1, d2 - 1);
+          const plus = Math.random() < 0.6 || a * m <= b;
+          const n = plus ? a * m + b : a * m - b;
+          const op = plus ? '+' : '−';
+          return { type: 'frac', mode: 'any', text: `[[${F(a, d1)} ${op} ${F(b, d2)} = ⬜]]`, answer: { n, d: d2 },
+            diagnose: ans => (ans.d === d1 + d2 || (ans.d === d2 && ans.n === (plus ? a + b : a - b)) ? { err: 'related', msg: `השמות שונים! קודם מתרגמים: כל [[${F(1, d1)}]] שווה ${m} חלקים של [[${F(1, d2)}]].` } : null),
+            hint: `מתרגמים לאותה שפה: [[${F(a, d1)} = ${F(a * m, d2)}]].`, hintViz: D.bars([[d1, a, F(a, d1)], [d2, a * m, F(a * m, d2)]]),
+            solve: [`מתרגמים: [[${F(a, d1)} = ${F(a * m, d2)}]].`, `[[${F(a * m, d2)} ${op} ${F(b, d2)} = ${F(n, d2)}]].`] };
+        }
+        if (v === 'oneMinus') {
+          const d = rnd(3, 10), a = rnd(1, d - 1);
+          return { type: 'frac', mode: 'any', text: `[[1 − ${F(a, d)} = ⬜]]`, answer: { n: d - a, d },
+            hint: `פיצה שלמה אחת היא [[${F(d, d)}]]. עכשיו מורידים ${a} פרוסות.`, hintViz: D.pizza(d, d - a),
+            solve: [`[[1 = ${F(d, d)}]].`, `[[${F(d, d)} − ${F(a, d)} = ${F(d - a, d)}]].`] };
+        }
+        const k = rnd(2, 4), d = rnd(3, 8), a = rnd(1, d - 1);
+        return { type: 'frac', mode: 'any', text: `[[${k} × ${F(a, d)} = ⬜]]`, answer: { n: k * a, d },
+          diagnose: ans => (ans.d === k * d ? { err: 'timesFrac', msg: `כופלים רק את המספר למעלה! ${k} פעמים ${a} פרוסות. גודל הפרוסה לא משתנה.` } : null),
+          hint: `כפל זה חיבור חוזר: [[${F(a, d)}]], ${k} פעמים.`, hintViz: D.bars(Array.from({ length: k }, () => [d, a, F(a, d)])),
+          solve: [`${k} פעמים ${a} פרוסות זה ${k * a} פרוסות.`, `[[${k} × ${F(a, d)} = ${F(k * a, d)}]].`] };
+      }
+      const v = pick(['mixAdd', 'wholeMinus', 'borrow', 'missing']);
+      if (v === 'mixAdd') {
+        const d = rnd(3, 8), w1 = rnd(1, 3), w2 = rnd(1, 2), r1 = rnd(1, d - 1), r2 = rnd(1, d - 1);
+        const tot = (w1 + w2) * d + r1 + r2;
+        return { type: 'frac', mode: 'any', text: `[[${MX(w1, r1, d)} + ${MX(w2, r2, d)} = ⬜]]`, answer: { n: tot, d },
+          hint: 'מחברים שלמים עם שלמים, ופרוסות עם פרוסות. אם יש יותר פרוסות מפיצה – בונים עוד פיצה.',
+          solve: [`שלמים: ${w1} ועוד ${w2} זה ${w1 + w2}.`, `פרוסות: ${r1} ועוד ${r2} זה ${r1 + r2}.`,
+            (r1 + r2 >= d ? `${r1 + r2} פרוסות זה פיצה שלמה ועוד ${r1 + r2 - d}.` : 'אין מספיק פרוסות לפיצה נוספת.'),
+            (tot % d ? `התשובה: [[${MX(Math.floor(tot / d), tot % d, d)}]].` : `התשובה: ${tot / d}.`)] };
+      }
+      if (v === 'wholeMinus') {
+        const W = rnd(2, 4), d = rnd(3, 8), a = rnd(1, d - 1), n = W * d - a;
+        return { type: 'frac', mode: 'any', text: `[[${W} − ${F(a, d)} = ⬜]]`, answer: { n, d },
+          diagnose: ans => (ans.w === W && ans.n === d - a ? { err: 'borrow', msg: `כשפורטים פיצה אחת לפרוסות, נשארות פחות פיצות שלמות: ${W - 1}, לא ${W}.` } : null),
+          hint: `פורטים פיצה אחת ל־${d} פרוסות. כמה פיצות שלמות נשארו? וכמה פרוסות?`, hintViz: D.pizzas([...Array.from({ length: W - 1 }, () => [d, d]), [d, d - a]]),
+          solve: [`פורטים פיצה אחת: [[${W} = ${MX(W - 1, d, d)}]].`, `מורידים ${a} פרוסות: נשארו [[${MX(W - 1, d - a, d)}]].`] };
+      }
+      if (v === 'borrow') {
+        const d = rnd(4, 8), w = rnd(2, 3), r1 = rnd(1, d - 2), r2 = rnd(r1 + 1, d - 1), n = w * d + r1 - r2;
+        return { type: 'frac', mode: 'any', text: `[[${MX(w, r1, d)} − ${F(r2, d)} = ⬜]]`, answer: { n, d },
+          hint: `אין מספיק פרוסות! פורטים פיצה שלמה אחת לעוד ${d} פרוסות.`,
+          solve: [`${r1} פרוסות זה פחות מ־${r2}, אז פורטים פיצה: [[${MX(w, r1, d)} = ${MX(w - 1, r1 + d, d)}]].`, `[[${MX(w - 1, r1 + d, d)} − ${F(r2, d)} = ${MX(w - 1, r1 + d - r2, d)}]].`] };
+      }
+      const d = rnd(3, 10), a = rnd(1, d - 1);
+      return { type: 'frac', mode: 'frac', text: `[[${F(a, d)} + ⬜ = 1]]`, answer: { n: d - a, d },
+        hint: `שלם אחד הוא [[${F(d, d)}]]. כמה פרוסות חסרות?`, hintViz: D.pizza(d, a),
+        solve: [`[[1 = ${F(d, d)}]].`, `חסרות ${d} פחות ${a}, כלומר ${d - a} פרוסות: [[${F(d - a, d)}]].`] };
+    },
+  });
+
+  /* ---------- 5. שבר של כמות ---------- */
+  units.push({
+    id: 'f5', topic: 'fractions', icon: '📦', title: 'שבר של כמות', sub: 'למטה מחלק, למעלה לוקח',
+    lesson: [
+      { say: 'כמה זה [[3/4]] מ־20? המספר למטה אומר לכמה קופסאות לחלק.', viz: () => D.boxes(20, 4, 0) },
+      { say: 'מחלקים 20 ל־4 קופסאות. בכל קופסה 5.', viz: () => D.boxes(20, 4, 0) },
+      { say: 'המספר למעלה אומר כמה קופסאות לוקחים: 3 קופסאות. 3 כפול 5 זה 15.', viz: () => D.boxes(20, 4, 3) },
+      { say: 'לזכור: למטה מחלק, למעלה לוקח.', viz: () => D.boxes(20, 4, 3) },
+      { say: 'והסוג ההפוך: [[1/4]] מהכיתה הם 6 ילדים. אז בקופסה אחת יש 6. יש 4 קופסאות, ו־4 כפול 6 זה 24 ילדים.', viz: () => D.boxes(24, 4, 1) },
+    ],
+    gen(level) {
+      if (level === 1) {
+        const d = pick([2, 3, 4, 5, 6, 10]), n = d * rnd(2, 9);
+        return { type: 'num', text: `כמה זה [[${F(1, d)}]] מ־${n}?`, answer: n / d,
+          hint: `מחלקים ${n} ל־${d} קופסאות שוות. כמה בכל קופסה?`, hintViz: D.boxes(n, d, 0),
+          solve: [`${n} חלקי ${d} זה ${n / d}.`] };
+      }
+      if (level === 2) {
+        const d = pick([3, 4, 5, 6, 8, 10]), k = rnd(2, d - 1), per = rnd(2, 8), n = d * per;
+        const word = Math.random() < 0.4;
+        return { type: 'num',
+          text: word ? `לדני היו ${n} ₪. הוא הוציא [[${F(k, d)}]] מהם על משחק. כמה שקלים הוציא?` : `כמה זה [[${F(k, d)}]] מ־${n}?`,
+          answer: k * per,
+          diagnose: v => (v === per ? { err: 'forgotTake', msg: `זה רק קופסה אחת! המספר למעלה אומר לקחת ${k} קופסאות.` } :
+            v === n - k * per ? { err: 'remaining', msg: 'זה מה שנשאר. שאלו כמה לקחו.' } : null),
+          hint: 'למטה מחלק, למעלה לוקח.', hintViz: D.boxes(n, d, k),
+          solve: [`מחלקים ${n} ל־${d} קופסאות: בכל אחת ${per}.`, `לוקחים ${k} קופסאות: ${k} כפול ${per} זה ${k * per}.`], solveViz: D.boxes(n, d, k) };
+      }
+      const v = pick(['whole', 'wholeK', 'rest']);
+      if (v === 'whole') {
+        const d = pick([2, 3, 4, 5, 6]), x = rnd(3, 9);
+        return { type: 'num', text: `[[${F(1, d)}]] מהילדים בכיתה הם ${x} ילדים. כמה ילדים בכל הכיתה?`, answer: d * x,
+          diagnose: v => (v * d === x || v === Math.round(x / d) ? { err: 'inverse', msg: `השאלה הפוכה! אנחנו כבר יודעים כמה בקופסה אחת: ${x}. כמה בכל ${d} הקופסאות?` } : null),
+          hint: `בקופסה אחת יש ${x}. כמה קופסאות יש בסך הכל?`, hintViz: D.boxes(d * x, d, 1),
+          solve: [`[[${F(1, d)}]] זה קופסה אחת מתוך ${d}, ובה ${x}.`, `${d} כפול ${x} זה ${d * x}.`] };
+      }
+      if (v === 'wholeK') {
+        const d = pick([3, 4, 5]), k = rnd(2, d - 1), per = rnd(2, 6), x = k * per;
+        return { type: 'num', text: `[[${F(k, d)}]] ממספר הם ${x}. מה המספר?`, answer: d * per,
+          hint: `${k} קופסאות הן ${x}. אז כמה בקופסה אחת? ואז – כמה ב־${d} קופסאות?`, hintViz: D.boxes(d * per, d, k),
+          solve: [`${k} קופסאות הן ${x}, אז בקופסה אחת ${x} חלקי ${k}, כלומר ${per}.`, `${d} קופסאות: ${d} כפול ${per} זה ${d * per}.`] };
+      }
+      const d = pick([3, 4, 5]), k = rnd(1, d - 1), per = rnd(3, 7), n = d * per;
+      return { type: 'num', text: `בכיתה ${n} ילדים, ו־[[${F(k, d)}]] מהם בנות. כמה בנים בכיתה?`, answer: n - k * per,
+        diagnose: v => (v === k * per ? { err: 'remaining', msg: 'זה מספר הבנות! שאלו על הבנים.' } : null),
+        hint: 'קודם מוצאים כמה בנות, ואז כמה נשאר.', hintViz: D.boxes(n, d, k),
+        solve: [`בנות: [[${F(k, d)}]] מ־${n} זה ${k * per}.`, `בנים: ${n} פחות ${k * per} זה ${n - k * per}.`] };
+    },
+  });
+
+  G.FRACTIONS = units;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* סדרות – 4 יחידות */
+(function (G) {
+  const { rnd, pick } = G.U;
+  const D = G.D;
+  const lab = (a, b) => (b - a >= 0 ? '+' + (b - a) : '−' + (a - b));
+  const labs = seq => seq.slice(0, -1).map((v, i) => (v == null || seq[i + 1] == null ? null : lab(v, seq[i + 1])));
+
+  /* שאלת "מה חסר" גנרית על סדרה */
+  function seqQ(seq, blank, opts = {}) {
+    const items = seq.map((v, i) => (i === blank ? null : v));
+    const answer = seq[blank];
+    const shownLabels = opts.labels || labs(seq);
+    const hintLabels = shownLabels.map((l, i) => (i === blank || i + 1 === blank ? null : l));
+    const said = items.map(v => (v === null ? 'משהו' : v)).join(', ');
+    return {
+      type: 'num', answer, text: blank === seq.length - 1 ? 'מה המספר הבא בסדרה?' : 'איזה מספר חסר בסדרה?',
+      say: (blank === seq.length - 1 ? 'מה המספר הבא בסדרה? ' : 'איזה מספר חסר בסדרה? ') + said,
+      viz: D.seq(items, null), hintViz: D.seq(items, hintLabels), solveViz: D.seq(seq, shownLabels),
+      hint: opts.hint || 'בואי נמצא את הקפיצה: מכמה לכמה עוברים כל פעם?',
+      diagnose: opts.diagnose, solve: opts.solve || [`החוק: ${opts.rule}.`, `המספר החסר הוא ${answer}.`],
+    };
+  }
+
+  const units = [];
+
+  /* ---------- 1. קפיצה קבועה ---------- */
+  units.push({
+    id: 's1', topic: 'sequences', icon: '🦘', title: 'הקפיצה הקבועה', sub: 'מוסיפים ומורידים',
+    lesson: [
+      { say: 'בסדרה, כל מספר נוצר מהמספר שלפניו לפי חוק. אנחנו הבלשים שמגלים את החוק.', viz: () => D.seq([3, 7, 11, 15, null], null) },
+      { say: 'בודקים את הקפיצה: מ־3 ל־7 קפצנו 4.', viz: () => D.seq([3, 7, 11, 15, null], ['+4', null, null, null]) },
+      { say: 'גם מ־7 ל־11, וגם מ־11 ל־15, קפיצה של 4. החוק: מוסיפים 4.', viz: () => D.seq([3, 7, 11, 15, null], ['+4', '+4', '+4', null]) },
+      { say: 'אז המספר הבא: 15 ועוד 4, זה 19.', viz: () => D.seq([3, 7, 11, 15, 19], ['+4', '+4', '+4', '+4']) },
+      { say: 'זה עובד גם בירידה: 50, 45, 40, 35. החוק: מורידים 5.', viz: () => D.seq([50, 45, 40, 35, null], ['−5', '−5', '−5', null]) },
+      { say: 'ואם חסר מספר באמצע? מוצאים את הקפיצה משני מספרים צמודים, וממלאים את החור.', viz: () => D.seq([5, null, 13, 17], [null, null, '+4']) },
+    ],
+    gen(level) {
+      if (level === 1) {
+        const a = rnd(1, 20), d = rnd(2, 5), seq = Array.from({ length: 5 }, (_, i) => a + i * d);
+        return seqQ(seq, 4, { rule: `מוסיפים ${d} כל פעם`,
+          diagnose: v => (v === seq[3] - d ? { err: 'direction', msg: 'המספרים עולים – אז מוסיפים, לא מורידים.' } : Math.abs(v - seq[4]) <= 2 ? { err: 'wrongJump', msg: 'כמעט! בדקי שוב את גודל הקפיצה.' } : null) });
+      }
+      if (level === 2) {
+        if (Math.random() < 0.5) {
+          const d = rnd(3, 10), a = rnd(40, 100), seq = Array.from({ length: 5 }, (_, i) => a - i * d);
+          return seqQ(seq, 4, { rule: `מורידים ${d} כל פעם`,
+            diagnose: v => (v === seq[3] + d ? { err: 'direction', msg: 'המספרים יורדים! אז מורידים, לא מוסיפים.' } : null) });
+        }
+        const a = rnd(2, 40), d = rnd(3, 10), seq = Array.from({ length: 5 }, (_, i) => a + i * d), b = rnd(1, 3);
+        return seqQ(seq, b, { rule: `מוסיפים ${d} כל פעם`, hint: 'מצאי שני מספרים צמודים בלי חור ביניהם, ובדקי מה הקפיצה.' });
+      }
+      const d = pick([12, 15, 25, 50, 11, 9]), a = rnd(100, 400), down = Math.random() < 0.4;
+      const seq = Array.from({ length: 5 }, (_, i) => (down ? a + 200 - i * d : a + i * d));
+      const blank = pick([0, 1, 2, 3, 4]);
+      return seqQ(seq, blank, { rule: down ? `מורידים ${d} כל פעם` : `מוסיפים ${d} כל פעם`,
+        hint: blank === 0 ? 'חסר המספר הראשון! הולכים אחורה – עושים את הקפיצה ההפוכה.' : undefined,
+        diagnose: v => (blank === 0 && v - seq[0] === 2 * (seq[1] - seq[0]) ? { err: 'direction', msg: 'כדי ללכת אחורה עושים את הקפיצה ההפוכה.' } : null) });
+    },
+  });
+
+  /* ---------- 2. כפל וחילוק ---------- */
+  units.push({
+    id: 's2', topic: 'sequences', icon: '🚀', title: 'גדלות מהר', sub: 'כפל וחילוק',
+    lesson: [
+      { say: 'יש סדרות שבהן המספרים גדלים מהר מאוד: 2, 4, 8, 16.', viz: () => D.seq([2, 4, 8, 16, null], null) },
+      { say: 'הקפיצות לא שוות: פלוס 2, פלוס 4, פלוס 8. אז זה לא חיבור של אותו מספר.', viz: () => D.seq([2, 4, 8, 16, null], ['+2', '+4', '+8', null]) },
+      { say: 'בודקים כפל: 2 כפול 2 זה 4. 4 כפול 2 זה 8. החוק: כופלים ב־2!', viz: () => D.seq([2, 4, 8, 16, null], ['×2', '×2', '×2', null]) },
+      { say: 'המספר הבא: 16 כפול 2, זה 32.', viz: () => D.seq([2, 4, 8, 16, 32], ['×2', '×2', '×2', '×2']) },
+      { say: 'ובכיוון ההפוך: 81, 27, 9. כל פעם מחלקים ב־3.', viz: () => D.seq([81, 27, 9, null], ['÷3', '÷3', null]) },
+      { say: 'שאלת הבלש: אם המספרים גדלים או קטנים מהר מאוד, כנראה שזה כפל או חילוק.', viz: () => D.seq([81, 27, 9, 3], ['÷3', '÷3', '÷3']) },
+    ],
+    gen(level) {
+      const mk = (start, m, len, div) => Array.from({ length: len }, (_, i) => (div ? start / Math.pow(m, i) : start * Math.pow(m, i)));
+      const diag = seq => v => {
+        const L = seq.length - 1, prev = seq[L - 1], prev2 = seq[L - 2];
+        if (v === prev + (prev - prev2)) return { err: 'notMult', msg: 'שימי לב שהקפיצות לא שוות! המספרים משתנים מהר – אולי כופלים או מחלקים?' };
+        return null;
+      };
+      let seq, m, div;
+      if (level === 1) {
+        if (Math.random() < 0.6) { m = 2; seq = mk(rnd(1, 5), 2, 5); } else { m = 10; seq = mk(rnd(1, 4), 10, 4); }
+      } else if (level === 2) {
+        if (Math.random() < 0.5) { m = 3; seq = mk(rnd(1, 3), 3, 5); } else { m = 2; div = true; seq = mk(pick([3, 5, 6, 7]) * 16, 2, 5, true); }
+      } else {
+        const t = pick(['div3', 'x5', 'mid']);
+        if (t === 'div3') { m = 3; div = true; seq = mk(pick([1, 2, 4]) * 81, 3, 5, true); }
+        else if (t === 'x5') { m = 5; seq = mk(rnd(1, 3), 5, 4); }
+        else { m = pick([2, 3]); seq = mk(rnd(2, 4), m, 5); return seqQ(seq, 2, { rule: `כופלים ב־${m}`, labels: seq.slice(0, -1).map(() => '×' + m), hint: 'בדקי: האם מוסיפים אותו מספר? אם לא – אולי כופלים?' }); }
+      }
+      return seqQ(seq, seq.length - 1, { rule: div ? `מחלקים ב־${m}` : `כופלים ב־${m}`, labels: seq.slice(0, -1).map(() => (div ? '÷' : '×') + m),
+        hint: 'הקפיצות לא שוות. נסי לבדוק: כמה פעמים המספר הקטן נכנס בגדול?', diagnose: diag(seq) });
+    },
+  });
+
+  /* ---------- 3. קפיצות משתנות ---------- */
+  units.push({
+    id: 's3', topic: 'sequences', icon: '🔍', title: 'קפיצות משתנות', sub: 'חוק בתוך חוק',
+    lesson: [
+      { say: 'לפעמים הקפיצות עצמן משתנות: 1, 3, 6, 10, 15.', viz: () => D.seq([1, 3, 6, 10, 15, null], null) },
+      { say: 'כותבים את הקפיצות: פלוס 2, פלוס 3, פלוס 4, פלוס 5. הקפיצה גדלה כל פעם ב־1!', viz: () => D.seq([1, 3, 6, 10, 15, null], ['+2', '+3', '+4', '+5', null]) },
+      { say: 'אז הקפיצה הבאה היא פלוס 6. המספר הבא: 15 ועוד 6, זה 21.', viz: () => D.seq([1, 3, 6, 10, 15, 21], ['+2', '+3', '+4', '+5', '+6']) },
+      { say: 'יש גם סדרות שמתחלפות: 2, 5, 4, 7, 6. פלוס 3, ואז מינוס 1, ושוב פלוס 3, מינוס 1.', viz: () => D.seq([2, 5, 4, 7, 6, null], ['+3', '−1', '+3', '−1', null]) },
+      { say: 'וסדרה מפורסמת: כל מספר הוא הסכום של שני המספרים שלפניו. 1, 1, 2, 3, 5, 8.', viz: () => D.seq([1, 1, 2, 3, 5, 8, null], null) },
+      { say: 'הטיפ: כשהקפיצות לא שוות, כותבים אותן בשורה, ומחפשים חוק בקפיצות עצמן.', viz: () => D.seq([1, 3, 6, 10, 15, null], ['+2', '+3', '+4', '+5', null]) },
+    ],
+    gen(level) {
+      const sameJump = seq => v => {
+        const L = seq.length - 1;
+        return v === seq[L - 1] + (seq[L - 1] - seq[L - 2]) ? { err: 'sameJump', msg: 'הקפיצות משתנות! כתבי את הקפיצות בשורה, ובדקי מה קורה להן.' } : null;
+      };
+      if (level === 1) {
+        const a = rnd(1, 10), j = rnd(1, 3); const seq = [a];
+        for (let i = 0; i < 5; i++) seq.push(seq[i] + j + i);
+        return seqQ(seq, 5, { rule: 'הקפיצה גדלה ב־1 כל פעם', diagnose: sameJump(seq), hint: 'הקפיצות לא שוות. כתבי אותן – מה קורה להן?' });
+      }
+      if (level === 2) {
+        if (Math.random() < 0.5) {
+          const a = rnd(2, 10), up = rnd(3, 6), dn = rnd(1, up - 1), seq = [a];
+          for (let i = 0; i < 6; i++) seq.push(seq[i] + (i % 2 === 0 ? up : -dn));
+          return seqQ(seq, 6, { rule: `פלוס ${up}, מינוס ${dn}, לסירוגין`, hint: 'יש כאן שתי קפיצות שמתחלפות. מה הן?',
+            diagnose: v => (v === seq[5] - dn ? { err: 'sameJump', msg: 'החוק מתחלף: אחרי מינוס בא פלוס.' } : null) });
+        }
+        const a = rnd(1, 6), seq = [a];
+        for (let i = 0; i < 5; i++) seq.push(seq[i] + 2 * (i + 1));
+        return seqQ(seq, 5, { rule: 'הקפיצה גדלה ב־2 כל פעם', diagnose: sameJump(seq) });
+      }
+      const t = pick(['squares', 'fib', 'double']);
+      if (t === 'squares') {
+        const s0 = rnd(1, 3), seq = Array.from({ length: 5 }, (_, i) => (s0 + i) * (s0 + i));
+        return seqQ(seq, 4, { rule: `כל מספר הוא מספר כפול עצמו: ${s0} כפול ${s0}, ${s0 + 1} כפול ${s0 + 1}`,
+          hint: 'כתבי את הקפיצות – הן גדלות ב־2 כל פעם. או נסי: איזה מספר כפול עצמו נותן כל איבר?', diagnose: sameJump(seq) });
+      }
+      if (t === 'fib') {
+        const seq = [rnd(1, 3), rnd(1, 4)];
+        for (let i = 2; i < 7; i++) seq.push(seq[i - 1] + seq[i - 2]);
+        return seqQ(seq, 6, { rule: 'כל מספר הוא הסכום של שני המספרים שלפניו', hint: 'נסי לחבר שני מספרים צמודים. מה יוצא?', diagnose: sameJump(seq) });
+      }
+      const a = rnd(1, 10), seq = [a];
+      for (let i = 0; i < 5; i++) seq.push(seq[i] + Math.pow(2, i));
+      return seqQ(seq, 5, { rule: 'הקפיצה מוכפלת ב־2 כל פעם: 1, 2, 4, 8, 16', hint: 'כתבי את הקפיצות. מה קורה להן?', diagnose: sameJump(seq) });
+    },
+  });
+
+  /* ---------- 4. המקום ה־N ---------- */
+  units.push({
+    id: 's4', topic: 'sequences', icon: '🪜', title: 'המקום מספר N', sub: 'בלי לכתוב הכל',
+    lesson: [
+      { say: 'איך מוצאים את המספר במקום מספר 10, בלי לכתוב את כל הסדרה? למשל: 4, 8, 12.', viz: () => D.seq([4, 8, 12, null], ['+4', '+4', null]) },
+      { say: 'מהמקום הראשון למקום מספר 10 עושים רק 9 קפיצות. כמו במדרגות: מהמדרגה הראשונה לשלישית עולים רק 2 מדרגות.', viz: () => D.stairs(5) },
+      { say: 'אז: מתחילים מ־4, ועוד 9 קפיצות של 4. 9 כפול 4 זה 36. ועוד 4, זה 40.', viz: () => D.seq([4, 8, 12, null], ['+4', '+4', null]) },
+      { say: 'האם 100 נמצא בסדרה 3, 7, 11? מורידים את ההתחלה: 100 פחות 3 זה 97. האם 97 מתחלק ב־4? לא. אז 100 לא בסדרה.', viz: () => D.seq([3, 7, 11, 15], ['+4', '+4', '+4']) },
+      { say: 'ובעיית הגפרורים: ריבוע אחד צריך 4 גפרורים, וכל ריבוע נוסף מוסיף 3. זו בדיוק סדרה עם קפיצה של 3!', viz: () => D.matches(3) },
+    ],
+    gen(level) {
+      const nth = (a, d, n) => a + (n - 1) * d;
+      const off = (a, d, n) => v => (v === a + n * d ? { err: 'offByOne', msg: `ספרת קפיצה אחת יותר מדי. מהמקום הראשון למקום מספר ${n} יש רק ${n - 1} קפיצות.` } : null);
+      if (level === 1 || (level === 2 && Math.random() < 0.6)) {
+        const a = rnd(1, 10), d = level === 1 ? rnd(2, 5) : rnd(3, 10), n = level === 1 ? rnd(5, 8) : rnd(10, 20);
+        const items = [a, a + d, a + 2 * d];
+        return { type: 'num', answer: nth(a, d, n), text: `איזה מספר נמצא במקום מספר ${n} בסדרה?`,
+          say: `בסדרה ${items.join(', ')}, איזה מספר נמצא במקום מספר ${n}?`,
+          viz: D.seq([...items, null], null), hintViz: D.stairs(Math.min(n, 6)),
+          hint: `כמה קפיצות יש מהמקום הראשון עד מקום מספר ${n}? ומה גודל כל קפיצה?`, diagnose: off(a, d, n),
+          solve: [`הקפיצה היא ${d}. מהמקום הראשון למקום ${n} יש ${n - 1} קפיצות.`, `${n - 1} כפול ${d} זה ${(n - 1) * d}.`, `ועוד ${a} שבהתחלה: ${nth(a, d, n)}.`] };
+      }
+      if (level === 2) {
+        const k = rnd(5, 10);
+        return { type: 'num', answer: 4 + (k - 1) * 3, text: `ריבוע אחד מגפרורים = 4 גפרורים. 2 ריבועים צמודים = 7. 3 ריבועים = 10. כמה גפרורים צריך ל־${k} ריבועים צמודים?`,
+          viz: D.matches(3), hint: 'כל ריבוע נוסף מוסיף 3 גפרורים. כמה ריבועים נוספים יש אחרי הראשון?', diagnose: off(4, 3, k),
+          solve: [`הריבוע הראשון: 4 גפרורים.`, `עוד ${k - 1} ריבועים, כל אחד 3: ${k - 1} כפול 3 זה ${(k - 1) * 3}.`, `ביחד: ${4 + (k - 1) * 3}.`] };
+      }
+      const a = rnd(1, 9), d = rnd(3, 9);
+      if (Math.random() < 0.5) {
+        const inSeq = Math.random() < 0.5;
+        let X = nth(a, d, rnd(8, 16)); if (!inSeq) X += rnd(1, d - 1);
+        return { type: 'choice', answer: inSeq ? 'yes' : 'no', text: `האם המספר ${X} נמצא בסדרה?`,
+          say: `האם המספר ${X} נמצא בסדרה ${a}, ${a + d}, ${a + 2 * d}?`,
+          viz: D.seq([a, a + d, a + 2 * d, null], ['+' + d, '+' + d, null]),
+          choices: [{ label: 'כן', value: 'yes', err: 'member' }, { label: 'לא', value: 'no', err: 'member' }],
+          hints: { member: `מורידים את המספר הראשון: ${X} פחות ${a}. האם מה שנשאר מתחלק ב־${d}?` },
+          solve: [`${X} פחות ${a} זה ${X - a}.`, (X - a) % d === 0 ? `${X - a} מתחלק ב־${d}, אז כן, ${X} בסדרה.` : `${X - a} לא מתחלק ב־${d}, אז ${X} לא בסדרה.`] };
+      }
+      const n = rnd(8, 15), X = nth(a, d, n);
+      return { type: 'num', answer: n, text: `באיזה מקום בסדרה נמצא המספר ${X}?`, say: `בסדרה ${a}, ${a + d}, ${a + 2 * d}, באיזה מקום נמצא המספר ${X}?`,
+        viz: D.seq([a, a + d, a + 2 * d, null], ['+' + d, '+' + d, null]),
+        diagnose: v => (v === n - 1 ? { err: 'offByOne', msg: 'מצאת את מספר הקפיצות. אבל המקום הוא אחד יותר – כי מתחילים ממקום מספר 1.' } : null),
+        hint: `כמה קפיצות של ${d} צריך כדי להגיע מ־${a} ל־${X}?`,
+        solve: [`${X} פחות ${a} זה ${X - a}.`, `${X - a} חלקי ${d} זה ${n - 1} קפיצות.`, `אז המקום הוא ${n - 1} ועוד 1: מקום מספר ${n}.`] };
+    },
+  });
+
+  G.SEQUENCES = units;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* המורה הקולית – מסכים, מנוע תרגול, רמות, מסך הורים */
+(function () {
+  const { fmt } = window.HE;
+  const V = window.Voice;
+  const UNITS = [...window.FRACTIONS, ...window.SEQUENCES];
+  const TOPICS = [
+    { id: 'fractions', title: 'שברים', icon: '🍕' },
+    { id: 'sequences', title: 'סדרות', icon: '🦘' },
+  ];
+  const ROUND = 8;
+  const ERR_LABELS = {
+    uncolored: 'סופרת את החלק הלא צבוע', swapped: 'מחליפה בין המספר למעלה למספר למטה', den: 'טעות בספירת כל החלקים',
+    count: 'צובעת מספר חלקים לא נכון', remaining: 'עונה על החלק שנלקח במקום על מה שנשאר',
+    sameDen: 'השוואה כשהמספר למטה שווה', sameNum: 'חושבת שמספר גדול למטה = שבר גדול', equal: 'לא מזהה שברים שווים',
+    half: 'השוואה בעזרת חצי', missing: 'טריק החלק החסר', wholeConvert: 'המרה בין שלמים לפרוסות',
+    addWholes: 'מחברת שלמים לפרוסות במקום "כפול ועוד"', notMixed: 'לא מוציאה את השלמים במספר מעורב',
+    addDen: 'מחברת או מחסרת גם את המספרים למטה', related: 'לא מתרגמת לאותו מכנה', timesFrac: 'כופלת גם את המספר למטה',
+    borrow: 'לא פורטת שלם בחיסור', forgotTake: 'מחלקת ושוכחת לכפול במספר למעלה', inverse: 'מתבלבלת בבעיה ההפוכה (מציאת השלם)',
+    direction: 'הולכת בכיוון הלא נכון בסדרה', wrongJump: 'טעות בגודל הקפיצה', notMult: 'לא מזהה סדרת כפל/חילוק',
+    sameJump: 'לא שמה לב שהקפיצות משתנות', offByOne: 'סופרת קפיצה אחת יותר מדי (מקום N)', member: 'בדיקה אם מספר נמצא בסדרה',
+    other: 'טעות אחרת',
+  };
+  const PRAISE = ['מעולה!', 'בדיוק!', 'כל הכבוד!', 'יפה מאוד!', 'וואו, נכון!', 'אלופה!', 'מצוין!', 'פגיעה בול!'];
+
+  /* ---------- מצב ושמירה ---------- */
+  const KEY = 'voicetutor_v1';
+  let S;
+  function fresh() { return { name: '', stars: 0, units: {}, errors: {}, voiceOn: true, rate: 0.95 }; }
+  function load() { try { S = Object.assign(fresh(), JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) { S = fresh(); } }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+  function U(id) { return (S.units[id] = S.units[id] || { level: 1, hist: [], correct: 0, total: 0, mastered: false, lessonSeen: false }); }
+
+  /* ---------- כלי תצוגה ---------- */
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const main = () => $('#main');
+  function setBubble(text) { const b = $('#bubble'); if (b) { b.innerHTML = fmt(text); b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop'); } }
+  V.onSubtitle = setBubble;
+  function topbar() {
+    $('#stars').textContent = S.stars;
+    $('#hello').textContent = S.name ? `היי ${S.name}!` : '';
+  }
+  function confetti() {
+    const box = $('#confetti');
+    box.innerHTML = '';
+    const colors = ['#ff8fab', '#ffd166', '#06d6a0', '#118ab2', '#ef476f', '#b388ff'];
+    for (let i = 0; i < 40; i++) {
+      const c = document.createElement('i');
+      c.style.left = Math.random() * 100 + '%';
+      c.style.background = colors[i % colors.length];
+      c.style.animationDelay = Math.random() * 0.5 + 's';
+      c.style.transform = `rotate(${Math.random() * 360}deg)`;
+      box.appendChild(c);
+    }
+    setTimeout(() => (box.innerHTML = ''), 2600);
+  }
+  const say = t => V.speak(t);
+  /* כל מסך מקבל מזהה, כדי שהסבר שעוד רץ לא ייגע במסך חדש */
+  let SCREEN = 0;
+  const newScreen = () => { V.stop(); return ++SCREEN; };
+
+  /* ---------- מסך פתיחה ---------- */
+  function welcome() {
+    newScreen();
+    main().innerHTML = `
+      <div class="card center">
+        <h1>המורה הקולית</h1>
+        <p class="lead">שלום! אני נוגה הינשופה 🦉<br>אני אסביר לך שברים וסדרות – בקול, עם ציורים.</p>
+        <label class="field">איך קוראים לך?<input id="nm" maxlength="20" autocomplete="off" placeholder="השם שלך"></label>
+        <button class="big primary" id="go">בואי נתחיל! ✨</button>
+        <p class="note" id="vnote"></p>
+      </div>`;
+    voiceNote($('#vnote'));
+    $('#go').onclick = () => {
+      S.name = $('#nm').value.trim();
+      save(); topbar();
+      say(`נעים מאוד${S.name ? ' ' + S.name : ''}! בחרי נושא, ונתחיל.`);
+      home();
+    };
+  }
+  function voiceNote(el) {
+    if (!el) return;
+    setTimeout(() => {
+      if (!V.supported) el.textContent = 'הדפדפן הזה לא תומך בהקראה. הכתוביות יופיעו בבועה של נוגה.';
+      else if (!V.hasHebrew) el.innerHTML = 'לא נמצא קול עברי במכשיר הזה, אז ההסברים יופיעו בכתב. במחשב Windows: הגדרות ← זמן ושפה ← דיבור ← הוספת קולות ← עברית. באייפון הקול העברי מובנה.';
+      else el.textContent = '';
+    }, 600);
+  }
+
+  /* ---------- מסך הבית ---------- */
+  function home() {
+    newScreen();
+    topbar();
+    let html = '';
+    for (const t of TOPICS) {
+      html += `<h2 class="topic">${t.icon} ${t.title}</h2><div class="grid">`;
+      for (const u of UNITS.filter(x => x.topic === t.id)) {
+        const st = U(u.id);
+        const lv = st.mastered ? '<span class="crown">👑 אלופה</span>' : `<span class="lv">רמה ${st.level}</span>`;
+        const dots = [1, 2, 3].map(i => `<b class="${i < st.level || st.mastered ? 'f' : i === st.level ? 'c' : ''}"></b>`).join('');
+        html += `<button class="unit" data-id="${u.id}"><span class="ic">${u.icon}</span><span class="tt">${u.title}</span><span class="sb">${u.sub}</span><span class="dots">${dots}</span>${lv}</button>`;
+      }
+      html += '</div>';
+    }
+    html += `<button class="link" id="parents">מסך הורים</button>`;
+    main().innerHTML = html;
+    main().querySelectorAll('.unit').forEach(b => (b.onclick = () => unitMenu(UNITS.find(u => u.id === b.dataset.id))));
+    $('#parents').onclick = parents;
+    setBubble(S.name ? `${S.name}, מה נלמד היום?` : 'מה נלמד היום?');
+  }
+
+  /* ---------- תפריט יחידה ---------- */
+  function unitMenu(u) {
+    newScreen();
+    const st = U(u.id);
+    main().innerHTML = `
+      <div class="card center">
+        <div class="bigic">${u.icon}</div>
+        <h1>${u.title}</h1>
+        <p class="lead">${u.sub} · ${st.mastered ? '👑 שולטת בנושא!' : 'רמה ' + st.level + ' מתוך 3'}</p>
+        <div class="row">
+          <button class="big ${st.lessonSeen ? '' : 'primary glow'}" id="ls">📺 שיעור</button>
+          <button class="big ${st.lessonSeen ? 'primary' : ''}" id="pr">✏️ תרגול</button>
+        </div>
+        <button class="link" id="bk">→ חזרה</button>
+      </div>`;
+    $('#ls').onclick = () => lesson(u);
+    $('#pr').onclick = () => practice(u);
+    $('#bk').onclick = home;
+    say(st.lessonSeen ? `${u.title}. רוצה לתרגל, או לשמוע שוב את השיעור?` : `${u.title}. כדאי להתחיל מהשיעור.`);
+  }
+
+  /* ---------- נגן שיעור ---------- */
+  function lesson(u) {
+    const sid = newScreen();
+    let i = 0, auto = true, token = 0;
+    main().innerHTML = `
+      <div class="card">
+        <div class="hdr"><button class="link" id="bk">→ חזרה</button><b>📺 ${u.title}</b><span id="pg"></span></div>
+        <div class="vizbox" id="vz"></div>
+        <div class="sub" id="sb"></div>
+        <div class="row ctl">
+          <button id="pv">→ הקודם</button>
+          <button id="rp" aria-label="שוב">🔁 שוב</button>
+          <button id="nx">הבא ←</button>
+        </div>
+        <div id="end" class="center hidden"><button class="big primary" id="gopr">✏️ עכשיו לתרגל!</button></div>
+      </div>`;
+    const show = async idx => {
+      const my = ++token;
+      i = Math.max(0, Math.min(u.lesson.length - 1, idx));
+      const step = u.lesson[i];
+      $('#vz').innerHTML = step.viz ? step.viz() : '';
+      $('#sb').innerHTML = fmt(step.say);
+      $('#pg').textContent = `${i + 1}/${u.lesson.length}`;
+      const last = i === u.lesson.length - 1;
+      $('#end').classList.toggle('hidden', !last);
+      await say(step.say);
+      if (my !== token || sid !== SCREEN) return;
+      if (last) {
+        U(u.id).lessonSeen = true; save();
+        await say('עכשיו תורך! בואי נתרגל.');
+      } else if (auto) setTimeout(() => { if (my === token && sid === SCREEN) show(i + 1); }, 700);
+    };
+    $('#pv').onclick = () => show(i - 1);
+    $('#nx').onclick = () => show(i + 1);
+    $('#rp').onclick = () => show(i);
+    $('#bk').onclick = () => { token++; unitMenu(u); };
+    $('#gopr').onclick = () => { token++; practice(u); };
+    show(0);
+  }
+
+  /* ---------- תרגול ---------- */
+  function practice(u) {
+    const st = U(u.id);
+    const sess = { n: 0, firstOk: 0, q: null, tries: 0, done: false, streakBad: 0 };
+
+    function frame() {
+      main().innerHTML = `
+        <div class="card">
+          <div class="hdr"><button class="link" id="bk">→ חזרה</button><b>${u.icon} ${u.title}</b>
+            <span class="badge">${st.mastered ? '👑' : 'רמה ' + st.level}</span></div>
+          <div class="progress">${Array.from({ length: ROUND }, (_, k) => `<i class="${k < sess.n ? 'd' : k === sess.n ? 'c' : ''}"></i>`).join('')}</div>
+          <div class="qtext"><button class="spk" id="spk" aria-label="להשמיע שוב">🔊</button><div id="qt"></div></div>
+          <div class="vizbox" id="vz"></div>
+          <div id="ans"></div>
+          <div id="fb" class="fb"></div>
+          <div id="sol" class="sol hidden"></div>
+          <div class="row"><button class="big primary hidden" id="next">הבא ➜</button></div>
+          <div id="tip" class="tip hidden"></div>
+        </div>`;
+      $('#bk').onclick = () => { V.stop(); unitMenu(u); };
+    }
+
+    function ask() {
+      sess.sid = newScreen();
+      sess.q = u.gen(st.level);
+      sess.tries = 0; sess.done = false;
+      frame();
+      const q = sess.q;
+      $('#qt').innerHTML = fmt(q.text);
+      $('#vz').innerHTML = q.viz || '';
+      $('#spk').onclick = () => say(q.say || q.text);
+      renderAnswer(q);
+      $('#next').onclick = nextQ;
+      if (sess.streakBad >= 2) {
+        const t = $('#tip');
+        t.classList.remove('hidden');
+        t.innerHTML = `רוצה לשמוע שוב את ההסבר? <button class="link" id="relesson">📺 לשיעור</button>`;
+        $('#relesson').onclick = () => lesson(u);
+      }
+      say(q.say || q.text);
+    }
+
+    function renderAnswer(q) {
+      const box = $('#ans');
+      if (q.type === 'choice') {
+        box.innerHTML = `<div class="choices ${q.compare ? 'cmp' : ''}">${q.choices.map(c =>
+          `<button class="ch" data-v="${c.value}" dir="ltr">${fmt(c.label)}</button>`).join('')}</div>`;
+        box.querySelectorAll('.ch').forEach(b => (b.onclick = () => { if (!sess.done) submit(b.dataset.v, b); }));
+      } else if (q.type === 'num') {
+        box.innerHTML = `<form class="numin" id="f"><input id="v" inputmode="numeric" pattern="[0-9]*" autocomplete="off" enterkeyhint="done"><button class="big primary">בדיקה ✓</button></form>`;
+        $('#f').onsubmit = e => { e.preventDefault(); if (!sess.done) submit($('#v').value); };
+      } else if (q.type === 'frac') {
+        const whole = q.mode !== 'frac' ? `<input class="w" id="w" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="${q.mode === 'mixed' ? 'שלמים' : ''}">` : '';
+        box.innerHTML = `<form class="fracin" id="f"><div class="fx" dir="ltr">${whole}<div class="fbox"><input id="n" inputmode="numeric" pattern="[0-9]*" autocomplete="off"><span class="ln"></span><input id="d" inputmode="numeric" pattern="[0-9]*" autocomplete="off"></div></div>
+          ${q.mode === 'any' ? '<p class="note">אפשר לכתוב שבר או מספר מעורב (שלמים בתיבה השמאלית)</p>' : ''}
+          <button class="big primary">בדיקה ✓</button></form>`;
+        $('#f').onsubmit = e => {
+          e.preventDefault(); if (sess.done) return;
+          submit({ w: $('#w') ? $('#w').value : '', n: $('#n').value, d: $('#d').value });
+        };
+      } else if (q.type === 'paint') {
+        const svg = q.shape === 'pizza' ? window.D.pizza(q.n, 0) : window.D.bar(q.n, 0);
+        $('#vz').innerHTML = svg;
+        $('#vz').classList.add('paint');
+        $('#vz').querySelectorAll('.slice').forEach(s => (s.onclick = () => { if (!sess.done) s.classList.toggle('on'); }));
+        box.innerHTML = `<div class="row"><button class="big primary" id="chk">בדיקה ✓</button></div>`;
+        $('#chk').onclick = () => submit($('#vz').querySelectorAll('.slice.on').length);
+      }
+    }
+
+    function check(q, input) {
+      if (q.type === 'choice') {
+        if (input === q.answer) return { ok: true };
+        const c = q.choices.find(x => String(x.value) === String(input));
+        return { ok: false, err: c && c.err };
+      }
+      if (q.type === 'paint') return q.check(input);
+      if (q.type === 'num') {
+        if (String(input).trim() === '') return { invalid: 'כתבי מספר בתיבה 🙂' };
+        const v = parseInt(input, 10);
+        if (v === q.answer) return { ok: true };
+        return Object.assign({ ok: false }, (q.diagnose && q.diagnose(v)) || {});
+      }
+      /* frac */
+      const w = parseInt(input.w || '0', 10) || 0;
+      const hasN = String(input.n).trim() !== '', hasD = String(input.d).trim() !== '';
+      let n = parseInt(input.n, 10), d = parseInt(input.d, 10);
+      if (!hasN && !hasD) {
+        if (q.mode === 'any' && String(input.w).trim() !== '') { n = 0; d = 1; }
+        else return { invalid: 'כתבי את השבר: מספר למעלה ומספר למטה 🙂' };
+      } else if (!hasN || !hasD) return { invalid: hasN ? 'חסר המספר למטה 🙂' : 'חסר המספר למעלה 🙂' };
+      const ans = { w, n, d };
+      if (d === 0) {
+        const dg = q.diagnose && q.diagnose(ans);
+        return dg ? Object.assign({ ok: false }, dg) : { invalid: 'אי אפשר שהמספר למטה יהיה 0' };
+      }
+      const equal = (w * d + n) * q.answer.d === q.answer.n * d;
+      if (equal && q.mode === 'mixed' && n >= d) return { ok: false, err: 'notMixed', msg: 'נכון שזה שווה! אבל במספר מעורב מוציאים את כל הפיצות השלמות, וצריך שיישארו פחות פרוסות מפיצה שלמה.' };
+      if (equal) return { ok: true };
+      return Object.assign({ ok: false }, (q.diagnose && q.diagnose(ans)) || {});
+    }
+
+    async function submit(input, btn) {
+      const q = sess.q, sid = sess.sid;
+      const alive = () => sid === SCREEN;
+      const res = check(q, input);
+      const fb = $('#fb');
+      if (res.invalid) { fb.className = 'fb warn'; fb.innerHTML = res.invalid; return; }
+      if (res.ok) {
+        sess.done = true;
+        if (btn) btn.classList.add('right');
+        const first = sess.tries === 0;
+        S.stars += first ? 2 : 1;
+        record(true && first, null);
+        topbar();
+        let p = PRAISE[Math.floor(Math.random() * PRAISE.length)];
+        if (S.name && Math.random() < 0.35) p = p.replace('!', `, ${S.name}!`);
+        fb.className = 'fb good'; fb.innerHTML = `${p} ${first ? '⭐⭐' : '⭐'}`;
+        if (q.type === 'paint') $('#vz').classList.add('done');
+        $('#next').classList.remove('hidden');
+        const levelMsg = levelCheck();
+        await say(p);
+        if (!alive()) return;
+        if (levelMsg) { confetti(); fb.innerHTML += `<div class="lvup">${levelMsg}</div>`; await say(levelMsg); }
+        return;
+      }
+      if (btn) { btn.classList.add('wrong'); btn.disabled = true; }
+      sess.tries++;
+      if (sess.tries === 1) {
+        const key = res.err || 'other';
+        S.errors[key] = (S.errors[key] || 0) + 1; save();
+        const hint = res.msg || (q.hints && res.err && q.hints[res.err]) || q.hint || 'כמעט! בואי ננסה שוב.';
+        fb.className = 'fb hint'; fb.innerHTML = '💡 ' + fmt(hint);
+        if (q.hintViz) $('#vz').innerHTML = q.hintViz;
+        if (q.type === 'num' && $('#v')) { $('#v').value = ''; }
+        await say('כמעט! ' + hint);
+        return;
+      }
+      /* פעם שנייה: מראים פתרון */
+      sess.done = true;
+      record(false);
+      fb.className = 'fb hint'; fb.innerHTML = 'בואי נראה יחד איך פותרים:';
+      const sol = $('#sol');
+      sol.classList.remove('hidden');
+      sol.innerHTML = '';
+      if (q.solveViz) $('#vz').innerHTML = q.solveViz;
+      $('#ans').querySelectorAll('button,input').forEach(x => (x.disabled = true));
+      await say('בואי נראה יחד איך פותרים.');
+      for (const step of q.solve || []) {
+        if (!alive()) return;
+        const li = document.createElement('div');
+        li.className = 'sstep'; li.innerHTML = fmt(step);
+        sol.appendChild(li);
+        await say(step);
+      }
+      if (!alive()) return;
+      $('#next').classList.remove('hidden');
+    }
+
+    function record(firstOk) {
+      st.total++; if (firstOk) st.correct++;
+      st.hist.push(!!firstOk); if (st.hist.length > 5) st.hist.shift();
+      sess.n++; if (firstOk) sess.firstOk++;
+      sess.streakBad = firstOk ? 0 : sess.streakBad + 1;
+      save();
+    }
+    function levelCheck() {
+      const good = st.hist.filter(Boolean).length;
+      if (st.hist.length >= 5 && good >= 4) {
+        st.hist = [];
+        if (st.level < 3) { st.level++; save(); return `עלית לרמה ${st.level}! 🎉`; }
+        if (!st.mastered) { st.mastered = true; save(); return `את אלופת ${u.title}! 👑`; }
+      }
+      return null;
+    }
+    function nextQ() {
+      if (sess.n >= ROUND) return summary();
+      ask();
+    }
+    function summary() {
+      newScreen();
+      const k = sess.firstOk;
+      const msg = k >= 7 ? 'סיבוב מדהים!' : k >= 5 ? 'סיבוב טוב מאוד!' : k >= 3 ? 'יופי של התמדה!' : 'כל הכבוד שלא ויתרת!';
+      main().innerHTML = `
+        <div class="card center">
+          <div class="bigic">🏆</div>
+          <h1>${msg}</h1>
+          <p class="lead">פתרת נכון בניסיון הראשון ${k} מתוך ${ROUND}</p>
+          <p class="lead">${st.mastered ? '👑 את שולטת בנושא!' : 'רמה ' + st.level + ' מתוך 3'}</p>
+          <div class="row"><button class="big primary" id="again">עוד סיבוב ✏️</button><button class="big" id="hm">🏠 לנושאים</button></div>
+        </div>`;
+      if (k >= 5) confetti();
+      say(`${msg} פתרת נכון ${k} מתוך ${ROUND}.`);
+      $('#again').onclick = () => practice(u);
+      $('#hm').onclick = home;
+    }
+    ask();
+  }
+
+  /* ---------- מסך הורים ---------- */
+  function parents() {
+    newScreen();
+    const rows = UNITS.map(u => {
+      const st = U(u.id);
+      const pct = st.total ? Math.round((100 * st.correct) / st.total) + '%' : '—';
+      return `<tr><td>${u.icon} ${u.title}</td><td>${st.mastered ? '👑 3' : st.level}</td><td>${st.total}</td><td>${pct}</td><td>${st.lessonSeen ? '✓' : ''}</td></tr>`;
+    }).join('');
+    const errs = Object.entries(S.errors).sort((a, b) => b[1] - a[1]).slice(0, 8)
+      .map(([k, v]) => `<li><b>${v}×</b> ${ERR_LABELS[k] || k}</li>`).join('') || '<li>עדיין אין טעויות לרשום</li>';
+    const vstat = !V.supported ? 'הדפדפן לא תומך בהקראה' : V.hasHebrew ? `קול עברי פעיל: ${V.voice.name}` : 'לא נמצא קול עברי במכשיר';
+    main().innerHTML = `
+      <div class="card">
+        <div class="hdr"><button class="link" id="bk">→ חזרה</button><b>מסך הורים</b><span></span></div>
+        <h3>התקדמות לפי נושא</h3>
+        <table class="tbl"><thead><tr><th>נושא</th><th>רמה</th><th>תרגילים</th><th>נכון בניסיון ראשון</th><th>שיעור</th></tr></thead><tbody>${rows}</tbody></table>
+        <h3>הטעויות שחוזרות</h3>
+        <ul class="errs">${errs}</ul>
+        <p class="note">כל טעות כאן היא "אסימון שעוד לא נפל". אפשר לפתוח את השיעור של אותו נושא ולשמוע אותו יחד איתה.</p>
+        <h3>קול</h3>
+        <p>${vstat}</p>
+        <div class="row left">
+          <label class="tog"><input type="checkbox" id="von" ${S.voiceOn ? 'checked' : ''}> הקראה פעילה</label>
+          <label>מהירות <input type="range" id="rate" min="0.7" max="1.2" step="0.05" value="${S.rate}"></label>
+          <button id="test">🔊 בדיקה</button>
+        </div>
+        <p class="note" id="vnote"></p>
+        <h3>שם</h3>
+        <div class="row left"><input id="nm" value="${window.HE.esc(S.name)}" maxlength="20"><button id="svnm">שמירה</button></div>
+        <h3>איפוס</h3>
+        <button id="reset" class="danger">איפוס כל ההתקדמות</button>
+      </div>`;
+    voiceNote($('#vnote'));
+    $('#bk').onclick = home;
+    $('#von').onchange = e => { S.voiceOn = V.on = e.target.checked; save(); };
+    $('#rate').oninput = e => { S.rate = V.rate = +e.target.value; save(); };
+    $('#test').onclick = () => say('שלושה רבעים ועוד רבע זה ארבעה רבעים, כלומר שלם אחד.');
+    $('#svnm').onclick = () => { S.name = $('#nm').value.trim(); save(); topbar(); setBubble('השם נשמר!'); };
+    let armed = false;
+    $('#reset').onclick = e => {
+      if (!armed) { armed = true; e.target.textContent = 'בטוח? לחיצה נוספת תמחק הכל'; return; }
+      const name = S.name; S = fresh(); S.name = name; save(); topbar(); home();
+    };
+    setBubble('מסך הורים');
+  }
+
+  /* ---------- הפעלה ---------- */
+  load();
+  V.init();
+  V.on = S.voiceOn; V.rate = S.rate;
+  $('#homebtn').onclick = home;
+  topbar();
+  let seen = false; try { seen = !!localStorage.getItem(KEY); } catch (e) {}
+  if (!S.name && !seen) welcome(); else home();
+})();
+
+</script>
+</body>
+</html>
