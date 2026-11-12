@@ -1,0 +1,19 @@
+{
+  "name": "OrKeepers · שומרי האור",
+  "short_name": "OrKeepers",
+  "description": "A 3D world for kids: build, explore, learn English, math and money, and keep the light together. A world by Shirel Yitzhak.",
+  "lang": "he",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "any",
+  "background_color": "#141a4a",
+  "theme_color": "#141a4a",
+  "categories": ["games", "education", "kids"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

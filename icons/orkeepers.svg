@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512"><clipPath id="r"><rect width="512" height="512" rx="112"/></clipPath><g clip-path="url(#r)"><rect width="512" height="512" fill="url(#bg)"/><defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#141a4a"/><stop offset="1" stop-color="#3d2b7d"/></linearGradient>
+  <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#ffd166" stop-opacity="0.75"/><stop offset="0.45" stop-color="#ffb703" stop-opacity="0.25"/><stop offset="1" stop-color="#ffb703" stop-opacity="0"/></radialGradient>
+  <linearGradient id="flame" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff6c8"/><stop offset="0.45" stop-color="#ffc93c"/><stop offset="1" stop-color="#ff7b00"/></linearGradient>
+  <linearGradient id="clay" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f0a35e"/><stop offset="1" stop-color="#a24d23"/></linearGradient>
+  <radialGradient id="dot" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#fffbe6"/><stop offset="0.5" stop-color="#ffd166"/><stop offset="1" stop-color="#ffd166" stop-opacity="0"/></radialGradient>
+</defs>
+<circle cx="256" cy="250" r="210" fill="url(#glow)"/>
+<g id="ring"><circle cx="256.0" cy="80.0" r="22" fill="url(#dot)"/><circle cx="256.0" cy="80.0" r="7" fill="#fff4c2"/><circle cx="338.5" cy="102.1" r="22" fill="url(#dot)"/><circle cx="338.5" cy="102.1" r="7" fill="#fff4c2"/><circle cx="398.9" cy="162.5" r="22" fill="url(#dot)"/><circle cx="398.9" cy="162.5" r="7" fill="#fff4c2"/><circle cx="421.0" cy="245.0" r="22" fill="url(#dot)"/><circle cx="421.0" cy="245.0" r="7" fill="#fff4c2"/><circle cx="398.9" cy="327.5" r="22" fill="url(#dot)"/><circle cx="398.9" cy="327.5" r="7" fill="#fff4c2"/><circle cx="338.5" cy="387.9" r="22" fill="url(#dot)"/><circle cx="338.5" cy="387.9" r="7" fill="#fff4c2"/><circle cx="256.0" cy="410.0" r="22" fill="url(#dot)"/><circle cx="256.0" cy="410.0" r="7" fill="#fff4c2"/><circle cx="173.5" cy="387.9" r="22" fill="url(#dot)"/><circle cx="173.5" cy="387.9" r="7" fill="#fff4c2"/><circle cx="113.1" cy="327.5" r="22" fill="url(#dot)"/><circle cx="113.1" cy="327.5" r="7" fill="#fff4c2"/><circle cx="91.0" cy="245.0" r="22" fill="url(#dot)"/><circle cx="91.0" cy="245.0" r="7" fill="#fff4c2"/><circle cx="113.1" cy="162.5" r="22" fill="url(#dot)"/><circle cx="113.1" cy="162.5" r="7" fill="#fff4c2"/><circle cx="173.5" cy="102.1" r="22" fill="url(#dot)"/><circle cx="173.5" cy="102.1" r="7" fill="#fff4c2"/></g>
+<path d="M40,420 Q98,398 156,420 T272,420 T388,420 T504,420 L512,512 L0,512 L0,430 Z" fill="#2ec4b6" opacity="0.35"/>
+<path d="M0,452 Q64,430 128,452 T256,452 T384,452 T512,452 L512,512 L0,512 Z" fill="#1fa5a0" opacity="0.55"/>
+<path d="M256,150 C296,206 310,248 291,283 C279,306 233,306 221,283 C202,248 216,206 256,150 Z" fill="url(#flame)"/>
+<path d="M256,214 C274,240 279,262 270,280 C264,292 248,292 242,280 C233,262 238,240 256,214 Z" fill="#fffdf0" opacity="0.9"/>
+<path d="M160,322 Q256,298 352,322 Q338,382 256,388 Q174,382 160,322 Z" fill="url(#clay)"/>
+<ellipse cx="256" cy="322" rx="96" ry="15" fill="#f6b877"/>
+<ellipse cx="256" cy="322" rx="70" ry="9" fill="#7a3416" opacity="0.55"/>
+<path d="M196,350 Q256,362 316,350" stroke="#ffe0b8" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.6"/>
+</g></svg>

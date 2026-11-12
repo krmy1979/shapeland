@@ -1,4 +1,4 @@
-<title>Shapeland</title>
+<title>OrKeepers · שומרי האור</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Varela+Round&family=Dancing+Script:wght@700&display=swap">
 <style>
@@ -193,7 +193,8 @@ input.txt{font:inherit;font-family:var(--f-display);font-size:18px;border:2px so
 
 <div id="title" dir="rtl">
   <div class="tcard">
-    <div class="logo" aria-label="Shapeland" id="logo"></div>
+    <div class="logo" aria-label="OrKeepers" id="logo"></div>
+    <div class="heblogo" style="font-family:'Varela Round',sans-serif;font-weight:700;font-size:1.7em;color:#FFB41F;margin-top:-2px;letter-spacing:1px;text-shadow:0 2px 0 #1D2A48,0 0 2px #1D2A48">שומרי האור</div>
     <div class="sig"><small>a world by</small>Shirel Yitzhak</div>
     <div class="preview" id="titleAv"></div>
     <div class="tform">
@@ -1792,7 +1793,7 @@ function loop(){const dt=Math.min(clock.getDelta(),.05),t=clock.elapsedTime;
   controls.update();renderer.render(scene,camera);requestAnimationFrame(loop)}
 
 /* ===================== BOOT ===================== */
-$('#logo').innerHTML='SHAPELAND'.split('').map((c,i)=>`<span style="animation-delay:${i*.12}s;color:${['#FF8FB1','#FFB41F','#64A8FA','#8AD26C','#B49BFA','#FB9A45','#34CDB5','#F57070','#FCD045'][i]}">${c}</span>`).join('');
+$('#logo').innerHTML='ORKEEPERS'.split('').map((c,i)=>`<span style="animation-delay:${i*.12}s;color:${['#FF8FB1','#FFB41F','#64A8FA','#8AD26C','#B49BFA','#FB9A45','#34CDB5','#F57070','#FCD045'][i]}">${c}</span>`).join('');
 $('#titleAv').innerHTML=charSVG(P.ch);$('#tName').value=P.name;$('#tCode').value=P.code;
 P.pieces.forEach(p=>addPieceObj(p,P.key,'island'));
 for(let i=0;i<3;i++)makeChest('island');for(let i=0;i<2;i++)makeChest('town');for(let i=0;i<2;i++)makeChest('city');updatePlotSigns();

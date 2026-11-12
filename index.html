@@ -3,13 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Shapeland</title>
+<title>OrKeepers · שומרי האור</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Varela+Round&family=Dancing+Script:wght@700&display=swap">
-<link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="icon.svg">
+<link rel="icon" href="icons/orkeepers.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#9FD6FF">
-<meta name="description" content="Shapeland · a world by Shirel Yitzhak">
+<meta name="description" content="OrKeepers · שומרי האור · a world by Shirel Yitzhak">
 <link rel="stylesheet" href="css/style.css?v=44">
 <style>[hidden]{display:none!important}</style>
 </head>
@@ -35,7 +36,8 @@
 
 <div id="title" dir="rtl">
   <div class="tcard">
-    <div class="logo" aria-label="Shapeland" id="logo"></div>
+    <div class="logo" aria-label="OrKeepers" id="logo"></div>
+    <div class="heblogo" style="font-family:'Varela Round',sans-serif;font-weight:700;font-size:1.7em;color:#FFB41F;margin-top:-2px;letter-spacing:1px;text-shadow:0 2px 0 #1D2A48,0 0 2px #1D2A48">שומרי האור</div>
     <div class="sig"><small>a world by</small>Shirel Yitzhak</div>
     <div class="preview" id="titleAv"></div>
     <div class="tform" id="cloudBox" hidden>
@@ -140,5 +142,6 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script src="js/firebase-config.js?v=44"></script>
 <script src="js/21-cloud.js?v=44"></script>
+<script>if('serviceWorker' in navigator&&location.protocol==='https:'){addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})})}</script>
 </body>
 </html>

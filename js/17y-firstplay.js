@@ -116,7 +116,7 @@ function ftEnd(skipped){if(!FT.on)return;FT.on=false;FT.tgt=null;FT.cine=0;ftCin
   document.body.classList.remove('ft');document.body.classList.add('ftreveal');setTimeout(()=>document.body.classList.remove('ftreveal'),1200);
   if(!FT.replay)FT.calmUntil=Date.now()+5*60000;
   if(!FT.replay){const s=ST();if(!s.intro){s.intro=1;if(s.ch<1){s.ch=1;s.step=0;s.k=0}placeMosh()}P.ftue=1;save()}renderHud();renderQuestChip();
-  if(!skipped){burst('🌟 Welcome to Shapeland!');toast('🧺 Mosh מחכה לך! נוגעים בו כדי לדבר. הכפתורים למטה נפתחו: בנייה, בית, מפה ועוד');say('Welcome to Shapeland!')}}
+  if(!skipped){burst('🌟 Welcome, OrKeeper!');toast('🧺 Mosh מחכה לך! נוגעים בו כדי לדבר. הכפתורים למטה נפתחו: בנייה, בית, מפה ועוד');say('Welcome to Shapeland!')}}
 /* the camera is ours during the cinematic */
 const _stepCamF=stepCamera;stepCamera=function(dt){_stepCamF(dt);if(FT.on&&FT.cine){const t=performance.now()/1000;const c=CRYSPOS();const a=t*.25;const R=FT.cine===2?9:12;camera.position.set(c.x+Math.cos(a)*R,FT.cine===2?4.5:6,c.z+Math.sin(a)*R);camera.lookAt(c.x,1.3,c.z)}};
 /* no 7-page book and no surprise popups while the opening runs */
