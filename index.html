@@ -39,6 +39,11 @@
     <div class="sig"><small>a world by</small>Shirel Yitzhak</div>
     <div class="preview" id="titleAv"></div>
     <div class="tform" id="cloudBox" hidden>
+      <div id="quickBox">
+        <input class="txt" id="qName" dir="auto" maxlength="14" placeholder="איך קוראים לך? (לא חובה)" aria-label="השם שלך במשחק">
+        <button class="btn bigplay" data-a="quickplay">▶ לשחק!</button>
+      </div>
+      <details class="kidcode"><summary>🔑 יש לי קוד מההורים (לשחק עם חברים)</summary>
       <div id="kidLoginForm" style="display:flex;flex-direction:column;gap:10px">
         <label for="kCode">קוד שחקן (מקבלים מההורים)</label>
         <input class="txt en" id="kCode" dir="ltr" maxlength="12" placeholder="abc123" autocapitalize="none" autocomplete="username" spellcheck="false">
@@ -54,17 +59,18 @@
         <button class="btn" data-c="kidgo" id="kidGo" style="font-size:22px">יאללה, לשחק! ✨</button>
         <button class="btn ghost mini" data-a="avatar">🎨 לעצב את הדמות</button>
       </div>
-      <button class="btn ghost mini" data-c="solo">לשחק לבד, בלי חברים</button>
+      </details>
       <a class="sub" href="parent.html" style="text-align:center">🔒 אזור הורים</a>
     </div>
     <div class="tform" id="localBox">
       <label for="tName">איך קוראים לדמות שלך?</label>
       <input class="txt" id="tName" dir="auto" maxlength="14" placeholder="שם במשחק">
-      <div class="codewrap" style="display:flex;flex-direction:column;gap:10px">
-      <label for="tCode">קוד החבורה (כל מי שמשתמש באותו קוד משחק ביחד)</label>
+      <button class="btn bigplay" data-a="play" style="font-size:28px;padding:16px 10px;border-radius:26px">▶ לשחק!</button>
+      <details class="kidcode codewrap"><summary>👫 קוד חבורה (לשחק עם חברים)</summary>
+      <div style="display:flex;flex-direction:column;gap:10px">
+      <label for="tCode">כל מי שמשתמש באותו קוד משחק ביחד</label>
       <input class="txt en" id="tCode" dir="ltr" maxlength="24" placeholder="shirel-friends" autocapitalize="none" autocomplete="off" spellcheck="false">
-      </div>
-      <button class="btn" data-a="play" style="font-size:22px">יאללה, לשחק! ✨</button>
+      </div></details>
       <button class="btn ghost mini" data-a="avatar">🎨 לעצב את הדמות</button>
     </div>
   </div>
@@ -123,6 +129,7 @@
 <script src="js/17v-beauty.js?v=44"></script>
 <script src="js/17x-people.js?v=44"></script>
 <script src="js/17y-firstplay.js?v=44"></script>
+<script src="js/17z-fun.js?v=45"></script>
 <script src="js/18-events.js?v=44"></script>
 <script src="js/19-loop.js?v=44"></script>
 <script src="js/20-boot.js?v=44"></script>
