@@ -43,7 +43,7 @@ function fillKid(k){const v=typeof KIDV[k]==='object'?KIDV[k]:{};const p=v.progr
   groups.forEach(g=>{if(!GNAMES[g])db.ref('groups/'+g+'/meta/name').get().then(s=>{GNAMES[g]=s.val()||'קבוצה';fillKid(k)}).catch(()=>{})})}
 const GNAMES={};
 
-$('#addKid').onsubmit=async e=>{e.preventDefault();const nick=$('#kidNick').value.trim();if(!nick)return;const msg=$('#addMsg');msg.textContent='פותחים חשבון…';
+$('#addKid').onsubmit=async e=>{e.preventDefault();const nick=$('#kidNick').value.trim();if(!nick)return;const msg=$('#addMsg');{const c=SAFE.checkName(nick);if(!c.ok){msg.textContent=c.reason+' (הכינוי גלוי לחברי הקבוצה. עדיף שם פרטי או כינוי, בלי שם משפחה)';return}}msg.textContent='פותחים חשבון…';
   const code=rnd('abcdefghjkmnpqrstuvwxyz',3)+rnd('23456789',3),pin=rnd('0123456789',6);let sec;
   try{sec=firebase.initializeApp(FIREBASE_CONFIG,'sec'+Date.now());const c=await sec.auth().createUserWithEmailAndPassword(code+'@'+KID_DOMAIN,pin+'-sl');const kid=c.user.uid;await sec.auth().signOut();
     const fc=newFc();const up={};up['kids/'+kid+'/parent']=ME.uid;up['kids/'+kid+'/nick']=nick;up['kids/'+kid+'/code']=code;up['kids/'+kid+'/fc']=fc;up['kids/'+kid+'/pname']=pname();up['kids/'+kid+'/created']=firebase.database.ServerValue.TIMESTAMP;

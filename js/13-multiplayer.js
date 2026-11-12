@@ -6,13 +6,13 @@ let VISIT=null;// {host,hostPeer,name,house,defs,mine:Set,pending}
 const HBUF={};
 const sanitizeCh=c=>{const o={};if(!c||typeof c!=='object')return P.ch;if(c.kind==='human')return sanitizeHuman(c);for(const k of['shape','pat','eyes','mouth','ears','back','hat']){const ok=CH[k].map(x=>x[0]);o[k]=ok.includes(c[k])?c[k]:ok[0]}
   o.color=COLORS.map(x=>x[0]).includes(c.color)?c.color:'#FF8FB1';o.w=clamp(+c.w||1,.7,1.3);o.h=clamp(+c.h||1,.7,1.3);return o};
-const nameOf=p=>String((p&&p.presence&&p.presence.n)||'חבר/ה').slice(0,14);
+const nameOf=p=>SAFE.safeName(String((p&&p.presence&&p.presence.n)||'חבר/ה').slice(0,14),'חבר/ה');
 const peerByKey=k=>NET.peers.find(p=>!p.sameTab&&(p.presence||{}).k===k);
 async function connect(){
   NET.state='connecting';renderFriends();
   try{
     let r;
-    if(window.CLOUD&&window.CLOUD.on){if(!CLOUD.user||!CLOUD.gid){NET.state='solo';renderFriends();if(CLOUD.user&&!CLOUD.gid)toast('עוד אין קבוצה. בכפתור 👫 פותחים קבוצה ומזמינים חברים');return}r=cloudRoom(CLOUD.gid)}
+    if(window.CLOUD&&window.CLOUD.on){if(!CLOUD.user||!CLOUD.gid){NET.state='solo';renderFriends();if(CLOUD.user&&!CLOUD.gid)toast('עוד אין קבוצה. בכפתור 👫 פותחים קבוצה ומזמינים חברים');return}r=cloudRoom(CLOUD.gid);SAFE.maybeDailyReminder()}
     else{if(!window.claude||!window.claude.use){NET.state='solo';renderFriends();return}
       const ns=await window.claude.use('room');if(!ns){NET.state='solo';renderFriends();return}r=await ns.join('sl-'+P.code)}
     NET.room=r;NET.state='on';
@@ -60,7 +60,7 @@ let lastPres=0;
 function localPos(){const[cx,cz]=ZC[ME.zone]||[0,0];return[+(ME.pos.x-cx).toFixed(2),+(ME.pos.z-cz).toFixed(2)]}
 function pushPresence(force){if(!NET.room)return;const t=performance.now();if(!force&&t-lastPres<120)return;lastPres=t;const[x,z]=localPos();
   const zone=ME.zone==='home'?'house':ME.zone==='visit'?'house':ME.zone,host=ME.zone==='home'?P.key:ME.zone==='visit'&&VISIT?VISIT.host:ME.zone==='inside'&&INSIDE?INSIDE.id:null;
-  NET.room.presence({n:P.name||'שחקן/ית',k:P.key,lv:level(),pc:P.pieces.length+P.cpieces.length,ch:P.ch,hc:P.house.color,pet:P.pet,pl:P.plots,zone,host,x,z,y:ME.y>.3?Math.round(ME.y*10)/10:0}).catch(()=>{})}
+  NET.room.presence({n:SAFE.safeName(P.name||'שחקן/ית','שחקן/ית'),k:P.key,lv:level(),pc:P.pieces.length+P.cpieces.length,ch:P.ch,hc:P.house.color,pet:P.pet,pl:P.plots,zone,host,x,z,y:ME.y>.3?Math.round(ME.y*10)/10:0}).catch(()=>{})}
 function emit(topic,data){if(NET.room&&NET.room.connected())NET.room.emit(topic,data).catch(()=>{})}
 let sendQ=Promise.resolve();
 const wait=ms=>new Promise(r=>setTimeout(r,ms));

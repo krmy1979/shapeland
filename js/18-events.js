@@ -7,7 +7,7 @@ document.addEventListener('click',e=>{const sh=$('#sheet');if(e.target===sh&&!(P
 function act(a,d){if(ACTX[a]){ACTX[a](d);return}
   switch(a){
    case'play':{const nm=$('#tName').value.trim().slice(0,14);const code=($('#tCode').value.trim()||'shirel-friends').toLowerCase().replace(/\s+/g,'-');
-     if(!CODE_RE.test(code)){toast('קוד החבורה באנגלית או מספרים בלבד, למשל shirel-friends');break}P.name=nm||P.name||'Player';P.code=code;save();
+     if(!CODE_RE.test(code)){toast('קוד החבורה באנגלית או מספרים בלבד, למשל shirel-friends');break}if(nm){const c=SAFE.checkName(nm);if(!c.ok){toast(c.reason);break}}P.name=nm||P.name||'Player';P.code=code;save();
      $('#title').hidden=true;$('#hudTop').hidden=false;$('#hudBot').hidden=false;rebuildMe();renderHouse('home',P.house);clearScope('H');P.house.pieces.forEach(p=>addPieceObj(p,'H','home',P.furn));
      clearScope('W');P.ws.forEach(p=>addPieceObj(p,'W','work',P.furn));renderExteriors();teleport('island');renderHud();setNpcMarks();say("Welcome to Shirel Yitzhak's World, "+spName()+'!');connect();
      if(!P.adv)setTimeout(()=>toast('👷‍♀️ Bella מחכה לך עם משימה ראשונה! לגעת בה'),2500);break}
@@ -113,5 +113,5 @@ function act(a,d){if(ACTX[a]){ACTX[a](d);return}
    case'reset2':{try{localStorage.removeItem(KEY)}catch(e){}const k=P.key;[...OBJ.keys()].forEach(removePieceObj);OTHERS.clear();P=freshP();P.key=k;save();closeSheet();
      rebuildMe();renderHouse('home',P.house);renderExteriors();teleport('island');renderHud();setNpcMarks();toast('המשחק אופס');break}
   }}
-document.addEventListener('input',e=>{if(e.target.id==='nm'){P.name=e.target.value.slice(0,14);save()}
+document.addEventListener('input',e=>{if(e.target.id==='nm'){const v=e.target.value.slice(0,14),c=SAFE.checkName(v);if(c.ok){P.name=v;save()}else if(v.trim()&&!/^\s*$/.test(v)){clearTimeout(window._nmT);window._nmT=setTimeout(()=>toast(c.reason),700)}}
   if(e.target.id==='sw'||e.target.id==='sh'){P.ch[e.target.id==='sw'?'w':'h']=+e.target.value;save();$('#pv').innerHTML=charSVG(P.ch)}});
